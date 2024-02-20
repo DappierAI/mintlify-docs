@@ -1,13 +1,22 @@
 ---
-title: 'Quickstart'
-description: 'Start using Dappier AI in under 5 minutes'
+title: 'General set up'
 ---
 
-## Introduction
-Dappier data models help you build next-gen LLM apps with trusted, up-to-date content from the world’s leading brands.
+#### Platform API Key
+
 To use the Dappier AI Data Models, you will need an API key. Please visit https://platform.dappier.com/ to log in and create an API key in your profile.
 
-## Using Real Time Data API
+<img
+  className="block"
+  src="/images/dappier_profile_api_key.jpg"
+  alt="Dappier Profile"
+/>
+
+Our API Key will have the following format: **ak_\*\*\*p51f**. It's a bearer token.
+
+Once you have obtained a bearer token, you need to include it in the header of your HTTP requests to access protected resources. The bearer token is included in the "Authorization" header using the "Bearer" scheme.
+
+#### Using Real Time Data API
 
 <CodeGroup>
 
@@ -38,9 +47,3 @@ curl -L 'https://api.dappier.com/app/datamodel/dm_01hpsxyfm2fwdt2zet9cg6fdxt' \
 ```
 
 </CodeGroup>
-
-
-``` json result.json
-{
-    "message": "Hello there! How can I assist you today? If you need help with anything, feel free to ask."
-}
