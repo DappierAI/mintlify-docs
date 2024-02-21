@@ -1,0 +1,46 @@
+---
+title: 'Using Real Time Data with OpenAI'
+---
+
+#### About
+
+Creating your own GPT? Leverage Dappier’s Real Time Data model to allow your GPT to access real-time google web search results including the latest news, weather, travel, deals and more.
+
+Before getting started, you will need a Dappier API key first, please visit [Dappier API Key](https://docs.dappier.com/introduction) on how to obtain your own key.
+
+
+#### Configure your GPT
+
+> Create a new GPT or navigate to your existing GPT on OpenAI. Disable the Web Browsing capability as to not interfere with Dappier’s Real Time Data model when interacting with your GPT.
+
+<img
+  className="block"
+  src="/images/disabled_web_browsing.png"
+  alt="Disable Web Browsing"
+/>
+
+> Click on Create New Action, select Authentication > Authentication Type as API Key. Use your Dappier Key here with Auth Type - Bearer. Hit save.
+
+<img
+  className="block"
+  src="/images/authentication.png"
+  alt="Authentication"
+/>
+
+> Get the OpenAI schema found in the Real Time Data model in [Dappier DLM Marketplace](https://platform.dappier.com/marketplace).
+
+<img
+  className="block"
+  src="/images/dappier_realtime_data.png"
+  alt="Dappier Marketplace"
+/>
+
+> Copy the OpenAI schema from above into your GPT Actions Schema box.
+
+<img
+  className="block"
+  src="/images/drop_in_schema.png"
+  alt="Drop in schema"
+/>
+
+> Now your GPT can interact with the Real Time Data Model and access google web search results including the latest news, weather, travel, deals and more!

@@ -35,33 +35,20 @@
     {
       "group": "Get Started",
       "pages": [
-        "general",
-        "quickstart"
+        "introduction"
       ]
     },
     {
-      "group": "Essentials",
+      "group": "Real Time Data",
       "pages": [
-        "essentials/markdown",
-        "essentials/code",
-        "essentials/images",
-        "essentials/settings",
-        "essentials/navigation",
-        "essentials/reusable-snippets"
+        "real-time-data-api",
+        "real-time-data-openai-schema"
       ]
     },
     {
-      "group": "API Documentation",
+      "group": "API Reference",
       "pages": [
-        "api-reference/introduction"
-      ]
-    },
-    {
-      "group": "Endpoint Examples",
-      "pages": [
-        "api-reference/endpoint/get",
-        "api-reference/endpoint/create",
-        "api-reference/endpoint/delete"
+        "api-reference/endpoint/real-time-data"
       ]
     }
   ],
