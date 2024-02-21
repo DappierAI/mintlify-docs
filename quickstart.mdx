@@ -4,43 +4,17 @@ description: 'Start using Dappier AI in under 5 minutes'
 ---
 
 ## Introduction
-Dappier data models help you build next-gen LLM apps with trusted, up-to-date content from the world’s leading brands.
-To use the Dappier AI Data Models, you will need an API key. Please visit https://platform.dappier.com/ to log in and create an API key in your profile.
+Power your AI applications with Dappier’s pre-trained, LLM ready data models! Ensure factual, up-to-date, responses with fewer hallucinations.
 
-## Using Real Time Data API
+To use one of our Dappier AI Data Models, you will need an API key. Please visit https://platform.dappier.com/ to log in and create an API key in your profile.
 
-<CodeGroup>
-
-```bash Python
-import requests
-import json
-
-url = "https://api.dappier.com/app/datamodel/dm_01hpsxyfm2fwdt2zet9cg6fdxt"
-
-payload = json.dumps({
-  "query": "Hello Dappier!"
-})
-headers = {
-  'Content-Type': 'application/json',
-  'Authorization': 'Bearer <YOUR_DAPPIER_API_KEY>'
-}
-
-response = requests.request("POST", url, headers=headers, data=payload)
-
-print(response.text)
-```
-
-```bash cURL
-curl -L 'https://api.dappier.com/app/datamodel/dm_01hpsxyfm2fwdt2zet9cg6fdxt' \
--H 'Content-Type: application/json' \
--H 'Authorization: Bearer <YOUR_DAPPIER_API_KEY>' \
--d '{"query": "Plan me an itinerary for a 3 day trip to Puerto Rico"}'
-```
-
-</CodeGroup>
+<img
+  className="block"
+  src="/images/dappier_profile_api_key.jpg"
+  alt="Dappier Profile"
+/>
 
 
-``` json result.json
-{
-    "message": "Hello there! How can I assist you today? If you need help with anything, feel free to ask."
-}
+Our API Key will have the following format: ak_***p51f. It’s a bearer token.
+
+Once you have obtained a bearer token, you will need to include it in the header of your HTTP requests to access protected resources. The bearer token is included in the “Authorization” header using the “Bearer” scheme.
