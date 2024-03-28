@@ -42,7 +42,8 @@
       "group": "Real Time Data",
       "pages": [
         "real-time-data-api",
-        "real-time-data-openai-schema"
+        "real-time-data-openai-schema",
+        "real-time-data-langchain"
       ]
     },
     {
