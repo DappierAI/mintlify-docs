@@ -35,7 +35,11 @@
     {
       "group": "Get Started",
       "pages": [
-        "introduction"
+        "introduction",
+        "configure-ai-agent",
+        "custom-ai-experiences-data-model-api",
+        "publish-and-monetize",
+        "embed-widgets"
       ]
     },
     {
