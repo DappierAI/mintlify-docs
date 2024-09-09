@@ -1,16 +1,12 @@
 ---
-title: 'Using Real Time Data API'
+title: 'Real Time Data API'
 ---
 
 #### About
 
 Dappier’s Real Time Data model can help you access real-time google web search results including the latest news, weather, travel, deals and more.
 
-To use the Real Time Data API you will need a Dappier API key first, please visit [Dappier API Key](https://docs.dappier.com/introduction) on how to obtain your own key.
-
-Our API Key will have the following format: ak_***p51f. It’s a bearer token.
-
-Once you have obtained a bearer token, you will need to include it in the header of your HTTP requests to access protected resources. The bearer token is included in the “Authorization” header using the “Bearer” scheme.
+You first need the API key to access this API. Please visit [Dappier Platform](https://platform.dappier.com) to sign up and create an API key under Settings > Profile > API Keys.
 
 #### Using Real Time Data API
 
@@ -35,6 +31,34 @@ response = requests.request("POST", url, headers=headers, data=payload)
 print(response.text)
 ```
 
+```bash Go
+package main
+
+import (
+"fmt"
+"io"
+"net/http"
+"strings"
+)
+
+func main() {
+    url := "https://api.dappier.com/app/datamodel/dm_01hpsxyfm2fwdt2zet9cg6fdxt"
+    apiKey := "<YOUR_DAPPIER_API_KEY>"
+    query := `{"query": "What is the weather in Austin today?"}`
+
+    req, _ := http.NewRequest("POST", url, strings.NewReader(query))
+    req.Header.Set("Content-Type", "application/json")
+    req.Header.Set("Authorization", "Bearer "+apiKey)
+
+    resp, _ := http.DefaultClient.Do(req)
+    defer resp.Body.Close()
+    body, _ := io.ReadAll(resp.Body)
+
+    fmt.Println(string(body))
+}
+
+```
+
 ```bash cURL
 curl -L 'https://api.dappier.com/app/datamodel/dm_01hpsxyfm2fwdt2zet9cg6fdxt' \
 -H 'Content-Type: application/json' \
@@ -44,7 +68,7 @@ curl -L 'https://api.dappier.com/app/datamodel/dm_01hpsxyfm2fwdt2zet9cg6fdxt' \
 
 </CodeGroup>
 
-``` json result.json
+``` json response
 {
     "message": "Hey there! The weather in Austin today is a pleasant 64°F. Looks like a great day to enjoy some outdoor activities! 🌤️"
 }

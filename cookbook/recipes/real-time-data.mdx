@@ -1,0 +1,66 @@
+---
+title:  'Build a Real-Time Data Assistant'
+---
+
+Dappier’s Real Time Data model can help you access real-time google web search results including the latest news, weather, travel, deals and more.
+
+You first need the API key to access this API. Please visit [Dappier Platform](https://platform.dappier.com) to sign up and create an API key under Settings > Profile > API Keys.
+
+## Using Real Time Data API
+
+Below is an example of an assistant that prints a good morning message by accessing the latest weather and news in a given location.
+
+Using the Real Time Data API, you can access real-time data to enhance your application's functionality.
+
+```bash Python
+import requests
+import json
+import openai
+
+# Step 1: Receive Request (Assuming we have location)
+location = "Austin, TX"  # Example location
+
+# Step 2: Call Dappier API for Weather
+weather_query = f"What is the weather in {location} today?"
+dappier_url = "https://api.dappier.com/app/datamodel/dm_01hpsxyfm2fwdt2zet9cg6fdxt"
+headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer <YOUR_DAPPIER_API_KEY>'
+}
+
+weather_payload = json.dumps({"query": weather_query})
+weather_response = requests.post(dappier_url, headers=headers, data=weather_payload)
+weather_data = weather_response.json().get('results')
+
+# Step 3: Call Dappier API for Latest News
+news_query = f"What is the latest news in {location} today?"
+news_payload = json.dumps({"query": news_query})
+news_response = requests.post(dappier_url, headers=headers, data=news_payload)
+news_data = news_response.json().get('results')
+
+# Step 4: Prepare ChatGPT Prompt
+prompt_template = f"""
+You are an Assistant who responds to requests first thing in the morning. Your job is to greet the user and provide them with the latest weather and news. Make the response playful, like a text message, and keep it short. Add a joke to brighten their day and ask a follow-up question.
+
+Weather: {weather_data}
+News: {news_data}
+"""
+
+# Step 5: Call ChatGPT API
+openai.api_key = '<YOUR_OPENAI_API_KEY>'
+
+response = openai.Completion.create(
+    engine="text-davinci-003",
+    prompt=prompt_template,
+    max_tokens=150
+)
+
+chatgpt_response = response.choices[0].text.strip()
+
+# Step 6: Return the ChatGPT Response
+api_response = {
+    "Response": chatgpt_response
+}
+
+print(json.dumps(api_response, indent=2))
+```

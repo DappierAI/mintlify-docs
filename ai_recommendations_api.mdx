@@ -1,0 +1,116 @@
+---
+title: 'AI Recommendations API'
+---
+
+Convert any data into a recommendation engine with Dappier's AI-powered Article Recommendations API. This API uses a RAG (Retrieval-Augmented Generation) model to return article recommendations based on the input query or URL.
+
+You'll need an API key to access this API. Visit [Dappier Platform](https://platform.dappier.com) to sign up and create an API key under Settings > Profile > API Keys.
+
+
+#### Using AI Recommendations API
+
+This section demonstrates retrieving recommendations based on natural language queries or URLs. You can get the data model id of the desired data model from the [Dappier Marketplace](https://marketplace.dappier.com). The data model id starts with `dm_`.
+Api reference for this endpoint can be found [here](https://docs.dappier.com/api-reference/endpoint/real-time-data).
+
+    <br/>
+
+<CodeGroup>
+
+    ```bash Python
+    import requests
+    import json
+
+    url = "https://api.dappier.com/app/datamodel/dm_01j0pb465keqmatq9k83dthx34"
+    payload = json.dumps({
+    "query": "lifestyle new articles",
+    "similarity_top_k": 3,
+    "ref": "",
+    "num_articles_ref": 0,
+    "search_algorithm": "most_recent"
+})
+    headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer <YOUR_DAPPIER_API_KEY>'
+}
+
+    response = requests.post(url, headers=headers, data=payload)
+
+    print(response.text)
+    ```
+
+    ```bash Go
+    package main
+
+    import (
+    "bytes"
+    "fmt"
+    "net/http"
+    "io/ioutil"
+    )
+
+    func main() {
+    url := "https://api.dappier.com/app/datamodel/dm_01j0pb465keqmatq9k83dthx34"
+    apiKey := "<YOUR_DAPPIER_API_KEY>"
+    query := `{
+        "query": "lifestyle new articles",
+        "similarity_top_k": 3,
+        "ref": "",
+        "num_articles_ref": 0,
+        "search_algorithm": "most_recent"
+    }`
+
+    req, err := http.NewRequest("POST", url, bytes.NewBuffer([]byte(query)))
+    if err != nil {
+    fmt.Println("Error creating request:", err)
+    return
+}
+
+    req.Header.Set("Authorization", "Bearer "+apiKey)
+    req.Header.Set("Content-Type", "application/json")
+
+    client := &http.Client{}
+    resp, err := client.Do(req)
+    if err != nil {
+    fmt.Println("Error making request:", err)
+    return
+}
+    defer resp.Body.Close()
+
+    body, _ := ioutil.ReadAll(resp.Body)
+    fmt.Println(string(body))
+}
+
+    ```
+
+    ```bash cURL
+    curl --location --request POST 'https://api.dappier.com/app/datamodel/dm_01j0pb465keqmatq9k83dthx34' \
+    --header 'Content-Type: application/json' \
+    --header 'Authorization: Bearer <YOUR_DAPPIER_API_KEY>' \
+    --data-raw '{
+        "query": "lifestyle new articles",
+        "similarity_top_k": 3,
+        "ref": "",
+        "num_articles_ref": 0,
+        "search_algorithm" : "most_recent"
+    }'
+    ```
+
+</CodeGroup>
+
+``` json response
+{
+"results": [
+    {
+        "author": "Rusty Weiss",
+        "image_url": "https://images.dappier.com/dm_01j0pb465keqmatq9k83dthx34/Olympics-Rugby-Sevens-Women-Semifinal-USA-vs-NZL-23861886-scaled-e1725556056406_.jpg?width=428&height=321",
+        "preview_content": "<p>American rugby player Ilona Maher&#8217;s popularity is at its absolute peak. Demand for her has skyrocketed since her performance in [&#8230;]</p>\n<p>The post <a href=\"https://www.boundingintosports.com/2024/09/olympic-rugby-hero-ilona-maher-joins-dancing-with-the-stars/\">Olympic Rugby Hero Ilona Maher Joins &#8216;Dancing With The Stars&#8217;</a> appeared first on <a href=\"https://www.boundingintosports.com\">Bounding Into Sports</a>.</p>",
+        "pubdate": "Thu, 05 Sep 2024 17:30:27 +0000",
+        "site": "Bounding Into Sports",
+        "site_domain": "www.boundingintosports.com",
+        "title": "Olympic Rugby Hero Ilona Maher Joins ‘Dancing With The Stars’",
+        "url": "https://api.dappier.com/app/track/NB2HI4DTHIXS653XO4XGE33VNZSGS3THNFXHI33TOBXXE5DTFZRW63JPGIYDENBPGA4S633MPFWXA2LDFVZHKZ3CPEWWQZLSN4WWS3DPNZQS23LBNBSXELLKN5UW44ZNMRQW4Y3JNZTS253JORUC25DIMUWXG5DBOJZS6===?type=article_click&site_domain=www.boundingintosports.com&datamodel_id=dm_01j0pb465keqmatq9k83dthx34&request_id=3ac73c01974c-kqHLh38Cqy-2824988&origin="
+    },
+    ...
+]
+}
+```

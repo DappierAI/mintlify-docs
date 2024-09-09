@@ -1,0 +1,80 @@
+---
+title: 'Quickstart'
+---
+
+## Introduction
+Dappier is a developer-focused platform that enables easy integration of real-time, trusted data into AI applications using Retrieval-Augmented Generation (RAG). It simplifies the creation and deployment of RAG models, allowing AI systems to access up-to-date content at inference without retraining. Dappier provides APIs for seamless data access, helping developers build scalable AI experiences while also offering a pay-per-query model for data monetization.
+
+## Steps to get started
+
+<Steps>
+    <Step title="Get API Key">
+        You first need the API key to access the Dappier API. Please visit [Dappier Platform](https://platform.dappier.com) to sign up and create an API key under Settings > Profile > API Keys.
+        <img
+            className="block"
+            src="/images/dappier_profile_api_key.jpg"
+            alt="Dappier Profile"
+        />
+    </Step>
+    <Step title="Pick Data model from Marketplace">
+        You can browse through different data models available in the Dappier Marketplace. You can select the data model that best fits your use case. Once selected get the data model id from the request endpoint. Data model id starts with dm_.
+    </Step>
+    <Step title="Make API call">
+        The Curl request to access the data model is as follows:
+        <CodeGroup>
+
+            ```bash Python
+            # Python code example
+            import requests
+
+            def fetch_dappier_data(query):
+            api_key = "<YOUR_DAPPIER_API_KEY>" # Replace with your actual Dappier API key
+            endpoint = "https://api.dappier.com/app/datamodel/<DATAMODEL_ID>"
+            headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
+            body = {"query": query}
+            response = requests.post(endpoint, headers=headers, json=body)
+            return response.json()
+
+            # Example usage
+            results = fetch_dappier_data("Plan me an itinerary for a 3 day trip to Puerto Rico")
+            print(results)
+            ```
+
+            ```bash cURL
+                curl -L 'https://api.dappier.com/app/datamodel/<DATAMODEL_ID>'
+                -H 'Content-Type: application/json'
+                -H 'Authorization: Bearer <YOUR_DAPPIER_API_KEY>'
+                    -d "{
+                        \"query\": \"Plan me an itinerary for a 3 day trip to Puerto Rico\"
+                    }"
+            ```
+        </CodeGroup>
+
+    </Step>
+</Steps>
+
+## Features
+
+<CardGroup cols={2}>
+    <Card title="API" icon="code" href="api-reference/endpoint/real-time-data">
+        Access powerful APIs to integrate Dappier’s real-time data into your applications seamlessly.
+    </Card>
+    <Card title="Integrations" icon="link" href="real-time-data-langchain">
+        Connect with third-party platforms effortlessly using our built-in integration tools. (Coming soon)
+    </Card>
+    <Card title="Real time Data" icon="globe" href="api-reference/endpoint/real-time-data">
+        Get real-time access to trusted data sources for enhanced AI-driven insights.
+    </Card>
+    <Card title="AI Recommendations" icon="thumbs-up"  href="api-reference/endpoint/ai-recommendations">
+        Use AI-powered recommendations to personalize experiences for your users.
+    </Card>
+    <Card title="RAG Marketplace" icon="comments-dollar" href="publish-and-monetize">
+        Browse and access high-quality data models in our RAG Marketplace, or deploy and monetize your own data models.
+    </Card>
+    <Card title="Embed Chatbot" icon="comment-dots" href="embed-widgets">
+        Build and deploy intelligent chatbots using our data and AI models.
+    </Card>
+    <Card title="GPTs" icon="play" href="custom-ai-experiences-data-model-api">
+        We provide OpenAI's GPT schema, enabling anyone to easily deploy and manage their own GPTs.
+    </Card>
+</CardGroup>

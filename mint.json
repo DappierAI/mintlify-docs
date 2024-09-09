@@ -29,32 +29,76 @@
     {
       "name": "API Reference",
       "url": "api-reference"
+    },
+    {
+      "name": "Cookbook",
+      "url": "cookbook"
     }
   ],
+  "primaryTab": {
+    "name": "Home"
+  },
+  "anchors": [
+    {
+      "name": "Playground",
+      "icon": "play",
+      "url": "https://docs.dappier.com/api-reference/endpoint/real-time-data"
+    },
+    {
+      "name": "Blog",
+      "icon": "blogger",
+      "url": "https://dappier.com/blog"
+    },
+    {
+      "name": "Community",
+      "icon": "discord",
+      "url": "https://discord.com/invite/sSG77qEUSU"
+    },
+    {
+      "name": "Talk to Us",
+      "icon": "comments",
+      "url": "https://dappier.com/demo/"
+    }
+  ],
+
   "navigation": [
     {
       "group": "Get Started",
       "pages": [
-        "introduction",
-        "configure-ai-agent",
-        "custom-ai-experiences-data-model-api",
+        "quickstart"
+      ]
+    },
+    {
+      "group": "Developers",
+      "pages": [
+        "rag-marketplace",
+        "real-time-data-api",
+        "integrations",
+        "real-time-data-openai-schema"
+      ]
+    },
+    {
+      "group": "Publishers",
+      "pages": [
         "publish-and-monetize",
+        "configure-ai-agent",
+        "ai_recommendations_api",
         "embed-widgets",
         "bot-deterrence"
       ]
     },
     {
-      "group": "Real Time Data",
+      "group": "API Reference",
       "pages": [
-        "real-time-data-api",
-        "real-time-data-openai-schema",
-        "real-time-data-langchain"
+        "api-reference/endpoint/real-time-data",
+        "api-reference/endpoint/ai-recommendations"
       ]
     },
     {
-      "group": "API Reference",
+      "group": "Cookbook",
       "pages": [
-        "api-reference/endpoint/real-time-data"
+        "cookbook/recipes/ai-recommendations",
+        "cookbook/recipes/real-time-data"
       ]
     }
   ],
