@@ -45,7 +45,123 @@
 			}
 		  ]
 		}
-	  }
+	  },
+		"/app/datamodel/{datamodel_id}": {
+			"post": {
+				"summary": "Get AI Article Recommendations",
+				"description": "Retrieve articles based on queries or URLs, powered by semantic search.",
+				"parameters": [
+					{
+						"name": "datamodel_id",
+						"in": "path",
+						"required": true,
+						"description": "Data model ID, starting with `dm_`.",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"query": {
+										"type": "string",
+										"description": "Natural language query or URL."
+									},
+									"similarity_top_k": {
+										"type": "integer",
+										"default": 9,
+										"description": "Number of articles to return."
+									},
+									"ref": {
+										"type": "string",
+										"description": "Domain from which to retrieve recommendations."
+									},
+									"num_articles_ref": {
+										"type": "integer",
+										"default": 0,
+										"description": "Number of articles from the specified domain."
+									},
+									"search_algorithm": {
+										"type": "string",
+										"enum": ["most_recent", "semantic"],
+										"description": "Search algorithm for retrieving articles."
+									}
+								},
+								"required": ["query"]
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful response with article recommendations.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"results": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"author": {
+														"type": "string",
+														"description": "Author of the article."
+													},
+													"image_url": {
+														"type": "string",
+														"description": "Image URL for the article."
+													},
+													"preview_content": {
+														"type": "string",
+														"description": "Short preview of the article content."
+													},
+													"pubdate": {
+														"type": "string",
+														"description": "Publication date of the article."
+													},
+													"pubdate_unix": {
+														"type": "integer",
+														"description": "Publication date in UNIX timestamp."
+													},
+													"site": {
+														"type": "string",
+														"description": "Source site of the article."
+													},
+													"site_domain": {
+														"type": "string",
+														"description": "Domain of the site."
+													},
+													"title": {
+														"type": "string",
+														"description": "Title of the article."
+													},
+													"url": {
+														"type": "string",
+														"description": "URL for the article."
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"ApiKeyBearer": []
+					}
+				]
+			}
+		}
 	},
 	"components": {
 	  "schemas": {
