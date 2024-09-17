@@ -19,16 +19,25 @@
     {
       "name": "Support",
       "url": "mailto:support@dappier.com"
+    },
+    {
+      "name": "Dashboard",
+      "url": "https://platform.dappier.com"
     }
   ],
   "topbarCtaButton": {
-    "name": "Dashboard",
-    "url": "https://platform.dappier.com"
+    "type": "link",
+    "name": "View on GitHub",
+    "url": "https://github.com/DappierAI"
   },
   "tabs": [
     {
       "name": "API Reference",
       "url": "api-reference"
+    },
+    {
+      "name": "SDKs",
+      "url": "sdks"
     },
     {
       "name": "Cookbook",
@@ -88,10 +97,28 @@
       ]
     },
     {
-      "group": "API Reference",
+      "group": "Developer APIs",
       "pages": [
-        "api-reference/endpoint/real-time-data",
-        "api-reference/endpoint/ai-recommendations"
+        "api-reference/endpoint/real-time-data"
+      ]
+    },
+    {
+          "group": "Publisher APIs",
+          "pages": [
+            "api-reference/endpoint/ai-recommendations"
+          ]
+    },
+    {
+      "group": "Overview",
+      "pages": [
+        "sdks/introduction-sdk"
+      ]
+    },
+    {
+      "group": "SDKs",
+      "pages": [
+        "sdks/python-sdk",
+        "sdks/go-sdk"
       ]
     },
     {
@@ -106,6 +133,7 @@
     "instagram": "https://www.instagram.com/dappierai",
     "twitter": "https://twitter.com/dappierai",
     "linkedin": "https://www.linkedin.com/company/dappier",
-    "discord": "https://discord.com/invite/sSG77qEUSU"
+    "discord": "https://discord.com/invite/sSG77qEUSU",
+    "github": "https://github.com/dappierAI"
   }
 }

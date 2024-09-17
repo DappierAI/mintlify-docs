@@ -23,12 +23,12 @@ Leverage our turnkey widgets and APIs to build custom AI-powered experiences, in
         You first need the API key to access the Dappier API. Please visit [Dappier Platform](https://platform.dappier.com) to sign up and create an API key under Settings > Profile > API Keys.
         <img
             className="block"
-            src="/images/dappier_profile_api_key.jpg"
+            src="/images/dappier_profile_api_key.png"
             alt="Dappier Profile"
         />
     </Step>
     <Step title="Pick Data model from Marketplace">
-        You can browse through different data models available in the Dappier Marketplace. You can select the data model that best fits your use case. Once selected get the data model id from the request endpoint. Data model id starts with dm_.
+        You can browse through different data models available in the [Dappier Marketplace](https://marketplace.dappier.com). You can select the data model that best fits your use case. Once selected get the data model id from the request endpoint. Data model id starts with dm_.
     </Step>
     <Step title="Make API call">
         The Curl request to access the data model is as follows:
@@ -40,7 +40,7 @@ Leverage our turnkey widgets and APIs to build custom AI-powered experiences, in
 
             def fetch_dappier_data(query):
             api_key = "<YOUR_DAPPIER_API_KEY>" # Replace with your actual Dappier API key
-            endpoint = "https://api.dappier.com/app/datamodel/<DATAMODEL_ID>"
+            endpoint = "https://api.dappier.com/app/datamodel/dm_01hpsxyfm2fwdt2zet9cg6fdxt"
             headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
             body = {"query": query}
             response = requests.post(endpoint, headers=headers, json=body)
@@ -52,7 +52,7 @@ Leverage our turnkey widgets and APIs to build custom AI-powered experiences, in
             ```
 
             ```bash cURL
-                curl -L 'https://api.dappier.com/app/datamodel/<DATAMODEL_ID>'
+                curl -L 'https://api.dappier.com/app/datamodel/dm_01hpsxyfm2fwdt2zet9cg6fdxt'
                 -H 'Content-Type: application/json'
                 -H 'Authorization: Bearer <YOUR_DAPPIER_API_KEY>'
                     -d "{
@@ -70,7 +70,7 @@ Leverage our turnkey widgets and APIs to build custom AI-powered experiences, in
     <Card title="API" icon="code" href="api-reference/endpoint/real-time-data">
         Access powerful APIs to integrate Dappier’s real-time data into your applications seamlessly.
     </Card>
-    <Card title="Integrations" icon="link" href="real-time-data-langchain">
+    <Card title="Integrations" icon="link" href="https://docs.dappier.com/integrations">
         Connect with third-party platforms effortlessly using our built-in integration tools. (Coming soon)
     </Card>
     <Card title="Real time Data" icon="globe" href="api-reference/endpoint/real-time-data">
@@ -79,13 +79,13 @@ Leverage our turnkey widgets and APIs to build custom AI-powered experiences, in
     <Card title="AI Recommendations" icon="thumbs-up"  href="api-reference/endpoint/ai-recommendations">
         Use AI-powered recommendations to personalize experiences for your users.
     </Card>
-    <Card title="RAG Marketplace" icon="comments-dollar" href="publish-and-monetize">
+    <Card title="RAG Marketplace" icon="comments-dollar" href="https://docs.dappier.com/rag-marketplace">
         Browse and access high-quality data models in our RAG Marketplace, or deploy and monetize your own data models.
     </Card>
     <Card title="Embed Chatbot" icon="comment-dots" href="embed-widgets">
         Build and deploy intelligent chatbots using our data and AI models.
     </Card>
-    <Card title="GPTs" icon="play" href="custom-ai-experiences-data-model-api">
+    <Card title="GPTs" icon="play" href="https://docs.dappier.com/real-time-data-openai-schema">
         We provide OpenAI's GPT schema, enabling anyone to easily deploy and manage their own GPTs.
     </Card>
 </CardGroup>

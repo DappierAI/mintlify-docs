@@ -70,7 +70,7 @@
 								"properties": {
 									"query": {
 										"type": "string",
-										"description": "Natural language query or URL."
+										"description": "Natural language query, keyword or URL. If URL is specified, our AI analyzes the page context, summarizes and provides semantic recommendations based on the content."
 									},
 									"similarity_top_k": {
 										"type": "integer",
@@ -79,17 +79,17 @@
 									},
 									"ref": {
 										"type": "string",
-										"description": "Domain from which to retrieve recommendations."
+										"description": "site domain of where ai recommendations are being displayed. Example format: dappier.com"
 									},
 									"num_articles_ref": {
 										"type": "integer",
 										"default": 0,
-										"description": "Number of articles from the specified domain."
+										"description": "minimum number of articles from the \"ref\" domain specified above. Rest of the articles will come from other sites within the RAG model. "
 									},
 									"search_algorithm": {
 										"type": "string",
 										"enum": ["most_recent", "semantic"],
-										"description": "Search algorithm for retrieving articles."
+										"description": "Search algorithm for retrieving articles. \"most_recent\": simply gets the most recent articles by published date. \"semantic\" means it gets contextually relevant articles based on the query or the page context of the article from the URL. "
 									}
 								},
 								"required": ["query"]

@@ -1,5 +1,5 @@
 ---
-title: 'RAG Marketplace'
+title: 'RAG API Marketplace'
 
 ---
 
@@ -23,10 +23,10 @@ flowchart TB
     subgraph Dappier
         A2(Your Data Source) --> A5(Dappier RAG Model)
         A3(Trusted Source) --> A5
-        A4(Real time Data) --> A5
+        A4(Real Time Data) --> A5
     end
-    A1(User Query) -- Natural Language Query --> A5(Dappier RAG Model)
-    A5 -- Trusted and Vetted Results --> LLM
+    A5 -- Trusted and \Real-Time Knowledge --> LLM
+    LLM -- Natural Language Query --> A5
     LLM --> Response[Response]
 ```
 
