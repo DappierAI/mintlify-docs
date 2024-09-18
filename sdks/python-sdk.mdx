@@ -1,0 +1,95 @@
+---
+title: 'Python SDKs'
+icon: 'python'
+---
+
+## Overview
+
+`dappier-py` provides a straightforward way to interact with Dappier's API's, which allows for real-time data search on the internet and other datamodels from the marketplace. The library is designed to be easy to use and integrate into existing Python projects.
+
+## Installation
+
+To install the package, run:
+
+```bash
+pip install dappier
+
+```
+
+Alternatively, you can clone the repository and install the dependencies:
+
+```bash
+git clone https://github.com/DappierAI/dappier-py
+cd dappier-py
+pip install -r requirements.txt
+```
+
+## Initialization
+
+You can get your API key from your [Dappier account](https://platform.dappier.com).
+
+```python
+from dappier.dappier import DappierApp
+
+app = DappierApp(api_key='your_api_key')
+
+```
+## Real-Time Search
+
+You can perform a real-time search by providing a query. This will search for real-time data related to your query.
+
+```python
+result = app.realtime_search_api("When is the next election?")
+print(result.response['response']["results"])
+
+```
+
+## AI Recommendations
+The AI Recommendations feature allows you to query for articles and other content using a specific data model.
+You can pick a specific datamodel from [marketplace](https://marketplace.dappier.com/)
+
+### Default Options:
+
+```python
+ai_result = app.ai_recommendations(query="latest tech news", datamodel_id="dm_02hr75e8ate6adr15hjrf3ikol")
+print(ai_result.results)
+```
+
+### Custom Options:
+You can pass custom parameters such as `similarity_top_k`, `ref` and `num_articles_ref`:
+
+```python
+ai_custom_result = app.ai_recommendations(
+    query="latest tech news",
+    datamodel_id="dm_02hr75e8ate6adr15hjrf3ikol",
+    similarity_top_k=5,
+    ref="techcrunch.com",
+    num_articles_ref=2
+)
+print(ai_custom_result.results)
+
+```
+
+## Parameters
+
+### `query` (string):
+- A natural language query or URL.
+- If a URL is passed, the AI analyzes the page, creates a summary, and performs a semantic search query based on the content.
+
+### `similarity_top_k` (integer):
+- The number of articles to return (default is 9).
+
+### `ref` (string):
+- The domain of the site from which the recommendations should come.
+- Example: `techcrunch.com`.
+
+### `num_articles_ref` (integer):
+- Specifies how many articles should be guaranteed to match the domain specified in `ref`.
+- Use this to ensure a set number of articles from the desired domain appear in the results.
+
+### `search_algorithm` (string):
+- Options: `"most_recent"` or `"semantic"`.
+- `"semantic"` (default): Contextual matching of the query to retrieve articles.
+- `"most_recent"`: Retrieves articles sorted by the most recent publication date.
+
+Checkout [example.py](https://github.com/DappierAI/dappier-py/blob/main/examples/example.py) in this repository for a working example.
