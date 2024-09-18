@@ -84,12 +84,13 @@
 									"num_articles_ref": {
 										"type": "integer",
 										"default": 0,
-										"description": "minimum number of articles from the \"ref\" domain specified above. Rest of the articles will come from other sites within the RAG model. "
+										"description": "Minimum number of articles from the `ref` domain specified above. The rest of the articles will come from other sites within the RAG model."
+
 									},
 									"search_algorithm": {
 										"type": "string",
 										"enum": ["most_recent", "semantic"],
-										"description": "Search algorithm for retrieving articles. \"most_recent\": simply gets the most recent articles by published date. \"semantic\" means it gets contextually relevant articles based on the query or the page context of the article from the URL. "
+										"description": "Search algorithm for retrieving articles. `\\\"most_recent\\\"`: retrieves the most recent articles by publication date. `\\\"semantic\\\"` (default): retrieves contextually relevant articles based on the query or the page content from the provided URL."
 									}
 								},
 								"required": ["query"]
