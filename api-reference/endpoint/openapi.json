@@ -90,7 +90,7 @@
 									"search_algorithm": {
 										"type": "string",
 										"enum": ["most_recent", "semantic", "most_recent_semantic"],
-										"description": "Search algorithm for retrieving articles. \n `\\\"most_recent\\\"`: retrieves the most recent articles by publication date. `\\\"semantic\\\"` (default): retrieves contextually relevant articles based on the query or the page content from the provided URL. `\\\"most_recent_semantic\\\"`: performs semantic search and retrieves the most recent articles by publication date."
+										"description": "Search algorithm for retrieving articles. \n `most_recent`: retrieves the most recent articles by publication date. `semantic` (default): retrieves contextually relevant articles based on the query or the page content from the provided URL. `most_recent_semantic`: performs semantic search and retrieves the most recent articles by publication date."
 									}
 								},
 								"required": ["query"]
