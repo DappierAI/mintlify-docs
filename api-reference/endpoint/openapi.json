@@ -89,8 +89,8 @@
 									},
 									"search_algorithm": {
 										"type": "string",
-										"enum": ["most_recent", "semantic"],
-										"description": "Search algorithm for retrieving articles. `\\\"most_recent\\\"`: retrieves the most recent articles by publication date. `\\\"semantic\\\"` (default): retrieves contextually relevant articles based on the query or the page content from the provided URL."
+										"enum": ["most_recent", "semantic", "most_recent_semantic"],
+										"description": "Search algorithm for retrieving articles. \n `\\\"most_recent\\\"`: retrieves the most recent articles by publication date. `\\\"semantic\\\"` (default): retrieves contextually relevant articles based on the query or the page content from the provided URL. `\\\"most_recent_semantic\\\"`: performs semantic search and retrieves the most recent articles by publication date."
 									}
 								},
 								"required": ["query"]
@@ -117,7 +117,7 @@
 													},
 													"image_url": {
 														"type": "string",
-														"description": "Image URL for the article."
+														"description": "Image URL for the article. You can add &w=400&h=200 to the end of the URL with your desired size values to automatically resize and optimize delivery of the image."
 													},
 													"preview_content": {
 														"type": "string",
