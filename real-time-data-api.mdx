@@ -16,7 +16,7 @@ You first need the API key to access this API. Please visit [Dappier Platform](h
 import requests
 import json
 
-url = "https://api.dappier.com/app/datamodel/dm_01hpsxyfm2fwdt2zet9cg6fdxt"
+url = "https://api.dappier.com/app/aimodel/am_01j06ytn18ejftedz6dyhz2b15"
 
 payload = json.dumps({
   "query": "What is the weather in Austin today?"
@@ -42,7 +42,7 @@ import (
 )
 
 func main() {
-    url := "https://api.dappier.com/app/datamodel/dm_01hpsxyfm2fwdt2zet9cg6fdxt"
+    url := "https://api.dappier.com/app/aimodel/am_01j06ytn18ejftedz6dyhz2b15"
     apiKey := "<YOUR_DAPPIER_API_KEY>"
     query := `{"query": "What is the weather in Austin today?"}`
 
@@ -60,7 +60,7 @@ func main() {
 ```
 
 ```bash cURL
-curl -L 'https://api.dappier.com/app/datamodel/dm_01hpsxyfm2fwdt2zet9cg6fdxt' \
+curl -L 'https://api.dappier.com/app/aimodel/am_01j06ytn18ejftedz6dyhz2b15' \
 -H 'Content-Type: application/json' \
 -H 'Authorization: Bearer <YOUR_DAPPIER_API_KEY>' \
 -d '{"query": "What is the weather in Austin today?"}'

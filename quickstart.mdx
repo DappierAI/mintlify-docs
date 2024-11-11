@@ -39,7 +39,7 @@ Boost engagement and generate revenue with Dappier's AI-powered tools! Use our A
 
             def fetch_dappier_data(query):
             api_key = "<YOUR_DAPPIER_API_KEY>" # Replace with your actual Dappier API key
-            endpoint = "https://api.dappier.com/app/datamodel/dm_01hpsxyfm2fwdt2zet9cg6fdxt"
+            endpoint = "https://api.dappier.com/app/aimodel/am_01j06ytn18ejftedz6dyhz2b15"
             headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
             body = {"query": query}
             response = requests.post(endpoint, headers=headers, json=body)
@@ -51,7 +51,7 @@ Boost engagement and generate revenue with Dappier's AI-powered tools! Use our A
             ```
 
             ```bash cURL
-                curl -L 'https://api.dappier.com/app/datamodel/dm_01hpsxyfm2fwdt2zet9cg6fdxt'
+                curl -L 'https://api.dappier.com/app/aimodel/am_01j06ytn18ejftedz6dyhz2b15'
                 -H 'Content-Type: application/json'
                 -H 'Authorization: Bearer <YOUR_DAPPIER_API_KEY>'
                     -d "{
