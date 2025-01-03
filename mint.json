@@ -40,6 +40,10 @@
       "url": "sdks"
     },
     {
+      "name": "Integrations",
+      "url": "integrations"
+    },
+    {
       "name": "Cookbook",
       "url": "cookbook"
     }
@@ -119,6 +123,18 @@
       "pages": [
         "sdks/python-sdk",
         "sdks/go-sdk"
+      ]
+    },
+    {
+      "group": "Overview",
+      "pages": [
+        "integrations/introduction-integration"
+      ]
+    },
+    {
+      "group": "integrations",
+      "pages": [
+        "integrations/langchain-integration"
       ]
     },
     {
