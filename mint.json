@@ -86,7 +86,6 @@
       "pages": [
         "rag-marketplace",
         "real-time-data-api",
-        "integrations",
         "real-time-data-openai-schema"
       ]
     },
@@ -132,7 +131,7 @@
       ]
     },
     {
-      "group": "integrations",
+      "group": "Integrations",
       "pages": [
         "integrations/langchain-integration"
       ]
