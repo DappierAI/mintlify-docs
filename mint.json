@@ -40,6 +40,10 @@
       "url": "sdks"
     },
     {
+      "name": "Integrations",
+      "url": "integrations"
+    },
+    {
       "name": "Cookbook",
       "url": "cookbook"
     }
@@ -82,7 +86,6 @@
       "pages": [
         "rag-marketplace",
         "real-time-data-api",
-        "integrations",
         "real-time-data-openai-schema"
       ]
     },
@@ -119,6 +122,18 @@
       "pages": [
         "sdks/python-sdk",
         "sdks/go-sdk"
+      ]
+    },
+    {
+      "group": "Overview",
+      "pages": [
+        "integrations/introduction-integration"
+      ]
+    },
+    {
+      "group": "Integrations",
+      "pages": [
+        "integrations/langchain-integration"
       ]
     },
     {
