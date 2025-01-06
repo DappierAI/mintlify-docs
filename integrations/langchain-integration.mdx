@@ -17,7 +17,18 @@ This will help you getting started with the Dappier [retriever](https://python.l
 | :------------------------------------------------------------------------------------- | :-------- | :------------: | :---------------: |
 | [DappierRetriever](https://python.langchain.com/docs/integrations/retrievers/dappier/) | ❌        |       ❌       |  langchain-dappier |
 
-### Setup
+
+## Installation
+
+This retriever lives in the `langchain-dappier` package:
+
+
+```bash
+pip install -U langchain-dappier
+```
+
+
+## Setup
 
 Install ``langchain-dappier`` and set environment variable ``DAPPIER_API_KEY``.
 
@@ -37,43 +48,34 @@ If you want to get automated tracing from individual queries, you can also set y
 # os.environ["LANGSMITH_TRACING"] = "true"
 ```
 
-### Installation
+## Parameters
 
-This retriever lives in the `langchain-dappier` package:
+### `data_model_id` (str):
+    - The data model ID to use for recommendations.
+    - Data model IDs always start with the prefix "dm_". 
+    - Multiple data model IDs are available and can be found at: https://marketplace.dappier.com/marketplace
+### `k` (int):
+    - Number of documents to return.
+    - Defaults to 3.
+### `ref` (str) _Optional_:
+    - The site domain where AI recommendations should be displayed.
+    - Defaults to None.
+### `num_articles_ref` (int):
+    - Minimum number of articles from the ref domain specified.
+    - The rest will come from other sites within the RAG model.
+    - Defaults to 0.
+### `search_algorithm` (string): 
+    - Search algorithm for retrieving articles. 
+    - Options: 
+        - `"most_recent"` (default),
+        - `"most_recent_semantic"`,
+        - `"semantic"`,
+        - `"trending"`
+    
+### `api_key` (string) _Optional_: 
+    - The API key used to interact with the Dappier APIs.
 
-
-```bash
-pip install -U langchain-dappier
-```
-
-### Instantiation
-
-- data_model_id: str
-    The data model ID to use for recommendations.
-    Data model IDs always start with the prefix "dm_". 
-    Multiple data model IDs are available and can be 
-    found at: https://marketplace.dappier.com/marketplace
-- k: int
-    Number of documents to return. Defaults to 3.
-- ref: Optional[str]
-    The site domain where AI recommendations should be displayed.
-    Defaults to None.
-- num_articles_ref: int
-    Minimum number of articles from the ref domain specified.
-    The rest will come from other sites within the RAG model.
-    Defaults to 0.
-- search_algorithm: Literal[
-    "most_recent",
-    "most_recent_semantic",
-    "semantic",
-    "trending"
-]
-    Search algorithm for retrieving articles. Defaults to "most_recent".
-- api_key: Optional[str]
-    The API key used to interact with the Dappier APIs.
-
-### Usage
-
+## Usage
 
 ```bash Python
 from langchain_dappier import DappierRetriever
