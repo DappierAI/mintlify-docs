@@ -81,6 +81,7 @@
       "group": "Developers",
       "pages": [
         "rag-marketplace",
+        "integrations",
         "real-time-data-api",
         "real-time-data-openai-schema"
       ]
@@ -108,7 +109,7 @@
           ]
     },
     {
-      "group": "Overview",
+      "group": "Integrations",
       "pages": [
         "integrations/introduction-integration"
       ]
