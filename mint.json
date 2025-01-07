@@ -36,10 +36,6 @@
       "url": "api-reference"
     },
     {
-      "name": "SDKs",
-      "url": "sdks"
-    },
-    {
       "name": "Integrations",
       "url": "integrations"
     },
@@ -114,24 +110,18 @@
     {
       "group": "Overview",
       "pages": [
-        "sdks/introduction-sdk"
+        "integrations/introduction-integration"
       ]
     },
     {
       "group": "SDKs",
       "pages": [
-        "sdks/python-sdk",
-        "sdks/go-sdk"
+        "integrations/python-sdk",
+        "integrations/go-sdk"
       ]
     },
     {
-      "group": "Overview",
-      "pages": [
-        "integrations/introduction-integration"
-      ]
-    },
-    {
-      "group": "Integrations",
+      "group": "Platform Integrations",
       "pages": [
         "integrations/langchain-integration"
       ]
