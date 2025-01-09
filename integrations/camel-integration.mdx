@@ -1,0 +1,144 @@
+---
+title: 'Camel'
+icon: 'horse-head'
+---
+{/*TODO: Add the cookbook on this page once, it is published. */}
+Building your AI app with Camel? Supercharge your app with immediate access to real-time data, spanning news, entertainment, finance, market data, weather, and more.
+
+## Dappier Toolkit
+
+Dappier [toolkit](https://docs.camel-ai.org/key_modules/tools.html)
+helps interacting with the Dappier API. It provides methods for searching 
+real time data and fetching ai recommendations across key verticals like 
+News, Finance, Stock Market, Sports, Weather and more.
+
+This will help you getting started with the Dappier [toolkit](https://docs.camel-ai.org/key_modules/tools.html).
+ 
+## Installation
+
+This toolkit lives in the `camel` package. First, install the CAMEL 
+package with all its dependencies:
+
+```bash
+pip install "camel-ai[all]"
+```
+
+## Setup
+
+You'll need to set up your API keys for Dappier. You can go to 
+[here](https://platform.dappier.com/profile/api-keys) to get API Key 
+from Dappier.
+
+```bash Python
+import os
+
+os.environ["DAPPIER_API_KEY"] = "your_api_key"
+```
+
+## Real-Time Search
+
+Search real-time data using an AI model. Access real-time information 
+using the specified AI model based on the given query. Depending on the
+AI model ID, the data retrieved can vary between general web search results 
+or financial news and stock prices.
+
+Note: Multiple AI model IDs are available, which can be found at [Dappier marketplace.](https://platform.dappier.com/marketplace)
+
+```bash Python
+from camel.toolkits import DappierToolkit
+
+real_time_data_response = DappierToolkit().search_real_time_data(
+    query="dappier-ai"
+)
+```
+
+```
+Dappier recently made waves after securing $2 million in seed funding in 
+2024! 🚀 They're diving into the advertising space with their AI chatbot,
+AskAI, which now features ad deployment to create contextually relevant 
+conversations on any webpage.
+
+They've also been rolling out new data models via Datarade, enhancing 
+how users interact with web content. Plus, Dappier is showcasing its 
+innovations at CES 2025 in Las Vegas from January 7-10, where you can 
+meet their CEO, Dan Goikhman, and CBO, Mark Balabanian. Exciting times 
+ahead for Dappier! 🎉✨
+```
+
+## Parameters
+
+### `query` (str):
+- The user-provided query. Examples include:
+  - `"How is the weather today in Austin, TX?"`
+  - `"What is the latest news for Meta?"`
+  - `"What is the stock price for AAPL?"`
+
+### `ai_model_id` (str) _Optional_:
+- The AI model ID to use for the query.
+- AI model IDs always start with the prefix `"am_"`.
+- Defaults to `"am_01j06ytn18ejftedz6dyhz2b15"`.
+- Multiple AI model IDs are available, which can be found at 
+[Dappier marketplace.](https://platform.dappier.com/marketplace)
+
+## AI Recommendations
+
+Retrieve AI-powered recommendations based on the provided query
+and data model. It fetches real-time AI-generated recommendations using the
+specified data model and search algorithm. The results include
+personalized content based on the query and, optionally, relevance
+to a specific reference domain.
+
+Note: Multiple Data model IDs are available, which can be found at
+[Dappier marketplace.](https://platform.dappier.com/marketplace)
+
+```bash Python
+from camel.toolkits import DappierToolkit
+
+ai_recommendations_response = DappierToolkit().get_ai_recommendations(
+    query="latest sports news",
+    data_model_id="dm_01j0pb465keqmatq9k83dthx34",
+    similarity_top_k=3,
+    ref="sportsnaut.com",
+    num_articles_ref=2,
+    search_algorithm="most_recent",
+)
+```
+
+```
+[
+    {'author': 'Andrew Buller-Russ', 'image_url': 'https://images.dappier.com/dm_01j0pb465keqmatq9k83dthx34/ Syndication-Detroit-Free-Press-25087075_.jpg?width=428&height=321', 'pubdate': 'Thu, 02 Jan 2025 03:12:06 +0000', 'source_url': 'https://sportsnaut.com/nick-bosa-detroit-lions-trade-rumors-49ers/', 'summary': 'In a thrilling Monday night game, the Detroit Lions triumphed over the San Francisco 49ers 40-34, solidifying their status as a top NFL team. Despite a strong performance from Nick Bosa, who recorded eight tackles and two sacks, the 49ers\' playoff hopes were dashed. Bosa praised the Lions\' competitive spirit and resilience under Coach Dan Campbell, sparking about his interest in joining the team, although he remains under contract with the 49ers for four more seasons. Bosa\'s admiration for the Lions highlights the stark contrast between the two franchises\' fortunes, with the Lions celebrating a significant victory while the 49ers struggle. Having experienced playoff success with the 49ers, Bosa values strong leadership from both Campbell and his own coach, Kyle Shanahan. His comments reflect a broader sentiment in the NFL about the importance of winning and the positive environment it fosters for players.', 'title': 'Nick Bosa gushes about Detroit Lions, sparking 49ers trade rumors'},
+    {'author': 'Andrew Buller-Russ', 'image_url': 'https://images.dappier.com/dm_01j0pb465keqmatq9k83dthx34/ Baseball-World-Baseball-Classic-Semifinal-Japan-vs-Mexico-20279015_.jpg?width=428&height=321', 'pubdate': 'Thu, 02 Jan 2025 02:43:38 +0000', 'source_url': 'https://www.lafbnetwork.com/los-angeles-dodgers/ los-angeles-dodgers-news/los-angeles-dodgers-meeting-roki-sasaki/', 'summary': 'Roki Sasaki, a talented 23-year-old Japanese pitcher, is approaching a decision on his MLB free agency, with the Los Angeles Dodgers among the frontrunners to sign him. They are competing against teams like the Chicago Cubs, New York Mets, and others. The Dodgers are set to meet with Sasaki, emphasizing his signing as a top priority despite facing competition from around 20 other teams. Sasaki\'s status as a minor-league posting player may allow him to be signed at a more affordable price, increasing his appeal. As he gathers information and prepares for a second round of meetings, the Dodgers are keen to secure him before the posting window closes on January 24, with the international signing period beginning on January 15.', 'title': 'Los Angeles Dodgers Take Another Step Toward Signing Roki Sasaki'},
+    {'author': 'Andrew Buller-Russ', 'image_url': 'https://images.dappier.com/dm_01j0pb465keqmatq9k83dthx34/ NFL-Detroit-Lions-at-Kansas-City-Chiefs-24020812_.jpg?width=428&height=321', 'pubdate': 'Thu, 02 Jan 2025 02:08:34 +0000', 'source_url': 'https://sportsnaut.com/detroit-lions-cut-jamal-adams/', 'summary': 'The Detroit Lions, with a strong 14-2 record, have released former All-Pro safety Jamal Adams from their practice squad ahead of a crucial Week 18 game against the Minnesota Vikings. Adams, who joined the Lions on December 1, 2024, played in two games but recorded only three tackles in 20 defensive snaps, representing a mere 17% of the team\'s defensive plays. This marks Adams\' second release this season, having previously been cut by the Tennessee Titans after three appearances. The Lions\' decision to part ways with Adams comes as they focus on their playoff positioning for the upcoming game.', 'title': 'Detroit Lions cut bait with All-Pro ahead of Week 18 matchup with Vikings'}
+]
+```
+
+## Parameters
+
+### `query` (str):
+- The user query for retrieving recommendations.
+
+### `data_model_id` (str) _Optional_:
+- The data model ID to use for recommendations.
+- Data model IDs always start with the prefix `"dm_"`.
+- Defaults to `"dm_01j0pb465keqmatq9k83dthx34"`.
+
+### `similarity_top_k` (int) _Optional_:
+- The number of top documents to retrieve based on similarity.
+- Defaults to `9`.
+
+### `ref` (str) _Optional_:
+- The site domain where AI recommendations should be displayed.
+- Defaults to `None`.
+
+### `num_articles_ref` (int) _Optional_:
+- The minimum number of articles to return from the specified reference domain (`ref`).
+- The remaining articles will come from other sites in the RAG model.
+- Defaults to `0`.
+
+### `search_algorithm` (str) _Optional_:
+- The search algorithm to use for retrieving articles.  
+- Options:  
+  - `"most_recent"` (default),  
+  - `"semantic"`,  
+  - `"most_recent_semantic"`,  
+  - `"trending"`.  
