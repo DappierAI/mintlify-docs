@@ -90,6 +90,7 @@
       "group": "Publishers",
       "pages": [
         "publish-and-monetize",
+        "configure-ask-ai",
         "configure-ai-agent",
         "ai_recommendations_api",
         "embed-widgets",
