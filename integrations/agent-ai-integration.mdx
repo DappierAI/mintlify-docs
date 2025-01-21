@@ -1,0 +1,150 @@
+---
+title: 'Agent.ai'
+icon: 'gear'
+---
+## Build Smarter Agent.ai Agents with Dappier’s Real-Time, Verified Data Models
+
+[**Agent.ai**](http://Agent.ai) is a professional network and marketplace 
+for AI agents—and the people who love them. It allows users to discover, 
+connect with, and hire a variety of AI agents to perform useful tasks, 
+serving as a hub for agent-based collaborations and innovations.
+
+[**Dappier**](https://dappier.com/developers/) is a platform that connects
+LLMs and Agentic AI agents to real-time, rights-cleared data from trusted
+sources, including web search, finance, and news. By providing enriched, 
+prompt-ready data, Dappier empowers AI with verified and up-to-date 
+information for a wide range of applications.
+
+This guide provides a step-by-step process for extracting real-time 
+search data from Dappier RAG models into a new Agent on the Agent.ai 
+platform. Follow the instructions carefully to ensure a successful setup.
+For the purpose of this guide, we are using Dappier’s Real Time Data RAG 
+model, available here: [https://marketplace.dappier.com/marketplace/real-time-data](https://marketplace.dappier.com/marketplace/real-time-data) 
+
+## Watch the Video Guide
+If you prefer a visual walkthrough, check out the accompanying video guide below:
+
+<iframe 
+    width="700"
+    height="400"
+    src="https://www.youtube.com/embed/TEAb_AEJM1E?si=zQc_TQ2hIQXbia3i"
+    title="YouTube video player"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    referrerpolicy="strict-origin-when-cross-origin" 
+    allowfullscreen>
+</iframe>
+
+## Follow the Step-by-Step Tutorial
+
+For detailed, written instructions, follow along with this 
+comprehensive guide to complete your setup:
+
+### Accessing the Agent.ai Platform
+
+* Open your preferred web browser and navigate to [agent.ai](http://agent.ai).  
+* Log in using your credentials, If you don’t have an account, click **Sign Up** and complete the registration process.
+
+<img height="200" src="https://i.imgur.com/j8WOREo.png" />
+
+### Create an Agent
+
+* Navigate to the Agent Builder option in the platform's navigation bar and click on it to proceed.
+* Click on the Create Agent button located on the right-hand side of the screen.  
+* In the popup window, select the Start from Scratch option to begin configuring your new agent.
+
+<img height="200" src="https://i.imgur.com/YacT5DJ.png" />
+
+Note: Any changes made under the available tabs are automatically saved, so you don't need to manually save your progress.
+
+### Configuring Basic Agent Details
+
+Go to the Settings tab and provide the following information:
+
+* Agent Name: Enter a unique name, such as "Real-Time Search."  
+* Icon URL: Use your custom URL or the following default icon:  
+  `https://dappierassets.b-cdn.net/dappier_real_time_logo.png`  
+* Agent Description: Summarize the agent's functionality.   
+  Example: *"Access real-time Google web search results, including the latest news, weather, travel, deals, and more."*  
+* Agent Username: Assign a username for the agent.  
+* Tags: Add tags to categorize the agent's purpose.  
+* Runtime Details: Specify the anticipated runtime for the agent's operations
+
+<img height="200" src="https://i.imgur.com/EvIZG79.png" />
+
+### Setting Up Triggers
+
+* Navigate to the Trigger tab.  
+* Set the trigger option to Manual Only if the agent will only be triggered from the Agent.ai platform.
+
+<img height="200" src="https://i.imgur.com/Q2ajPNq.png" />
+
+### Setting Up Actions
+
+#### Step 1: Adding User Input
+
+* Click on Add Action and select User Input > Get User Input.
+
+<img height="200" src="https://i.imgur.com/jYL5xGt.png" />
+
+* User Prompt: Provide guidance for users. Example: "Enter your message."  
+* Optional Examples: Add examples to clarify input expectations.  
+* Required Field: Enable this option to make input mandatory.  
+* Default Value: Leave as-is unless a specific value is needed.  
+* Output Variable Name: Save the user's input in a variable, such as user_message.
+
+<img height="200" src="https://i.imgur.com/fmwY7qQ.png" />
+
+#### Step 2: API Integration
+
+* Click on Add Action and select Advanced > Invoke Web API.
+
+<img height="200" src="https://i.imgur.com/SRn0w35.png" />
+
+* Configure the API request:  
+* URL: Use the following endpoint:  
+  `https://api.dappier.com/app/aimodel/am_01j06ytn18ejftedz6dyhz2b15`  
+  (Explore other AI models on the [Dappier Marketplace](https://marketplace.dappier.com/).)  
+* Request Type: Set to POST.  
+* Headers: Input the following in JSON format:  
+  `{ "Authorization": "Bearer your-api-key", "Content-Type": "application/json" }`  
+* Replace "your-api-key" with your actual API key, which can be retrieved from [Dappier Profile API Keys](https://platform.dappier.com/profile/api-keys).  
+* Set the JSON Body to the following, using string interpolation to incorporate the user input from the previous step (stored as user_message):  
+  `{ "query": "{{user_message}}" }`
+* Output Variable Name: Save the API response to a variable, such as `assistant_message`.
+
+<img height="200" src="https://i.imgur.com/B1WRsLY.png" />
+
+#### Step 3: Displaying Output
+
+* Click on Add Action and select Create Output > Show User Output.
+
+<img height="200" src="https://i.imgur.com/7lhoDQY.png" />
+
+* Heading Name: Enter a heading for the displayed result.  
+* Formatted Text Box: Insert the `assistant_message` variable using the syntax:  
+  `{{assistant_message['message']}}`.
+
+<img height="200" src="https://i.imgur.com/0Dn7O1c.png" />
+
+### Publishing Your Agent
+
+* Go to the Settings tab and locate the Sharing & Visibility section.  
+* Request to make the agent public by selecting the appropriate option.
+
+Congratulations! 🎉 Your Dappier agent is now ready to be shared with the world!
+
+<img height="200" src="https://i.imgur.com/HBuOz03.png" />
+
+### Testing and Sharing Your Agent
+
+1. Click on Run Agent in the top-right corner to test its functionality and view results.  
+2. Share the agent's link with colleagues, friends, or family to showcase your creation.
+
+<img height="200" src="https://i.imgur.com/QZ5Klig.png" />
+
+<img height="200" src="https://i.imgur.com/kDZaERm.png" />
+
+This guide ensures you have all the details needed to build, 
+configure, and integrate real-time data from Dappier RAG models,
+with the Agent.ai platform! Happy building! 🚀
