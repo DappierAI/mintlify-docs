@@ -128,7 +128,8 @@
         "integrations/agent-ai-integration",
         "integrations/crew-ai-integration",
         "integrations/camel-integration",
-        "integrations/langchain-integration"
+        "integrations/langchain-integration",
+        "integrations/replit-integration"
       ]
     },
     {
