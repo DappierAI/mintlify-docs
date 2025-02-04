@@ -129,7 +129,8 @@
         "integrations/crew-ai-integration",
         "integrations/camel-integration",
         "integrations/langchain-integration",
-        "integrations/replit-integration"
+        "integrations/replit-integration",
+        "integrations/anthropic-mcp-integration"
       ]
     },
     {

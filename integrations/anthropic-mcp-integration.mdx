@@ -1,0 +1,80 @@
+---
+title: 'Anthropic MCP'
+icon: 'microchip-ai'
+---
+
+The Model Context Protocol (MCP) is an open protocol that enables seamless integration between LLM applications and external data sources and tools. Whether you're building an AI-powered IDE, enhancing a chat interface, or creating custom AI workflows, MCP provides a standardized way to connect LLMs with the context they need.
+
+# Dappier MCP Server
+
+A Model Context Protocol (MCP) server that connects any LLM or Agentic AI to real-time, rights-cleared, proprietary data from trusted sources. Dappier enables your AI to become an expert in anything by providing access to specialized models, including Real-Time Web Search, News, Sports, Financial Stock Market Data, Crypto Data, and exclusive content from premium publishers. Explore a wide range of data models in our marketplace at [marketplace.dappier.com](https://marketplace.dappier.com/marketplace).
+
+## Features
+
+- **Real-Time Web Search**: Access real-time Google web search results, including the latest news, weather, stock prices, travel, deals, and more.
+- **Stock Market Data**: Get real-time financial news, stock prices, and trades from Polygon.io, with AI-powered insights and up-to-the-minute updates.
+- **AI-Powered Recommendations**: Personalized content discovery across Sports, Lifestyle News, and niche favorites like I Heart Dogs, I Heart Cats, Green Monster, WishTV, and many more.
+- **Structured JSON Responses**: Rich metadata for articles, including titles, summaries, images, and source URLs.
+- **Flexible Customization**: Choose from predefined data models, similarity filtering, reference domain filtering, and search algorithms.
+
+## Tools
+
+### 1. Real-Time Data Search
+- **Name**: `dappier_real_time_search`
+- **Description**: Retrieves direct answers to real-time queries using AI-powered search. This includes web search results, financial information, news, weather, stock market updates, and more.
+- **Parameters**:
+  - `query` (string, required): The user-provided input string for retrieving real-time data.
+  - `ai_model_id` (string, optional): The AI model ID to use for the query. Defaults to `am_01j06ytn18ejftedz6dyhz2b15` (Real-Time Data).
+
+### 2. AI Recommendations
+- **Name**: `dappier_ai_recommendations`
+- **Description**: Provides AI-powered content recommendations based on structured data models. Returns a list of articles with titles, summaries, images, and source URLs.
+- **Parameters**:
+  - `query` (string, required): The user-provided input string for AI recommendations.
+  - `data_model_id` (string, optional): The data model ID to use for recommendations. Defaults to `dm_01j0pb465keqmatq9k83dthx34` (Sports News).
+  - `similarity_top_k` (integer, optional): The number of top documents to retrieve based on similarity. Defaults to `9`.
+  - `ref` (string, optional): The site domain where AI recommendations should be displayed. Defaults to `None`.
+  - `num_articles_ref` (integer, optional): The minimum number of articles to return from the specified reference domain (`ref`). Defaults to `0`.
+  - `search_algorithm` (string, optional): The search algorithm to use for retrieving articles. Options: `most_recent`, `semantic`, `most_recent_semantic`, `trending`. Defaults to `most_recent`.
+
+## Setup Instructions
+
+### 1. Get Dappier API Key
+Head to [Dappier](https://platform.dappier.com/profile/api-keys) to sign up and generate an API key.
+
+### 2. Configure Claude Desktop
+Update your Claude configuration file (`claude_desktop_config.json`) with the following content:
+
+```json
+{
+  "mcpServers": {
+    "dappier": {
+      "command": "uvx",
+      "args": ["dappier-mcp"],
+      "env": {
+        "DAPPIER_API_KEY": "YOUR_API_KEY_HERE"
+      }
+    }
+  }
+}
+```
+
+Configuration file location:
+- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+
+## Examples
+
+### Real-Time Data Search
+- **Query**: "How is the weather today in Austin, TX?"
+- **Query**: "What is the latest news for Meta?"
+- **Query**: "What is the stock price for AAPL?"
+
+### AI Recommendations
+- **Query**: "Show me the latest sports news."
+- **Query**: "Find trending articles on sustainable living."
+- **Query**: "Get pet care recommendations from IHeartDogs AI."
+
+## Conclusion
+
+The Model Context Protocol (MCP) offers a powerful and standardized solution for integrating real-time, specialized data into LLM applications. With Dappier's MCP server, developers can easily connect AI models to a wide range of high-quality, rights-cleared data sources, including real-time web search, financial data, AI-powered recommendations, and more. The flexibility in customizing data models, algorithms, and parameters ensures that applications can be tailored to meet specific needs, whether it's for financial insights, personalized recommendations, or real-time information retrieval. By leveraging Dappier's tools, developers can build smarter, more informed applications that enhance user experience with up-to-the-minute content and insights.
