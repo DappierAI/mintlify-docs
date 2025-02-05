@@ -125,9 +125,11 @@
     {
       "group": "Platform Integrations",
       "pages": [
-        "integrations/langchain-integration",
+        "integrations/agent-ai-integration",
+        "integrations/anthropic-mcp-integration",
         "integrations/camel-integration",
-        "integrations/agent-ai-integration"
+        "integrations/langchain-integration",
+        "integrations/replit-integration"
       ]
     },
     {
