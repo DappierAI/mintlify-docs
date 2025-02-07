@@ -1,0 +1,174 @@
+---
+title: 'Anthropic MCP'
+icon: 'microchip-ai'
+---
+
+The Model Context Protocol (MCP) is an open protocol that enables seamless integration between LLM applications and external data sources and tools. Whether you're building an AI-powered IDE, enhancing a chat interface, or creating custom AI workflows, MCP provides a standardized way to connect LLMs with the context they need.
+
+# Dappier MCP Server
+
+A Model Context Protocol (MCP) server that connects any LLM or Agentic AI to real-time, rights-cleared, proprietary data from trusted sources. Dappier enables your AI to become an expert in anything by providing access to specialized models, including Real-Time Web Search, News, Sports, Financial Stock Market Data, Crypto Data, and exclusive content from premium publishers. Explore a wide range of data models in our marketplace at [marketplace.dappier.com](https://marketplace.dappier.com/marketplace).
+
+## Features
+
+- **Real-Time Web Search**: Access real-time Google web search results, including the latest news, weather, stock prices, travel, deals, and more.
+- **Stock Market Data**: Get real-time financial news, stock prices, and trades from Polygon.io, with AI-powered insights and up-to-the-minute updates.
+- **AI-Powered Recommendations**: Personalized content discovery across Sports, Lifestyle News, and niche favorites like I Heart Dogs, I Heart Cats, Green Monster, WishTV, and many more.
+- **Structured JSON Responses**: Rich metadata for articles, including titles, summaries, images, and source URLs.
+- **Flexible Customization**: Choose from predefined data models, similarity filtering, reference domain filtering, and search algorithms.
+
+## Getting Started
+
+### 1. Get Dappier API Key
+Head to [Dappier](https://platform.dappier.com/profile/api-keys) to sign up and generate an API key.
+
+### 2. Install Claude for Desktop
+
+Start by downloading **Claude for Desktop**:
+
+👉 [Download Claude for Desktop](https://claude.ai/download) (*Supports macOS & Windows*)
+
+After installation:
+- Ensure you have the **latest version** → Click **Claude Menu** → **“Check for Updates…”**
+- **Linux** is *not* yet supported.
+
+<Accordion title="Why Use Claude for Desktop Instead of Claude.ai?">
+MCP currently supports **local desktop servers** for security and performance reasons. **Remote hosting** is in active development.
+</Accordion>
+
+### 3. Adding the Dappier MCP Server
+
+To enable **real-time AI-powered search & recommendations**, configure **Claude for Desktop** to use the **Dappier MCP Server**.
+
+#### **Step 1: Open Claude Settings**
+1. Open the **Claude menu** → Select **“Settings…”**
+2. In **Settings**, click **“Developer”**
+3. Click **“Edit Config”**
+
+This creates a configuration file at:
+- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+
+#### **Step 2: Edit the Configuration File**
+Open the file in a text editor and **replace its contents** with:
+
+#### **Configuration**
+```json
+{
+  "mcpServers": {
+    "dappier": {
+      "command": "uvx",
+      "args": ["dappier-mcp"],
+      "env": {
+        "DAPPIER_API_KEY": "YOUR_API_KEY_HERE"
+      }
+    }
+  }
+}
+```
+
+<Warning>
+You may need to put the full path to the uv executable in the command field. You can get this by running which uv on MacOS/Linux or where uv on Windows.
+</Warning>
+
+<Tip>
+This configuration tells **Claude for Desktop** to start the **Dappier MCP Server** automatically whenever the app launches.
+</Tip>
+
+## 4. Restart Claude & Verify Setup
+
+1. **Restart Claude for Desktop** after saving the configuration.
+2. Look for a **hammer icon** 🔨 in the bottom-right of the chat input.
+3. Click the **hammer icon** to verify that **Dappier tools** are available.
+
+If the **Dappier MCP Server** is configured correctly, you will see these tools:
+- **Real-Time Web Search**  
+- **AI-Powered Recommendations** 
+
+## Tools
+
+### 1. Real-Time Data Search
+- **Name**: `dappier_real_time_search`
+- **Description**: Retrieves direct answers to real-time queries using AI-powered search. This includes web search results, financial information, news, weather, stock market updates, and more.
+- **Parameters**:
+  - `query` (string, required): The user-provided input string for retrieving real-time data.
+  - `ai_model_id` (string, optional): The AI model ID to use for the query. Defaults to `am_01j06ytn18ejftedz6dyhz2b15` (Real-Time Data).
+
+### 2. AI Recommendations
+- **Name**: `dappier_ai_recommendations`
+- **Description**: Provides AI-powered content recommendations based on structured data models. Returns a list of articles with titles, summaries, images, and source URLs.
+- **Parameters**:
+  - `query` (string, required): The user-provided input string for AI recommendations.
+  - `data_model_id` (string, optional): The data model ID to use for recommendations. Defaults to `dm_01j0pb465keqmatq9k83dthx34` (Sports News).
+  - `similarity_top_k` (integer, optional): The number of top documents to retrieve based on similarity. Defaults to `9`.
+  - `ref` (string, optional): The site domain where AI recommendations should be displayed. Defaults to `None`.
+  - `num_articles_ref` (integer, optional): The minimum number of articles to return from the specified reference domain (`ref`). Defaults to `0`.
+  - `search_algorithm` (string, optional): The search algorithm to use for retrieving articles. Options: `most_recent`, `semantic`, `most_recent_semantic`, `trending`. Defaults to `most_recent`.
+
+
+## Examples
+
+### Real-Time Data Search
+- **Query**: "How is the weather today in Austin, TX?"
+- **Query**: "What is the latest news for Meta?"
+- **Query**: "What is the stock price for AAPL?"
+
+### AI Recommendations
+- **Query**: "Show me the latest sports news."
+- **Query**: "Find trending articles on sustainable living."
+- **Query**: "Get pet care recommendations from IHeartDogs AI."
+
+## **5. Troubleshooting**
+
+If the **Dappier MCP Server** does not appear in Claude, try the following:
+
+<AccordionGroup>
+
+<Accordion title="Hammer icon missing / server not showing in Claude">
+1. **Restart Claude for Desktop**  
+2. **Check `claude_desktop_config.json` for errors**  
+3. **Ensure the API Key is correctly entered**  
+4. **Verify your internet connection**  
+5. **Try running the server manually**:
+```bash
+uvx dappier-mcp
+```
+</Accordion>
+
+<Accordion title="Checking Claude Logs for Errors">
+Logs are stored at:
+
+- **macOS**: `~/Library/Logs/Claude/mcp.log`
+- **Windows**: `%APPDATA%\Claude\logs\mcp.log`
+
+To view logs:
+
+#### **MacOS/Linux**
+```bash
+tail -n 20 -f ~/Library/Logs/Claude/mcp.log
+```
+
+#### **Windows**
+```bash
+type "%APPDATA%\Claude\logs\mcp.log"
+```
+</Accordion>
+
+<Accordion title="Dappier tools not responding">
+If Claude detects the server but fails to retrieve results:
+1. **Check Claude logs for errors**  
+2. **Restart Claude Desktop**  
+3. **Ensure your Dappier API Key is valid**  
+4. **Try manually running the server**:
+```bash
+uvx dappier-mcp
+```
+</Accordion>
+
+</AccordionGroup>
+
+## **Conclusion**  
+
+With the **Dappier MCP Server** integrated into **Claude for Desktop**, you now have access to **real-time web search, financial data, and AI-powered recommendations**. This enhances your AI assistant with **live insights and personalized content**, making it more powerful and responsive.  
+
+Get started today and explore more at the **[Dappier AI Marketplace](https://marketplace.dappier.com/marketplace)**! 🚀
