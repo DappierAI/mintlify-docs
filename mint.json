@@ -118,7 +118,8 @@
         "integrations/anthropic-mcp-integration",
         "integrations/camel-integration",
         "integrations/langchain-integration",
-        "integrations/replit-integration"
+        "integrations/replit-integration",
+        "integrations/zapier-integration"
       ]
     },
     {
