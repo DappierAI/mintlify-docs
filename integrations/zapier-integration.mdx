@@ -5,7 +5,7 @@ icon: "bolt"
 
 Zapier is a powerful automation platform that connects your favorite apps and services, enabling you to create workflows without writing any code. With Dappier's Zapier integration, you can automate tasks using real-time data, AI insights, and personalized recommendations.
 
-This guide explains the **five actions** available in Dappier's Zapier integration, highlighting the requirement of a **Model ID** only for the **Custom AI Agent**.
+This guide provides an overview of Dappier’s Zapier integration and its key functionalities, including automation with AI-powered insights. It also covers how to use different actions, with specific requirements for custom AI agents.
 
 ## Why Use Zapier with Dappier?
 
@@ -26,11 +26,71 @@ To generate an API key:
 - Visit the [Dappier API Key page](https://platform.dappier.com/profile/api-keys).
   ![API KEY PAGE](https://imgur.com/8TSFa2B.png)
 
+## 📖 Need a Step-by-Step Guide?
+
+We have a detailed cookbook tutorial for automating a daily newsletter using Dappier’s Zapier integration.
+
+[Click here to view the cookbook🚀](https://dappier.com/cookbook/recipes/daily-news-letter-zapier)
+
 ## Actions Available
 
 Dappier's Zapier integration supports the following **five actions**, with **Model ID** required only for the **Custom AI Agent**.
 
-### **1. Send Prompt (Requires Model ID for Custom AI Agent)**
+- Get Real-Time Data
+- Get Lifestyle News
+- Get Sports News
+- Get Stock Market Data
+- Send Prompt (Requires Model ID for Custom AI Agent)
+
+### **1. Get Real-Time Data**
+
+Fetch real-time web search results for topics like news, weather, travel, and more.
+
+#### **Zapier Action Fields**
+
+| Field     | Description                                                  | Required |
+| --------- | ------------------------------------------------------------ | -------- |
+| **Query** | Enter a query to fetch real-time data (e.g., weather, time). | Yes      |
+
+![Real-Time Example](https://imgur.com/TObTpYa.png)
+
+### **2. Get Lifestyle News**
+
+Retrieve personalized, real-time updates and articles on lifestyle topics, including fashion, travel, and health.
+
+#### **Zapier Action Fields**
+
+| Field     | Description                                                                                              | Required |
+| --------- | -------------------------------------------------------------------------------------------------------- | -------- |
+| **Query** | Enter a query to fetch lifestyle articles. For example, "Trending travel destinations" or "Health tips." | Yes      |
+
+![Life-Style News Example](https://imgur.com/PMuUwFH.png)
+
+### **3. Get Sports News**
+
+Fetch real-time updates and personalized content on sports topics, including game highlights and player news.
+
+#### **Zapier Action Fields**
+
+| Field     | Description                                                                                                     | Required |
+| --------- | --------------------------------------------------------------------------------------------------------------- | -------- |
+| **Query** | Enter a query to fetch sports highlights. For example, "Today's football highlights" or "NBA playoffs updates." | Yes      |
+
+![Sports-News Example](https://imgur.com/oIVd4k9.png)
+
+### **4. Get Stock Market Data**
+
+Retrieve stock prices, financial news, and trade updates for specific markets or companies.
+
+#### **Zapier Action Fields**
+
+| Field     | Description                                                                                                            | Required |
+| --------- | ---------------------------------------------------------------------------------------------------------------------- | -------- |
+| **Query** | Enter a query or stock ticker to fetch stock market data. For example, "META stock price" or "Latest Tesla updates." . | Yes      |
+
+![Stock Market Example](https://imgur.com/JUpuEVb.png)
+
+### **5. Send Prompt (Requires Model ID for Custom AI Agent)**
 
 Send a prompt to an AI agent and retrieve an AI-generated response. The **Custom AI Agent** requires a Model ID.
 
@@ -55,104 +115,6 @@ Send a prompt to an AI agent and retrieve an AI-generated response. The **Custom
 4. Paste the **Model ID** in the Zapier action field as shown below:
    ![Give your MODEL ID here](https://imgur.com/pC63bk3.png)
 
-### **2. Get Real-Time Data**
+## 🚀 Get Started with Dappier’s Zapier Integration!
 
-Fetch real-time web search results for topics like news, weather, travel, and more.
-
-#### **Zapier Action Fields**
-
-| Field     | Description                                                  | Required |
-| --------- | ------------------------------------------------------------ | -------- |
-| **Query** | Enter a query to fetch real-time data (e.g., weather, time). | Yes      |
-
-![Real-Time Example](https://imgur.com/TObTpYa.png)
-
-### **3. Get Lifestyle News**
-
-Retrieve personalized, real-time updates and articles on lifestyle topics, including fashion, travel, and health.
-
-#### **Zapier Action Fields**
-
-| Field     | Description                                                                                              | Required |
-| --------- | -------------------------------------------------------------------------------------------------------- | -------- |
-| **Query** | Enter a query to fetch lifestyle articles. For example, "Trending travel destinations" or "Health tips." | Yes      |
-
-![Life-Style News Example](https://imgur.com/PMuUwFH.png)
-
-### **4. Get Sports News**
-
-Fetch real-time updates and personalized content on sports topics, including game highlights and player news.
-
-#### **Zapier Action Fields**
-
-| Field     | Description                                                                                                     | Required |
-| --------- | --------------------------------------------------------------------------------------------------------------- | -------- |
-| **Query** | Enter a query to fetch sports highlights. For example, "Today's football highlights" or "NBA playoffs updates." | Yes      |
-
-![Sports-News Example](https://imgur.com/oIVd4k9.png)
-
-### **5. Get Stock Market Data**
-
-Retrieve stock prices, financial news, and trade updates for specific markets or companies.
-
-#### **Zapier Action Fields**
-
-| Field     | Description                                                                                                            | Required |
-| --------- | ---------------------------------------------------------------------------------------------------------------------- | -------- |
-| **Query** | Enter a query or stock ticker to fetch stock market data. For example, "META stock price" or "Latest Tesla updates." . | Yes      |
-
-![Stock Market Example](https://imgur.com/JUpuEVb.png)
-
-## Zap Example: Automating a Daily Newsletter
-
-This example demonstrates how to use Dappier's Zapier actions to automate sending a daily newsletter that includes:
-
-- **Real-Time Data**: Today's weather and events.
-- **Sports Highlights**: Key sports news updates.
-- **Lifestyle Articles**: Trending lifestyle topics.
-- **Email Delivery**: Sending the compiled newsletter to recipients.
-
-### **Workflow Steps**
-
-1. **Trigger: Schedule by Zapier**
-
-   - Schedule the Zap to run every day at 8:00 AM.
-
-2. **Action 1: Get Real-Time Data**
-
-   - **Query**: `"Today's weather and top events"`
-
-3. **Action 2: Get Sports News**
-
-   - **Query**: `"Today's sports highlights"`
-
-4. **Action 3: Get Lifestyle News**
-
-   - **Query**: `"Trending lifestyle articles"`
-
-5. **Action 4: Send Email (Gmail)**
-
-   - **Recipient**: Your mailing list or personal email.
-   - **Subject**: `"Today's Newsletter"`
-   - **Body**:
-
-     ```
-     Hello,
-
-     Here’s your daily newsletter:
-     - Weather & Events: [Insert Real-Time Data Response]
-     - Sports Highlights: [Insert Sports News Response]
-     - Lifestyle Articles: [Insert Lifestyle News Response]
-
-     Have a great day!
-     ```
-
-## Key Features
-
-- **Dynamic Content**: Automatically fetches real-time updates, sports highlights, and lifestyle articles.
-- **Personalization**: Ensures that every newsletter is up-to-date and tailored with the latest information.
-- **Automation**: Schedule the Zap once, and let it run daily without manual intervention.
-
-Here is the cookbook for automating a daily newsletter using Dappier's Zapier integration.
-
-[Click here to view the cookbook🚀](https://dappier.com/cookbook/recipes/zapier-tutorial)
+With these five powerful actions, you can streamline your workflows, leverage AI-driven insights, and automate content delivery seamlessly. Whether you're looking to fetch real-time data, personalize news, or integrate an AI-powered agent, Dappier's Zapier integration makes it simple and efficient.
