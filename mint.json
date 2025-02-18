@@ -136,7 +136,8 @@
       "group": "Cookbook",
       "pages": [
         "cookbook/recipes/ai-recommendations",
-        "cookbook/recipes/real-time-data"
+        "cookbook/recipes/real-time-data",
+        "cookbook/recipes/langchain-sports-news-summarizer"
       ]
     }
   ],

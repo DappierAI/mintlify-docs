@@ -1,0 +1,226 @@
+---
+title: "🦜 Langchain Automated Sports News Summarizer: Powered by Dappier AI Recommendations"
+---
+
+You can also check this cookbook in colab [here](https://colab.research.google.com/drive/1clJx_ILu5rwBwEAsZgfZQiJ7Xgb_NZZ9?usp=sharing)
+
+This notebook demonstrates how to set up and leverage LangChain's powerful chaining capabilities combined with Dappier's **DappierRetriever** for automated sports news summarization. By integrating real-time sports news data and advanced language models, this notebook walks you through an innovative approach to generating concise and accurate sports news summaries.
+
+In this notebook, you'll explore:
+
+-   **LangChain**: A versatile framework for chaining together language models and other components to create sophisticated AI-driven workflows. It enables seamless integration of LLMs with external tools and data sources, making it ideal for tasks like summarization, question-answering, and more.
+-   **Dappier**: A platform connecting LLMs and Agentic AI agents to real-time, rights-cleared data from trusted sources, specializing in domains like web search, finance, and news. It delivers enriched, prompt-ready data, empowering AI with verified and up-to-date information for diverse applications.
+-   **OpenAI**: A leading provider of advanced AI models capable of natural language understanding, contextual reasoning, and content generation. It enables intelligent, human-like interactions and supports a wide range of applications across various domains.
+-   **LangSmith**: A platform for debugging, testing, and monitoring LangChain applications. It provides detailed tracing and analytics to help you understand and optimize the performance of your AI workflows.
+
+This setup not only demonstrates a practical application of AI-driven sports news summarization but also provides a flexible framework that can be adapted to other real-world scenarios requiring real-time data integration from Dappier and advanced language model capabilities.
+
+## 📦 Installation
+
+First, install the Langchain Dappier integration package with all its dependencies:
+
+```bash
+!pip install langchain-dappier langchain-openai
+```
+
+## 🔑 Setting Up API Keys
+
+You'll need to set up your API keys for Dappier, OpenAI and LangSmith
+
+You can go to [here](https://platform.dappier.com/profile/api-keys) to get API Key from Dappier with **free** credits. The API Key could be found under Settings -> Profile.
+
+```bash Python
+import os
+from getpass import getpass
+
+# Prompt for the Dappier API key securely
+dappier_api_key = getpass('Enter your API key: ')
+os.environ["DAPPIER_API_KEY"] = dappier_api_key
+```
+
+Your can go to [here](https://platform.openai.com/settings/organization/api-keys) to get API Key from Open AI.
+
+```bash Python
+# Prompt for the Open AI API key securely
+openai_api_key = getpass('Enter your API key: ')
+os.environ["OPENAI_API_KEY"] = openai_api_key
+```
+
+Your can go to [here](https://smith.langchain.com/o/dfdd86ea-11a8-5cda-aa11-d998a680bfce/settings) to get API Key from LangSmith.
+
+```bash Python
+# Prompt for the LangSmith API key securely
+langsmith_api_key = getpass('Enter your API key: ')
+os.environ["LANGSMITH_API_KEY"] = langsmith_api_key
+os.environ["LANGSMITH_TRACING"] = "true"
+```
+
+## 🛰️ Access AI Recommendations using Dappier Retriever
+
+The Dappier AI Recommendations Retriever is a custom retriever built using LangChain's retriever interface. It enhances AI applications by providing real-time, AI-driven recommendations from premium content sources across industries like News, Finance, and Sports.
+
+By leveraging Dappier's pre-trained RAG models and natural language APIs, this retriever ensures that responses are not only accurate but also contextually relevant. It takes a user query as input and returns a list of LangChain Document objects with high-quality recommendations, making it a powerful tool for AI applications requiring up-to-date, content-aware insights.
+
+In this section, we will search for some breaking news using Wisth-TV AI Data model. Explore a wide range of data models in our marketplace at [marketplace.dappier.com](https://marketplace.dappier.com).
+
+For list of all parameters supported for Dappier retriever visit [Dappier docs](https://docs.dappier.com/integrations/langchain-integration#parameters-3).
+
+```bash Python
+from langchain_dappier import DappierRetriever
+
+retriever = DappierRetriever(data_model_id="dm_01jagy9nqaeer9hxx8z1sk1jx6")
+
+query = "What’s the latest breaking news in Indiana?"
+
+retriever.invoke(query)
+```
+
+```
+[Document(metadata={'title': 'Defense attorney: Claims of involvement in Delphi Murders surfaced in prison', 'author': 'Danielle Zulkosky', 'source_url': 'https://www.wishtv.com/news/i-team-8/indiana-prisoner-delphi-murder-evidence/', 'image_url': 'https://images.dappier.com/dm_01jagy9nqaeer9hxx8z1sk1jx6/RICHARD-ALLEN-INMATE.transfer_frame_343_.jpg?width=428&height=321', 'pubdata': 'Tue, 18 Feb 2025 04:09:55 +0000'}, page_content="Ricci Davis, an inmate at New Castle Correctional Facility, claims that Ron Logan and Kegan Kline confessed to him about their involvement in the Delphi Murders of Abigail Williams and Liberty German. He communicated these confessions to Richard Allen's attorney, Andrew Baldwin, and has requested that letters detailing these claims be preserved as evidence. The prosecution has dismissed Davis's assertions, citing his failure on a lie detector test and inaccuracies in his statements.\n\nExperts from the Murder Sheet podcast have expressed skepticism regarding Davis's credibility, suggesting his late claims lack substantiation. Baldwin is seeking confirmation on whether the letters were sent to the prosecution and why they were not disclosed before the trial. If the defense's motion to preserve evidence is successful, it could potentially lead to a new trial for Allen, who was sentenced to 130 years for the murders, which remain a significant case in Indiana's criminal history."),
+Document(metadata={'title': 'No. 1 Notre Dame extends win streak to 18 with victory over No. 11 Duke', 'author': 'Curt Rallo, Associated Press', 'source_url': 'https://www.wishtv.com/sports/college-basketball/notre-dame-beats-duke-hannah-hidalgo-february-17-2025/', 'image_url': 'https://images.dappier.com/dm_01jagy9nqaeer9hxx8z1sk1jx6/ONLINE-CROP-Hannah-Hidalgo-Notre-Dame-GettyImages-2199648561-copy_.jpg?width=428&height=321', 'pubdata': 'Tue, 18 Feb 2025 03:35:43 +0000'}, page_content="In a closely contested game on February 17, 2025, No. 1 Notre Dame triumphed over No. 11 Duke with a score of 64-59, marking their 18th consecutive victory. Hannah Hidalgo led the Fighting Irish with 19 points, supported by Sonia Citron's 15 points and 7 rebounds. The first half was tight, but Notre Dame's defense shone in the third quarter, outscoring Duke 21-8 and forcing 11 turnovers, which significantly impacted Duke's shooting performance.\n\nDespite Taina Mair's 15 points for Duke, the team struggled offensively, finishing with a shooting percentage of just 32%. Notre Dame's strong defensive efforts and a crucial 17-1 run in the third quarter allowed them to pull ahead decisively. Both teams faced challenges in shooting, but Notre Dame's victory solidified their top position in the Atlantic Coast Conference. Looking ahead, Duke will face Louisville, while Notre Dame will play against Miami."),
+Document(metadata={'title': 'GANGGANG expands creative equity initiatives in Indianapolis', 'author': 'Melea VanOstrand', 'source_url': 'https://www.wishtv.com/news/multicultural-news/ganggang-indiana-cultural-equity-2025/', 'image_url': 'https://images.dappier.com/dm_01jagy9nqaeer9hxx8z1sk1jx6/GANGGANG-LAUNCH-5P-PKG.transfer_frame_361_.jpg?width=428&height=321', 'pubdata': 'Tue, 18 Feb 2025 01:52:43 +0000'}, page_content="GANGGANG, a creative advocacy agency founded in 2020, has made a significant impact on Indianapolis' creative economy, generating over $9 million and fostering a cultural renaissance by promoting cultural equity and hiring artists of color. Co-founder Mali Bacon emphasizes the organization's role in expanding narratives around Black culture through major events like the Butter Fine Art Fair and the NBA All-Star Week, attracting thousands of visitors and enhancing community engagement.\n\nAs GANGGANG transitions to an anchor institution, it plans to launch public art projects and cultural initiatives, including the return of the Blackjoy festival and educational campaigns on the city's racial history. The organization aims to inspire other cities to adopt similar models of cultural equity, using storytelling and community engagement to foster pride and identity among residents. GANGGANG's commitment to preserving and promoting culture positions it as a potential blueprint for positive change in other communities.")]
+```
+
+🎉 **Dappier effortlessly retrieves the latest breaking news in Indiana, providing valuable data for AI integration!**
+
+## 🏀 Automated Sports news Summarizer
+
+This section sets up an automated workflow where LangChain and DappierRetriever collaborate to generate concise and accurate sports news summaries. We will guide the system in retrieving real-time sports news data and leveraging OpenAI models to create dynamic, up-to-date summaries.\_
+
+```bash Python
+from langchain_dappier import DappierRetriever
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_openai import ChatOpenAI
+from langchain_core.runnables import RunnablePassthrough, RunnableLambda
+```
+
+Initialize DappierRetriever for sports news. For list of all parameters supported for Dappier retriever visit [Dappier docs](https://docs.dappier.com/integrations/langchain-integration#parameters-3). Explore a wide range of data models in our marketplace at [marketplace.dappier.com](https://marketplace.dappier.com).
+
+```bash Python
+sports_retriever = DappierRetriever(
+    data_model_id="dm_01j0pb465keqmatq9k83dthx34",  # Sports news data model
+    k=10,  # Retrieve top 5 articles
+    search_algorithm="most_recent_semantic",  # Balance recency and relevance
+)
+```
+
+Initialize the OpenAI model
+
+```bash Python
+llm = ChatOpenAI(model="gpt-4o", temperature=1)
+```
+
+Define the prompt template to create the summary
+
+```bash Python
+summary_prompt = ChatPromptTemplate.from_template("""
+You are a sports news summarization expert. Generate a concise summary with key points from these articles:
+
+{context}
+
+Guidelines:
+- Focus on key events, players, and outcomes
+- Highlight statistics and records
+- Maintain chronological order
+- Use bullet points for clarity
+- Include team names and locations
+- Keep summaries under 300 words
+
+Generate summary:
+""")
+```
+
+Create the processing chain
+
+```bash Python
+summarization_chain = (
+    {
+        "context": RunnableLambda(lambda docs: "\n\n".join([f"Article {i+1}: {d.page_content}" for i, d in enumerate(docs)]))
+    }
+    | summary_prompt
+    | llm
+)
+```
+
+Create the full pipeline to generate the summary using chaining.
+
+```bash Python
+retrieval_summary_chain = (
+    RunnablePassthrough()
+    | sports_retriever
+    | summarization_chain
+)
+```
+
+Generate Summary
+
+```bash Python
+query = "latest NBA playoffs updates"
+result = retrieval_summary_chain.invoke(query)
+
+print("=== SPORTS NEWS SUMMARY ===\n")
+print(result.content)
+print("\n=== SOURCES ===\n")
+for doc in sports_retriever.invoke(query):
+    print(f"- {doc.metadata['title']} ({doc.metadata['pubdata']})")
+    print(f"  Source: {doc.metadata['source_url']}\n")
+```
+
+```
+=== SPORTS NEWS SUMMARY ===
+
+- **Luka Dončić's Workload Management (Los Angeles Lakers)**
+    - The Lakers are prioritizing Luka Dončić's long-term health by managing his post-All-Star break workload.
+    - Expected to rest during one game of a back-to-back against Charlotte and Portland.
+    - In his comeback from a calf strain, Dončić scored 14 and 16 points in games against Utah Jazz and yet experienced a loss.
+
+- **NBA All-Star Game's Entertainment Decline**
+    - Declining excitement in the NBA All-Star Game contrasts with the thrilling 1-on-1 Unrivaled Tournament.
+    - Napheesa Collier captured attention with a $200,000 prize win in the tournament.
+    - Advocates propose a new NBA All-Star format with 1-on-1 matchups and a tournament to increase fan engagement.
+
+- **Anthony Edwards' All-Star Absence (Minnesota Timberwolves)**
+    - Edwards was named an All-Star starter but withdrew due to a groin strain despite averaging 27.5 points per game.
+    - Initial reports citing a cold were corrected, confirming the groin injury.
+    - His health is emphasized as crucial for the Timberwolves' success.
+
+- **2024/25 NBA Most Improved Player Race**
+    - Cade Cunningham (Detroit Pistons) and Norman Powell (Los Angeles Clippers) are key contenders.
+    - Powell presents strong stats but is the oldest potential recipient.
+    - Cunningham's youth and impact could appeal more to voters, despite shared defensive flaws.
+
+- **Dalton Knecht's NBA Journey (Los Angeles Lakers)**
+    - Knecht's near-trade to the Charlotte Hornets and return to the Lakers highlight NBA's unpredictability.
+    - Set for the Rising Stars challenge during the All-Star Weekend alongside LeBron James.
+    - Mentored by D’Angelo Russell, Knecht sees this as an opportunity to showcase his talent and benefit from playing with elite teammates like Luka Dončić, though this might impact his playing time.
+
+=== SOURCES ===
+
+- Los Angeles Lakers Reveal Luka Doncic To Miss More Time Due To Injury (Mon, 17 Feb 2025 22:30:33 +0000)
+    Source: https://www.lafbnetwork.com/nba/la-lakers/los-angeles-lakers-luka-doncic-recovery-plan/
+
+- Minnesota Lynx Star Napheesa Collier Shows How 1-on-1 Can Fix the NBA All-Star Game (Mon, 17 Feb 2025 03:36:40 +0000)
+    Source: https://www.minnesotasportsfan.com/minnesota-lynx/minnesota-lynx-news/lynx-star-napheesa-collier-shows-how-1-on-1-can-fix-nba-all-star-game/
+
+- Mixed Reports Cloud Anthony Edwards’ Late Scratch from NBA All-Star Game (Mon, 17 Feb 2025 03:24:31 +0000)
+    Source: https://www.minnesotasportsfan.com/minnesota-timberwolves/minnesota-timberwolves-news/anthony-edwards-all-star-game-scratch-why/
+
+- Los Angeles Clippers Guard Predicted To Get Snubbed For Major Award For Foolish Reason (Mon, 17 Feb 2025 00:24:02 +0000)
+    Source: https://www.lafbnetwork.com/nba/la-clippers/los-angeles-clippers-norman-powell-most-improved-snub/
+
+- Los Angeles Lakers Rookie Gets Good Advice From Unlikely Source (Sun, 16 Feb 2025 23:04:42 +0000)
+    Source: https://www.lafbnetwork.com/nba/la-lakers/la-lakers-news/los-angeles-lakers-dalton-knecht-advice/
+```
+
+## 🌟 Highlights
+
+This notebook has guided you through setting up and running a Langchain RAG workflow with Dappier for a automated sports news generator. You can adapt and expand this example for various other scenarios requiring advanced web information retrieval and AI collaboration.
+
+Key tools utilized in this notebook include:
+
+-   **LangChain**: A versatile framework for chaining together language models and other components to create sophisticated AI-driven workflows. It enables seamless integration of LLMs with external tools and data sources, making it ideal for tasks like summarization, question-answering, and more.
+-   **Dappier**: A platform connecting LLMs and Agentic AI agents to real-time, rights-cleared data from trusted sources, specializing in domains like web search, finance, and news. It delivers enriched, prompt-ready data, empowering AI with verified and up-to-date information for diverse applications.
+-   **OpenAI**: A leading provider of advanced AI models capable of natural language understanding, contextual reasoning, and content generation. It enables intelligent, human-like interactions and supports a wide range of applications across various domains.
+-   **LangSmith**: A platform for debugging, testing, and monitoring LangChain applications. It provides detailed tracing and analytics to help you understand and optimize the performance of your AI workflows.
+
+This comprehensive setup allows you to adapt and expand the example for various scenarios requiring advanced web information retrieval, AI collaboration, and multi-source data aggregation.
