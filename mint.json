@@ -73,9 +73,7 @@
   "navigation": [
     {
       "group": "Get Started",
-      "pages": [
-        "quickstart"
-      ]
+      "pages": ["quickstart"]
     },
     {
       "group": "Developers",
@@ -99,28 +97,19 @@
     },
     {
       "group": "Developer APIs",
-      "pages": [
-        "api-reference/endpoint/real-time-data"
-      ]
+      "pages": ["api-reference/endpoint/real-time-data"]
     },
     {
-          "group": "Publisher APIs",
-          "pages": [
-            "api-reference/endpoint/ai-recommendations"
-          ]
+      "group": "Publisher APIs",
+      "pages": ["api-reference/endpoint/ai-recommendations"]
     },
     {
       "group": "Integrations",
-      "pages": [
-        "integrations/introduction-integration"
-      ]
+      "pages": ["integrations/introduction-integration"]
     },
     {
       "group": "SDKs",
-      "pages": [
-        "integrations/python-sdk",
-        "integrations/go-sdk"
-      ]
+      "pages": ["integrations/python-sdk", "integrations/go-sdk"]
     },
     {
       "group": "Platform Integrations",
@@ -129,7 +118,8 @@
         "integrations/anthropic-mcp-integration",
         "integrations/camel-integration",
         "integrations/langchain-integration",
-        "integrations/replit-integration"
+        "integrations/replit-integration",
+        "integrations/zapier-integration"
       ]
     },
     {
@@ -137,7 +127,8 @@
       "pages": [
         "cookbook/recipes/ai-recommendations",
         "cookbook/recipes/real-time-data",
-        "cookbook/recipes/langchain-sports-news-summarizer"
+        "cookbook/recipes/langchain-sports-news-summarizer",
+        "cookbook/recipes/daily-news-letter-zapier"
       ]
     }
   ],
