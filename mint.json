@@ -127,8 +127,8 @@
       "pages": [
         "cookbook/recipes/ai-recommendations",
         "cookbook/recipes/real-time-data",
-        "cookbook/recipes/langchain-sports-news-summarizer",
-        "cookbook/recipes/daily-news-letter-zapier"
+        "cookbook/recipes/zapier-daily-news-letter",
+        "cookbook/recipes/langchain-sports-news-summarizer"
       ]
     }
   ],
