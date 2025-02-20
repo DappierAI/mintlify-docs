@@ -1,0 +1,133 @@
+---
+title: "Build an AI-Powered News Agent with Zapier and Dappier"
+---
+
+Dappier’s **Custom AI Agent** allows you to fetch **real-time news** from RSS feeds, process user queries dynamically, and automate responses using **Zapier**. This guide walks you through creating a **Zap** that:
+
+- Runs on a **scheduled basis**.
+- Pulls **real-time AI tech news** from an RSS feed.
+- Uses **Dappier’s AI via the "Send Prompt" action** to extract insights.
+- Sends the **response via email**.
+
+## **Watch the Tutorial**
+
+To see the full setup process in action, watch the video below:
+
+<iframe
+  src="https://drive.google.com/file/d/1jBJLb6LkbBnZ-pE6A-i4PJbp2YbBwdPm/preview"
+  width="100%"
+  height="400"
+  allowfullscreen
+></iframe>
+
+---
+
+## **Prerequisites**
+
+Before starting, ensure you have:
+
+- A **[Zapier account](https://zapier.com)**
+- A **Dappier API Key** (Generate it from [Dappier Platform](https://platform.dappier.com) under **Settings > Profile > API Keys**)
+- An **email service** (Gmail, Outlook, or any Zapier-supported provider)
+
+---
+
+## **Step 1: Set Up a Custom AI Agent in Dappier**
+
+Before integrating with Zapier, you need to set up your **Custom AI Agent** on Dappier. Follow these steps:
+
+### **1. Create a New AI Agent**
+
+1. **Log in to Dappier** and navigate to **My AI Agents**.
+2. Click **Create New AI Agent**.
+3. Provide a **name** and **description**.
+
+### **2. Sync RSS Feed Data**
+
+1. Under **Sync Your Content**, add your RSS feed:
+   - Example: `https://abcnews.go.com/abcnews/usheadlines`
+2. Click **Add** and wait for processing to complete.
+
+### **3. Monetize or Publish AI Agent (Optional)**
+
+1. Go to the **Monetize in Marketplace** tab.
+2. Set up the agent for **public queries** or **private use**.
+
+### **4. Get the Model ID**
+
+1. Navigate to **Custom APIs** and copy the **Model ID**.
+2. You will need this ID to configure Zapier.
+
+---
+
+## **Step 2: Create a New Zap in Zapier**
+
+1. **Log in to Zapier** and click **Create a Zap**.
+2. **Select a Trigger**:
+   - Search for **"Schedule by Zapier"**.
+   - Set the schedule to **daily** or any preferred frequency.
+3. Click **Continue**, then **Test Trigger**.
+
+---
+
+## **Step 3: Process AI Tech News Queries Using the AI Agent**
+
+1. Click the **"+"** icon to add an action.
+2. Search for **Dappier** and select it.
+3. Choose **"Send Prompt"** (which requires a **Model ID**).
+4. Configure the fields:
+
+   - **Agent**: Select **Custom AI Agent**.
+   - **Prompt**:
+     ```plaintext
+     summarize the latest AI tech news and trends.
+     ```
+   - **Model ID**: Paste the **Model ID** from Step 1.
+
+5. Click **Continue**, then **Test the Step** to verify the AI-generated response.
+
+---
+
+## **Step 4: Send AI Tech News via Email**
+
+1. Click the **"+"** icon to add an action.
+2. Search for **Gmail** (or another email provider).
+3. Choose **"Send Email."**
+4. Configure the fields:
+
+   - **Recipient**: `{{User Email}}`
+   - **Subject**: `"Your AI Tech News Update"`
+   - **Body**:
+
+     ```plaintext
+     Hello,
+
+     Here’s your latest AI technology update based on recent news and trends:
+
+     - Headline: {{results[]title}}
+     - Summary: {{results[]summary}}
+
+     Stay informed and ahead of the curve with the latest AI insights!
+
+     Best,
+     [Your AI News Assistant]
+     ```
+
+5. Click **Continue**, then **Test the Step**.
+
+---
+
+## **Final Step: Publish Your Zap**
+
+1. Click **Publish Zap** to enable **automated AI tech news updates** using a **Custom AI Agent**.
+2. Your Zap will now **run daily** and send AI-generated summaries straight to users' inboxes!
+
+---
+
+## **Summary**
+
+✅ **Automate** fetching **real-time AI tech news** from an RSS feed.  
+✅ **Process user queries dynamically** using **Dappier’s AI Agent**.  
+✅ **Deliver AI-curated summaries** via email **automatically**.
+
+This **Zap** ensures your users receive up-to-date **AI tech trends and news insights**—without manual effort! 🚀
