@@ -1,0 +1,113 @@
+---
+title: "Automate Stock Market Alerts via Email Using Zapier and Dappier"
+---
+
+Dappier’s **Stock Market Data Model** allows you to fetch **real-time stock prices** based on user queries and automate responses via **Zapier and Gmail**. This guide walks you through creating a **Zap** that:
+
+- Detects **stock-related queries** via **email**.
+- Extracts the **stock ticker** using **Zapier Formatter**.
+- Fetches **real-time stock market data** using **Dappier’s Stock Market Model**.
+- Sends the **stock price update via email**.
+
+## **Watch the Tutorial**
+
+To see the full setup process in action, watch the video below:
+
+<iframe
+  src="https://drive.google.com/file/d/1hrW0ObzBMw7wPa6i4MSkVRehKW2zakDd/preview"
+  width="100%"
+  height="400"
+  allowfullscreen
+></iframe>
+
+---
+
+## **Prerequisites**
+
+Before starting, ensure you have:
+
+- A **[Zapier account](https://zapier.com)**
+- A **Dappier API Key** (Generate it from [Dappier Platform](https://platform.dappier.com) under **Settings > Profile > API Keys**)
+- A **Gmail account** (or any Zapier-supported email service)
+
+---
+
+## **Step 1: Set Up a Trigger for Email Queries**
+
+1. **Log in to Zapier** and click **Create a Zap**.
+2. **Select a Trigger**:
+   - Search for **"Gmail"** and select it.
+   - Choose **"New Email Matching Search"** as the trigger event.
+3. **Set up the search criteria**:
+   - Enter a keyword like **"Stock Price"** to filter relevant emails.
+4. Click **Continue**, then **Test Trigger**.
+
+---
+
+## **Step 2: Extract Stock Symbol Using Zapier Formatter**
+
+1. Click the **"+"** icon to add an action.
+2. Search for **"Formatter by Zapier"** and select it.
+3. Choose **"Text"** as the action event.
+4. Select **"Split Text"** to extract the stock ticker.
+5. Configure the fields:
+   - **Input**: Select the **email body** from Step 1.
+   - **Separator**: Space (" ")
+   - **Segment Index**: Choose **the stock ticker position** (e.g., the second word in “Stock Price TESLA”).
+6. Click **Continue**, then **Test the Step** to verify extraction.
+
+---
+
+## **Step 3: Fetch Real-Time Stock Price Using Dappier**
+
+1. Click the **"+"** icon to add another action.
+2. Search for **"Dappier"** and select it.
+3. Choose **"Get Stock Market Data"** as the action event.
+4. Configure the fields:
+   - **Stock Symbol**: Use the extracted **ticker from Step 2**.
+5. Click **Continue**, then **Test the Step** to retrieve the stock price.
+
+---
+
+## **Step 4: Send Stock Price Alert via Email**
+
+1. Click the **"+"** icon to add another action.
+2. Search for **"Gmail"** and select it.
+3. Choose **"Send Email"** as the action event.
+4. Configure the fields:
+
+   - **Recipient**: `{{User Email}}`
+   - **Subject**: `"Stock Market Update for {{Stock Symbol}}"`
+   - **Body**:
+
+     ```plaintext
+     Hello,
+
+     Here is the latest stock market update for {{Stock Symbol}}:
+
+     - **Stock Price**: {{Dappier Stock Price Output}}
+
+     Stay informed and make smarter investment decisions!
+
+     Best,
+     [Your Stock Market Assistant]
+     ```
+
+5. Click **Continue**, then **Test the Step**.
+
+---
+
+## **Final Step: Publish Your Zap**
+
+1. Click **Publish Zap** to enable **automated stock market updates**.
+2. Your Zap will now **run whenever a stock query email is received**, fetching stock prices and sending email updates.
+
+---
+
+## **Summary**
+
+✅ **Automate** real-time stock market alerts.  
+✅ **Extract stock symbols** dynamically from emails.  
+✅ **Deliver stock updates** instantly via **email notifications**.
+
+This **Zap** ensures you stay updated on stock market movements **without manually checking prices**! 🚀

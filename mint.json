@@ -128,7 +128,10 @@
         "cookbook/recipes/ai-recommendations",
         "cookbook/recipes/real-time-data",
         "cookbook/recipes/zapier-daily-news-letter",
-        "cookbook/recipes/langchain-sports-news-summarizer"
+        "cookbook/recipes/langchain-sports-news-summarizer",
+        "cookbook/recipes/zapier-my-ai-news-agent",
+        "cookbook/recipes/zapier-travel-itinerary",
+        "cookbook/recipes/zapier-stock-market-alerts"
       ]
     }
   ],
