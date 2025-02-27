@@ -1,5 +1,5 @@
 ---
-title: "Build a Daily Newsletter with Zapier"
+title: "⚡ Build a Daily Newsletter with Zapier"
 ---
 
 Dappier’s **Real-Time Data model** allows you to fetch the latest updates on **news, weather, sports, and lifestyle topics**. With **Zapier**, you can automate this process and send a **daily newsletter** to your recipients via email.
@@ -9,26 +9,26 @@ Dappier’s **Real-Time Data model** allows you to fetch the latest updates on *
 To see the full setup process in action, watch the video below:
 
 <iframe
-  src="https://drive.google.com/file/d/1Cd66WBh6n1Ar4tHIxbKsRtxrtop4YH65/preview"
-  width="100%"
-  height="400"
-  allowfullscreen
+    src="https://drive.google.com/file/d/1Cd66WBh6n1Ar4tHIxbKsRtxrtop4YH65/preview"
+    width="100%"
+    height="400"
+    allowfullscreen
 ></iframe>
 
 This guide walks you through creating a **Zap** that:
 
-- Fetches **real-time data**
-- Retrieves **sports highlights**
-- Gets **lifestyle updates**
-- Sends an **automated email newsletter**
+-   Fetches **real-time data**
+-   Retrieves **sports highlights**
+-   Gets **lifestyle updates**
+-   Sends an **automated email newsletter**
 
 ## **Prerequisites**
 
 Before starting, ensure you have:
 
-- A **[Zapier account](https://zapier.com)**
-- A **Dappier API Key** (Generate it from [Dappier Platform](https://platform.dappier.com) under **Settings > Profile > API Keys**)
-- An **email service** (Gmail, Outlook, or any Zapier-supported provider)
+-   A **[Zapier account](https://zapier.com)**
+-   A **Dappier API Key** (Generate it from [Dappier Platform](https://platform.dappier.com) under **Settings > Profile > API Keys**)
+-   An **email service** (Gmail, Outlook, or any Zapier-supported provider)
 
 ---
 
@@ -36,7 +36,7 @@ Before starting, ensure you have:
 
 1. **Log in to Zapier** and click **Create a Zap**.
 2. **Select a Trigger**:
-   - Search for **"Schedule by Zapier"** and set it to run **daily**.
+    - Search for **"Schedule by Zapier"** and set it to run **daily**.
 3. Click **Continue**, then **Test Trigger** to confirm.
 
 ---
@@ -47,7 +47,7 @@ Before starting, ensure you have:
 2. Search for **Dappier** and select it.
 3. Choose the action **"Get Real-Time Data."**
 4. Configure the fields:
-   - **Query**: `"Today's weather and top events"`
+    - **Query**: `"Today's weather and top events"`
 5. Click **Continue**, then **Test the Step** to fetch real-time data.
 
 ---
@@ -58,7 +58,7 @@ Before starting, ensure you have:
 2. Search for **Dappier** and select it.
 3. Choose **"Get Sports News."**
 4. Configure the fields:
-   - **Query**: `"Today's sports highlights"`
+    - **Query**: `"Today's sports highlights"`
 5. Click **Continue**, then **Test the Step** to retrieve sports news.
 
 ---
@@ -69,7 +69,7 @@ Before starting, ensure you have:
 2. Search for **Dappier** and select it.
 3. Choose **"Get Lifestyle News."**
 4. Configure the fields:
-   - **Query**: `"Trending lifestyle articles"`
+    - **Query**: `"Trending lifestyle articles"`
 5. Click **Continue**, then **Test the Step** to fetch lifestyle news.
 
 ---
@@ -81,21 +81,21 @@ Before starting, ensure you have:
 3. Choose **"Send Email."**
 4. Configure the fields:
 
-   - **Recipient**: Enter the recipient's email address.
-   - **Subject**: `"Today's Newsletter"`
-   - **Body**:
+    - **Recipient**: Enter the recipient's email address.
+    - **Subject**: `"Today's Newsletter"`
+    - **Body**:
 
-     ```plaintext
-     Hello,
+        ```plaintext
+        Hello,
 
-     Here’s your daily newsletter:
+        Here’s your daily newsletter:
 
-     - Weather & Events: {{Real-Time Data Output}}
-     - Sports Highlights: {{Sports News Output}}
-     - Lifestyle Articles: {{Lifestyle News Output}}
+        - Weather & Events: {{Real-Time Data Output}}
+        - Sports Highlights: {{Sports News Output}}
+        - Lifestyle Articles: {{Lifestyle News Output}}
 
-     Have a great day!
-     ```
+        Have a great day!
+        ```
 
 5. Click **Continue**, then **Test the Step** to ensure the email is sent successfully.
 

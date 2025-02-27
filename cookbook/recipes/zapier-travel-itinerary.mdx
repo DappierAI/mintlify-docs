@@ -1,5 +1,5 @@
 ---
-title: "Automate Travel Itineraries in Slack with Zapier and Dappier"
+title: "⚡ Automate Travel Itineraries in Slack with Zapier and Dappier"
 ---
 
 Dappier’s **Real-Time Data model** enables automatic **travel itinerary generation** based on user input. With **Zapier and Slack**, you can automate this process, extracting travel details from messages and generating personalized itineraries.
@@ -8,20 +8,20 @@ Dappier’s **Real-Time Data model** enables automatic **travel itinerary genera
 
 This guide walks you through creating a **Zap** that:
 
-- **Detects travel requests** in a Slack channel.
-- **Splits the message text** to extract the location and travel dates.
-- **Uses Dappier’s AI to generate a detailed itinerary**.
-- **Posts the itinerary back into Slack**.
+-   **Detects travel requests** in a Slack channel.
+-   **Splits the message text** to extract the location and travel dates.
+-   **Uses Dappier’s AI to generate a detailed itinerary**.
+-   **Posts the itinerary back into Slack**.
 
 ## **Watch the Tutorial**
 
 To see the full setup process in action, watch the video below:
 
 <iframe
-  src="https://drive.google.com/file/d/1aHbfh9vZfxLujvyiNDIiAWZoS2vtm6Vl/preview"
-  width="100%"
-  height="400"
-  allowfullscreen
+    src="https://drive.google.com/file/d/1aHbfh9vZfxLujvyiNDIiAWZoS2vtm6Vl/preview"
+    width="100%"
+    height="400"
+    allowfullscreen
 ></iframe>
 
 ---
@@ -30,9 +30,9 @@ To see the full setup process in action, watch the video below:
 
 Before starting, ensure you have:
 
-- A **[Zapier account](https://zapier.com)**
-- A **Slack workspace** with a public channel for travel requests.
-- A **Dappier API Key** (Generate it from [Dappier Platform](https://platform.dappier.com) under **Settings > Profile > API Keys**).
+-   A **[Zapier account](https://zapier.com)**
+-   A **Slack workspace** with a public channel for travel requests.
+-   A **Dappier API Key** (Generate it from [Dappier Platform](https://platform.dappier.com) under **Settings > Profile > API Keys**).
 
 ---
 
@@ -40,9 +40,9 @@ Before starting, ensure you have:
 
 1. **Log in to Zapier** and click **Create a Zap**.
 2. **Select a Trigger**:
-   - Search for **Slack** and choose **"New Message Posted to Channel"**.
-   - Choose the Slack workspace and the channel where users will request itineraries.
-   - Click **Continue**, then **Test Trigger**.
+    - Search for **Slack** and choose **"New Message Posted to Channel"**.
+    - Choose the Slack workspace and the channel where users will request itineraries.
+    - Click **Continue**, then **Test Trigger**.
 
 ---
 
@@ -53,17 +53,17 @@ Before starting, ensure you have:
 3. Choose **"Text"** as the action event.
 4. Select **"Split Text"** as the transformation.
 5. Configure the fields:
-   - **Input:** Select the Slack message (e.g., `"trip Charlotte August 10-15"`).
-   - **Separator:** Enter a **single space (`" "`).**
-   - **Segment Index:** Choose **"All as Separate Fields"** to extract parts dynamically.
+    - **Input:** Select the Slack message (e.g., `"trip Charlotte August 10-15"`).
+    - **Separator:** Enter a **single space (`" "`).**
+    - **Segment Index:** Choose **"All as Separate Fields"** to extract parts dynamically.
 6. Click **Continue**, then **Test Step**.
 
 ✅ **Expected Output Breakdown:**
 
-- `trip` (ignored)
-- `Charlotte` → City
-- `August` → Month
-- `10-15` → Travel Dates
+-   `trip` (ignored)
+-   `Charlotte` → City
+-   `August` → Month
+-   `10-15` → Travel Dates
 
 ---
 
@@ -73,12 +73,12 @@ Before starting, ensure you have:
 2. Search for **Dappier** and select it.
 3. Choose **"Get Real Time Data"** as the action.
 4. Configure the fields:
-   - **Search Query:**
-     ```plaintext
-     Create a detailed travel itinerary for {{Output Item 2}} from {{Output Item 3}} {{Output Item 4}}.
-     Include flights, hotels, meetings, and attractions.
-     ```
-   - Click **Continue**, then **Test the Step**.
+    - **Search Query:**
+        ```plaintext
+        Create a detailed travel itinerary for {{Output Item 2}} from {{Output Item 3}} {{Output Item 4}}.
+        Include flights, hotels, meetings, and attractions.
+        ```
+    - Click **Continue**, then **Test the Step**.
 
 ---
 
@@ -88,15 +88,15 @@ Before starting, ensure you have:
 2. Search for **Slack** and select it.
 3. Choose **"Send Channel Message"**.
 4. Configure the fields:
-   - **Channel:** Select the Slack channel where the request was posted.
-   - **Message Text:**
-     ```plaintext
-     Have fun! 🎉
-     Here’s a detailed travel itinerary for your trip to {{Output Item 2}} from {{Output Item 3}} {{Output Item 4}}. ✈️🏨🌟
-     {{Dappier Response}}
-     ```
-   - Enable **"Send as a bot"** and set the bot name (e.g., "TravelBot").
-   - Click **Continue**, then **Test Step**.
+    - **Channel:** Select the Slack channel where the request was posted.
+    - **Message Text:**
+        ```plaintext
+        Have fun! 🎉
+        Here’s a detailed travel itinerary for your trip to {{Output Item 2}} from {{Output Item 3}} {{Output Item 4}}. ✈️🏨🌟
+        {{Dappier Response}}
+        ```
+    - Enable **"Send as a bot"** and set the bot name (e.g., "TravelBot").
+    - Click **Continue**, then **Test Step**.
 
 ---
 

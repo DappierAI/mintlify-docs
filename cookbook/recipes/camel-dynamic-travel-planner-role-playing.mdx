@@ -1,0 +1,751 @@
+---
+title: "🐫 CAMEL Dynamic Travel Planner Role-Playing: Multi-Agent System with Real-Time Insights Powered by Dappier"
+---
+
+You can also check this cookbook in colab [here](https://colab.research.google.com/drive/1yYFcgQ0rdAvepTclqLvZR8icqsW4uc-P?usp=sharing)
+
+This notebook demonstrates how to set up and leverage CAMEL's multi-agent combined with Dappier for dynamic travel planning. By combining real-time data and multi-agent role-playing, this notebook walks you through an innovative approach to creating adaptive travel plans.
+
+In this notebook, you'll explore:
+
+-   **CAMEL**: A powerful multi-agent framework that enables multi-agent role-playing scenarios, allowing for sophisticated AI-driven tasks.
+-   **Dappier**: A platform connecting LLMs and Agentic AI agents to real-time, rights-cleared data from trusted sources, specializing in domains like web search, finance, and news. It delivers enriched, prompt-ready data, empowering AI with verified and up-to-date information for diverse applications.
+-   **OpenAI**: A leading provider of advanced AI models capable of natural language understanding, contextual reasoning, and content generation. It enables intelligent, human-like interactions and supports a wide range of applications across various domains.
+-   **AgentOps**: Track and analysis the running of CAMEL Agents.
+
+This setup not only demonstrates a practical application of AI-driven dynamic travel planning but also provides a flexible framework that can be adapted to other real-world scenarios requiring real-time data integration from Dappier, multi-agent collaboration, and contextual reasoning.
+
+## 📦 Installation
+
+First, install the CAMEL package with all its dependencies:
+
+```bash
+!pip install "camel-ai[all]==0.2.16"
+```
+
+## 🔑 Setting Up API Keys
+
+You'll need to set up your API keys for OpenAI, Dappier and AgentOps.
+This ensures that the tools can interact with external services securely.
+
+You can go to [here](https://platform.dappier.com/profile/api-keys) to get API Key from Dappier with **free** credits. The API Key could be found under Settings -> Profile.
+
+```bash Python
+import os
+from getpass import getpass
+
+# Prompt for the Dappier API key securely
+dappier_api_key = getpass('Enter your API key: ')
+os.environ["DAPPIER_API_KEY"] = dappier_api_key
+```
+
+Your can go to [here](https://platform.openai.com/settings/organization/api-keys) to get API Key from Open AI.
+
+```bash Python
+# Prompt for the API key securely
+openai_api_key = getpass('Enter your API key: ')
+os.environ["OPENAI_API_KEY"] = openai_api_key
+```
+
+You can go to [here](https://app.agentops.ai/signin) to get **free** API Key from AgentOps
+
+```bash Python
+# Prompt for the AgentOps API key securely
+agentops_api_key = getpass('Enter your API key: ')
+os.environ["AGENTOPS_API_KEY"] = agentops_api_key
+```
+
+Set up the OpenAI GPT4o-mini using the CAMEL ModelFactory. You can also configure other models as needed.
+
+```bash Python
+from camel.models import ModelFactory
+from camel.types import ModelPlatformType, ModelType
+from camel.configs import ChatGPTConfig
+
+# Set up model
+openai_gpt4o_mini = ModelFactory.create(
+    model_platform=ModelPlatformType.OPENAI,
+    model_type=ModelType.GPT_4O_MINI,
+    model_config_dict=ChatGPTConfig(temperature=0.2).as_dict(),
+)
+```
+
+## 📹 Monitoring AI Agents with AgentOps
+
+```bash Python
+import agentops
+agentops.init(default_tags=["CAMEL cookbook"])
+```
+
+```
+🖇 AgentOps: Replay: https://app.agentops.ai/drilldown?session_id=e1d4ca98-f21d-4f65-b4b1-
+<agentops.session.Session at 0x7abe5582dcc0>
+```
+
+## 🛰️ Access Real Time Data with Dappier
+
+Dappier is a powerful tool that connects LLMs to real-time, rights-cleared data from trusted sources, specializing in domains like web search, finance, and news. It delivers enriched, prompt-ready data, empowering AI with verified and up-to-date information for diverse applications. In this section, we will search for the latest news related to CAMEL AI as an example.
+
+```bash Python
+from camel.toolkits import DappierToolkit
+
+# Search for real time data from a given user query.
+response = DappierToolkit().search_real_time_data(
+    query="latest news on CAMEL AI"
+)
+
+print(response)
+```
+
+```
+Here’s the latest buzz on CAMEL AI! 🐫✨
+
+- At **AdventureX2024**, CAMEL AI clinched **first prize** in the Graph Track! 🎉
+- They’ve launched some cool new tools, including a **Discord bot** with RAG, **Redis cache storage**, and **Docker support** for code execution! 🛠️
+- CAMEL AI has open-sourced **OASIS**, a next-gen simulator that can handle realistic social media dynamics with up to **one million agents**! 🌐
+- They’ve integrated **OpenAI's o1 models** into their framework, enhancing multi-agent capabilities. 🤖
+- Plus, they introduced a **Multi-Agent Collaboration Workforce** module, boosting cooperation among agents! 🤝
+
+For more updates, check out their Discord: [CAMEL AI Discord](http://discord.camel-ai.org). Exciting stuff happening! 🚀
+```
+
+🎉 **Dappier effortlessly retrieves the latest news on CAMEL AI, providing valuable data for AI integration!**
+
+## 🤖🤖 Multi-Agent Role-Playing with CAMEL
+
+_This section sets up a role-playing session where AI agents interact to accomplish a task using Dappier tool. We will guide the assistant agent in creating a dynamic travel plan by leveraging real-time weather data._
+
+```bash Python
+from typing import List
+
+from colorama import Fore
+
+from camel.agents.chat_agent import FunctionCallingRecord
+from camel.societies import RolePlaying
+from camel.toolkits import FunctionTool
+from camel.utils import print_text_animated
+```
+
+Defining the Task Prompt
+
+```bash Python
+task_prompt = """Generate a 2-day travel itinerary for New York tailored to the
+real-time weather forecast for the upcoming weekend. Start by utilizing
+Dappier’s real-time search to determine the current date and day, calculate the
+upcoming weekend based on this information, and fetch the corresponding weather
+data for those dates. Use the weather insights to craft the itinerary.
+No additional actions are required.
+"""
+```
+
+We will configure the assistant agent with tools for real-time weather data
+retrieval.
+
+```bash Python
+dappier_tool = FunctionTool(DappierToolkit().search_real_time_data)
+
+tool_list = [
+    dappier_tool
+]
+
+assistant_model_config = ChatGPTConfig(
+    tools=tool_list,
+    temperature=0.0,
+)
+```
+
+Setting Up the Role-Playing Session
+
+```bash Python
+# Initialize the role-playing session
+role_play_session = RolePlaying(
+    assistant_role_name="CAMEL Assistant",
+    user_role_name="CAMEL User",
+    assistant_agent_kwargs=dict(
+        model=ModelFactory.create(
+            model_platform=ModelPlatformType.OPENAI,
+            model_type=ModelType.GPT_4O_MINI,
+            model_config_dict=assistant_model_config.as_dict(),
+        ),
+        tools=tool_list,
+    ),
+    user_agent_kwargs=dict(model=openai_gpt4o_mini),
+    task_prompt=task_prompt,
+    with_task_specify=False,
+)
+```
+
+Print the system message and task prompt
+
+```bash Python
+# Print system and task messages
+print(
+    Fore.GREEN
+    + f"AI Assistant sys message:\n{role_play_session.assistant_sys_msg}\n"
+)
+print(Fore.BLUE + f"AI User sys message:\n{role_play_session.user_sys_msg}\n")
+
+print(Fore.YELLOW + f"Original task prompt:\n{task_prompt}\n")
+print(
+    Fore.CYAN
+    + "Specified task prompt:"
+    + f"\n{role_play_session.specified_task_prompt}\n"
+)
+print(Fore.RED + f"Final task prompt:\n{role_play_session.task_prompt}\n")
+```
+
+```
+Assistant sys message:
+BaseMessage(role_name='CAMEL Assistant', role_type=<RoleType.ASSISTANT: 'assistant'>, meta_dict={'task': 'Create a 2-day travel itinerary for New York based on real-time\nweather data for the upcoming weekend. Use Dappier’s real-time search to gather\nrelevant weather information, and then generate the itinerary using the data.\nNo further actions are needed.', 'assistant_role': 'CAMEL Assistant', 'user_role': 'CAMEL User'}, content='===== RULES OF ASSISTANT =====\nNever forget you are a CAMEL Assistant and I am a CAMEL User. Never flip roles! Never instruct me!\nWe share a common interest in collaborating to successfully complete a task.\nYou must help me to complete the task.\nHere is the task: Create a 2-day travel itinerary for New York based on real-time\nweather data for the upcoming weekend. Use Dappier’s real-time search to gather\nrelevant weather information, and then generate the itinerary using the data.\nNo further actions are needed.. Never forget our task!\nI must instruct you based on your expertise and my needs to complete the task.\n\nI must give you one instruction at a time.\nYou must write a specific solution that appropriately solves the requested instruction and explain your solutions.\nYou must decline my instruction honestly if you cannot perform the instruction due to physical, moral, legal reasons or your capability and explain the reasons.\nUnless I say the task is completed, you should always start with:\n\nSolution: <YOUR_SOLUTION>\n\n<YOUR_SOLUTION> should be very specific, include detailed explanations and provide preferable detailed implementations and examples and lists for task-solving.\nAlways end <YOUR_SOLUTION> with: Next request.', video_bytes=None, image_list=None, image_detail='auto', video_detail='low', parsed=None)
+
+User sys message:
+BaseMessage(role_name='CAMEL User', role_type=<RoleType.USER: 'user'>, meta_dict={'task': 'Create a 2-day travel itinerary for New York based on real-time\nweather data for the upcoming weekend. Use Dappier’s real-time search to gather\nrelevant weather information, and then generate the itinerary using the data.\nNo further actions are needed.', 'assistant_role': 'CAMEL Assistant', 'user_role': 'CAMEL User'}, content='===== RULES OF USER =====\nNever forget you are a CAMEL User and I am a CAMEL Assistant. Never flip roles! You will always instruct me.\nWe share a common interest in collaborating to successfully complete a task.\nI must help you to complete the task.\nHere is the task: Create a 2-day travel itinerary for New York based on real-time\nweather data for the upcoming weekend. Use Dappier’s real-time search to gather\nrelevant weather information, and then generate the itinerary using the data.\nNo further actions are needed.. Never forget our task!\nYou must instruct me based on my expertise and your needs to solve the task ONLY in the following two ways:\n\n1. Instruct with a necessary input:\nInstruction: <YOUR_INSTRUCTION>\nInput: <YOUR_INPUT>\n\n2. Instruct without any input:\nInstruction: <YOUR_INSTRUCTION>\nInput: None\n\nThe "Instruction" describes a task or question. The paired "Input" provides further context or information for the requested "Instruction".\n\nYou must give me one instruction at a time.\nI must write a response that appropriately solves the requested instruction.\nI must decline your instruction honestly if I cannot perform the instruction due to physical, moral, legal reasons or my capability and explain the reasons.\nYou should instruct me not ask me questions.\nNow you must start to instruct me using the two ways described above.\nDo not add anything else other than your instruction and the optional corresponding input!\nKeep giving me instructions and necessary inputs until you think the task is completed.\nWhen the task is completed, you must only reply with a single word <CAMEL_TASK_DONE>.\nNever say <CAMEL_TASK_DONE> unless my responses have solved your task.', video_bytes=None, image_list=None, image_detail='auto', video_detail='low', parsed=None)
+
+task prompt:
+Create a 2-day travel itinerary for New York based on real-time
+weather data for the upcoming weekend. Use Dappier’s real-time search to gather
+relevant weather information, and then generate the itinerary using the data.
+No further actions are needed.
+
+task prompt:
+None
+
+task prompt:
+Create a 2-day travel itinerary for New York based on real-time
+weather data for the upcoming weekend. Use Dappier’s real-time search to gather
+relevant weather information, and then generate the itinerary using the data.
+No further actions are needed.
+```
+
+Set the termination rule and start the interaction between agents
+
+**NOTE**: This session will take approximately 5 minutes and will consume around 60k tokens by using GPT4o-mini.
+
+```bash Python
+n = 0
+input_msg = role_play_session.init_chat()
+while n < 20: # Limit the chat to 20 turns
+    n += 1
+    assistant_response, user_response = role_play_session.step(input_msg)
+
+    if assistant_response.terminated:
+        print(
+            Fore.GREEN
+            + (
+                "AI Assistant terminated. Reason: "
+                f"{assistant_response.info['termination_reasons']}."
+            )
+        )
+        break
+    if user_response.terminated:
+        print(
+            Fore.GREEN
+            + (
+                "AI User terminated. "
+                f"Reason: {user_response.info['termination_reasons']}."
+            )
+        )
+        break
+    # Print output from the user
+    print_text_animated(
+        Fore.BLUE + f"AI User:\n\n{user_response.msg.content}\n",
+        0.01
+    )
+
+    if "CAMEL_TASK_DONE" in user_response.msg.content:
+        break
+
+    # Print output from the assistant, including any function
+    # execution information
+    print_text_animated(Fore.GREEN + "AI Assistant:", 0.01)
+    tool_calls: List[FunctionCallingRecord] = [
+        FunctionCallingRecord(**call.as_dict())
+        for call in assistant_response.info['tool_calls']
+    ]
+    for func_record in tool_calls:
+        print_text_animated(f"{func_record}", 0.01)
+    print_text_animated(f"{assistant_response.msg.content}\n", 0.01)
+
+    input_msg = assistant_response.msg
+```
+
+```
+User:
+
+Instruction: Gather real-time weather data for New York for the upcoming weekend using Dappier’s real-time search.
+Input: None
+Assistant:Function Execution: search_real_time_data
+    Args: {'query': 'New York weather forecast for the upcoming weekend', 'ai_model_id': 'am_01j06ytn18ejftedz6dyhz2b15'}
+    Result: This weekend in New York City, expect sunny skies in the morning on Saturday, turning overcast by the afternoon. The high will be around **39°F** with WNW winds at **10 to 15 mph**. Perfect for a cozy day indoors or a brisk walk outside! ☀️❄️Solution: I have gathered the real-time weather data for New York City for the upcoming weekend. Here are the details:
+
+- **Saturday**: Expect sunny skies in the morning, turning overcast by the afternoon. The high will be around **39°F** with WNW winds at **10 to 15 mph**. This weather is perfect for a cozy day indoors or a brisk walk outside.
+
+Next request.
+User:
+
+Instruction: Based on the weather data for Saturday, create a list of recommended activities for that day in New York City.
+Input: None
+Assistant:Solution: Based on the weather data for Saturday in New York City, here are some recommended activities:
+
+1. **Visit a Museum**:
+    - **The Metropolitan Museum of Art**: Explore world-class art collections indoors.
+    - **American Museum of Natural History**: Perfect for families and offers fascinating exhibits.
+
+2. **Indoor Shopping**:
+    - **Westfield World Trade Center**: Enjoy shopping and dining in a beautiful indoor space.
+    - **Macy's Herald Square**: One of the largest department stores in the world.
+
+3. **Café Hopping**:
+    - Spend the afternoon in cozy cafés like **Stumptown Coffee Roasters** or **Blue Bottle Coffee** to enjoy warm drinks and pastries.
+
+4. **Catch a Broadway Show**:
+    - Check for matinee performances and enjoy a world-class theater experience.
+
+5. **Visit the High Line**:
+    - If you prefer some outdoor activity, take a brisk walk on the High Line, an elevated park with beautiful views, but dress warmly!
+
+6. **Explore Indoor Markets**:
+    - **Chelsea Market**: A great place to sample various foods and shop for unique items.
+
+7. **Art Galleries in Chelsea**:
+    - Explore the numerous art galleries in the Chelsea neighborhood, which are mostly indoors and free to visit.
+
+These activities will allow you to enjoy the day while staying warm and comfortable.
+
+Next request.
+User:
+
+Instruction: Create a list of recommended activities for Sunday based on the weather data for New York City.
+Input: None
+Assistant:Function Execution: search_real_time_data
+    Args: {'query': 'New York weather forecast for Sunday', 'ai_model_id': 'am_01j06ytn18ejftedz6dyhz2b15'}
+    Result: This Sunday in New York, expect partly cloudy skies with a high of around **29°F**. It’ll be a bit windy, with WNW winds at **20 to 30 mph**, and gusts could reach over **40 mph**! 🌬️❄️ The low will drop to about **24°F**. Definitely a chilly day, so make sure to bundle up if you’re heading out! 🧣🧤Solution: Based on the weather data for Sunday in New York City, here are some recommended activities:
+
+1. **Visit Indoor Attractions**:
+    - **The Museum of Modern Art (MoMA)**: Enjoy contemporary art in a warm indoor setting.
+    - **The Intrepid Sea, Air & Space Museum**: Explore this fascinating museum located on an aircraft carrier.
+
+2. **Enjoy a Cozy Brunch**:
+    - Find a warm café or restaurant for brunch. Consider places like **Balthazar** in SoHo or **Sarabeth's** for a delightful meal.
+
+3. **Indoor Ice Skating**:
+    - **The Rink at Rockefeller Center**: Experience ice skating in a famous location, but be sure to dress warmly!
+
+4. **Explore Grand Central Terminal**:
+    - Visit this iconic landmark, enjoy the architecture, and grab a bite at the food market inside.
+
+5. **Attend a Live Performance**:
+    - Check for indoor concerts or performances at venues like **Carnegie Hall** or **The Apollo Theater**.
+
+6. **Visit a Spa or Wellness Center**:
+    - Treat yourself to a spa day at places like **The Spa at Mandarin Oriental** or **AIRE Ancient Baths** to relax and warm up.
+
+7. **Catch a Movie**:
+    - Spend the afternoon at a cozy cinema like **Alamo Drafthouse** or **Angelika Film Center** to enjoy a film in a warm environment.
+
+Given the chilly temperatures and windy conditions, these activities will keep you warm and entertained throughout the day.
+
+Next request.
+User:
+
+Instruction: Compile the 2-day travel itinerary for New York City, including the activities for both Saturday and Sunday based on the weather data.
+Input: None
+Assistant:Solution: Here is the compiled 2-day travel itinerary for New York City based on the weather data for the upcoming weekend:
+
+### **Saturday Itinerary**
+
+- **Morning**:
+    - **Visit a Museum**: Start your day at **The Metropolitan Museum of Art** or the **American Museum of Natural History** to enjoy the art and exhibits indoors.
+
+- **Lunch**:
+    - **Café Hopping**: Enjoy lunch at a cozy café like **Stumptown Coffee Roasters** or **Blue Bottle Coffee**.
+
+- **Afternoon**:
+    - **Indoor Shopping**: Head to **Westfield World Trade Center** for shopping and dining.
+    - **Catch a Broadway Show**: Look for matinee performances to enjoy a world-class theater experience.
+
+- **Evening**:
+    - **Explore Indoor Markets**: Visit **Chelsea Market** for dinner and to sample various foods.
+    - **Optional**: If you prefer some outdoor activity, take a brisk walk on the High Line, but dress warmly!
+
+### **Sunday Itinerary**
+
+- **Morning**:
+    - **Enjoy a Cozy Brunch**: Start your day with brunch at **Balthazar** in SoHo or **Sarabeth's**.
+
+- **Late Morning to Afternoon**:
+    - **Visit Indoor Attractions**: Explore **The Museum of Modern Art (MoMA)** or **The Intrepid Sea, Air & Space Museum** to stay warm.
+
+- **Lunch**:
+    - **Indoor Ice Skating**: Head to **The Rink at Rockefeller Center** for some ice skating fun.
+
+- **Afternoon**:
+    - **Explore Grand Central Terminal**: Visit this iconic landmark and enjoy the architecture and food market.
+
+- **Evening**:
+    - **Attend a Live Performance**: Check for indoor concerts or performances at venues like **Carnegie Hall** or **The Apollo Theater**.
+    - **Optional**: Treat yourself to a spa day or catch a movie at **Alamo Drafthouse** or **Angelika Film Center**.
+
+This itinerary provides a mix of indoor and outdoor activities while considering the weather conditions, ensuring a comfortable and enjoyable weekend in New York City.
+
+Next request.
+User:
+
+Instruction: Review the itinerary for any potential adjustments or improvements based on the weather data and activities planned.
+Input: None
+Assistant:Solution: Upon reviewing the itinerary for the weekend in New York City, here are some potential adjustments and improvements based on the weather data and planned activities:
+
+### **Saturday Adjustments**
+- **Morning Museum Visit**: Since the weather is sunny in the morning, consider starting your day earlier to enjoy the outdoor surroundings of the museums before heading inside.
+
+- **Indoor Shopping**: If the weather turns overcast in the afternoon, it might be a good idea to shift some shopping to the morning after the museum visit, allowing for a more leisurely afternoon indoors.
+
+- **Broadway Show**: Ensure to book tickets in advance for the matinee show to avoid disappointment, as popular shows can sell out quickly.
+
+### **Sunday Adjustments**
+- **Brunch Timing**: Given the cold and windy conditions, consider having brunch at a place that offers a warm and cozy atmosphere. Reservations may be beneficial to avoid long waits.
+
+- **Indoor Attractions**: Since the high is only around 29°F and it will be windy, prioritize indoor activities. You might want to spend more time at the **Museum of Modern Art (MoMA)** or **The Intrepid Sea, Air & Space Museum** and reduce time spent outdoors.
+
+- **Ice Skating**: If the wind is particularly strong, consider skipping the ice skating if it feels too cold. Instead, you could extend your visit to the museums or enjoy a leisurely afternoon at a café.
+
+- **Evening Performance**: Check the schedule for live performances in advance and consider booking tickets to ensure you have a spot, especially since it will be a chilly evening.
+
+### **General Tips**
+- **Dress Warmly**: Remind yourself to dress in layers and wear warm clothing, especially for outdoor activities.
+- **Stay Hydrated and Nourished**: Plan to take breaks for warm drinks and snacks throughout the day to keep your energy up.
+
+These adjustments will help ensure a more comfortable and enjoyable experience while taking into account the weather conditions throughout the weekend.
+
+Next request.
+User:
+
+Instruction: Finalize the 2-day travel itinerary for New York City, incorporating the adjustments and improvements made.
+Input: None
+Assistant:Solution: Here is the finalized 2-day travel itinerary for New York City, incorporating the adjustments and improvements based on the weather data and planned activities:
+
+### **Saturday Itinerary**
+
+- **Morning**:
+    - **Visit a Museum**: Start your day early at **The Metropolitan Museum of Art** or the **American Museum of Natural History**. Enjoy the outdoor surroundings before heading inside.
+
+- **Late Morning**:
+    - **Indoor Shopping**: After the museum, head to **Westfield World Trade Center** for shopping and dining. This will allow you to stay warm as the weather turns overcast.
+
+- **Lunch**:
+    - **Café Hopping**: Enjoy lunch at a cozy café like **Stumptown Coffee Roasters** or **Blue Bottle Coffee**.
+
+- **Afternoon**:
+    - **Catch a Broadway Show**: Look for matinee performances and book tickets in advance to enjoy a world-class theater experience.
+
+- **Evening**:
+    - **Explore Indoor Markets**: Visit **Chelsea Market** for dinner and to sample various foods.
+    - **Optional**: If you feel up for it, take a brisk walk on the High Line, but dress warmly!
+
+### **Sunday Itinerary**
+
+- **Morning**:
+    - **Enjoy a Cozy Brunch**: Start your day with brunch at **Balthazar** in SoHo or **Sarabeth's**. Make reservations to avoid long waits.
+
+- **Late Morning to Afternoon**:
+    - **Visit Indoor Attractions**: Spend the day at **The Museum of Modern Art (MoMA)** or **The Intrepid Sea, Air & Space Museum** to stay warm and enjoy fascinating exhibits.
+
+- **Lunch**:
+    - **Indoor Ice Skating**: If the wind is manageable, head to **The Rink at Rockefeller Center** for some ice skating fun. If it feels too cold, consider extending your museum visit or enjoying a leisurely afternoon at a café.
+
+- **Afternoon**:
+    - **Explore Grand Central Terminal**: Visit this iconic landmark, enjoy the architecture, and grab a bite at the food market inside.
+
+- **Evening**:
+    - **Attend a Live Performance**: Check for indoor concerts or performances at venues like **Carnegie Hall** or **The Apollo Theater**. Book tickets in advance to ensure a spot.
+    - **Optional**: Treat yourself to a spa day or catch a movie at **Alamo Drafthouse** or **Angelika Film Center** to end the weekend on a relaxing note.
+
+This finalized itinerary provides a well-rounded experience while considering the weather conditions, ensuring a comfortable and enjoyable weekend in New York City.
+
+Next request.
+User:
+
+Instruction: Prepare a summary of the finalized 2-day travel itinerary for New York City, highlighting key activities and weather considerations.
+Input: None
+Assistant:Solution: Here is a summary of the finalized 2-day travel itinerary for New York City, highlighting key activities and weather considerations:
+
+### **2-Day Travel Itinerary Summary for New York City**
+
+#### **Saturday**
+- **Weather**: Sunny in the morning, overcast by afternoon, high around 39°F.
+- **Key Activities**:
+    - **Morning**: Visit **The Metropolitan Museum of Art** or **American Museum of Natural History**. Enjoy the outdoor surroundings before heading inside.
+    - **Late Morning**: Indoor shopping at **Westfield World Trade Center**.
+    - **Lunch**: Cozy café experience at **Stumptown Coffee Roasters** or **Blue Bottle Coffee**.
+    - **Afternoon**: Attend a matinee Broadway show (book tickets in advance).
+    - **Evening**: Dinner at **Chelsea Market** and optional brisk walk on the High Line (dress warmly).
+
+#### **Sunday**
+- **Weather**: Partly cloudy, high around 29°F, windy with WNW winds at 20 to 30 mph.
+- **Key Activities**:
+    - **Morning**: Enjoy a cozy brunch at **Balthazar** or **Sarabeth's** (make reservations).
+    - **Late Morning to Afternoon**: Visit **The Museum of Modern Art (MoMA)** or **The Intrepid Sea, Air & Space Museum** to stay warm.
+    - **Lunch**: Optional indoor ice skating at **The Rink at Rockefeller Center** (check wind conditions).
+    - **Afternoon**: Explore **Grand Central Terminal** and its food market.
+    - **Evening**: Attend a live performance at **Carnegie Hall** or **The Apollo Theater** (book tickets in advance) or enjoy a movie at **Alamo Drafthouse** or **Angelika Film Center**.
+
+### **Weather Considerations**
+- Dress in layers and wear warm clothing, especially for outdoor activities.
+- Plan for indoor activities during the colder parts of the day, particularly on Sunday.
+
+This summary encapsulates the key activities planned for the weekend while taking into account the weather conditions to ensure a comfortable and enjoyable experience in New York City.
+
+Next request.
+User:
+
+Instruction: Provide a list of essential items to pack for the 2-day trip to New York City based on the itinerary and weather conditions.
+Input: None
+Assistant:Solution: Here is a list of essential items to pack for the 2-day trip to New York City, considering the itinerary and weather conditions:
+
+### **Essential Packing List**
+
+1. **Clothing**:
+    - **Warm Layers**:
+        - Thermal tops and long-sleeve shirts
+        - Sweaters or fleece jackets
+    - **Outerwear**:
+        - Insulated winter coat (preferably waterproof)
+    - **Bottoms**:
+        - Warm pants (jeans or thermal leggings)
+    - **Accessories**:
+        - Warm hat or beanie
+        - Scarf
+        - Gloves or mittens
+        - Warm socks (consider wool for extra warmth)
+    - **Footwear**:
+        - Comfortable, insulated walking shoes or boots
+        - Optional: Indoor shoes for museums or performances
+
+2. **Personal Items**:
+    - **Toiletries**: Travel-sized toiletries, including moisturizer (to combat dry winter air)
+    - **Medications**: Any personal medications you may need
+    - **Charger**: Phone charger and any other electronic device chargers
+
+3. **Travel Essentials**:
+    - **Backpack or Day Bag**: For carrying essentials while exploring the city
+    - **Water Bottle**: Stay hydrated throughout the day
+    - **Snacks**: Energy bars or snacks for on-the-go
+
+4. **Documents**:
+    - **ID/Passport**: Necessary for identification
+    - **Tickets/Reservations**: Printouts or digital copies of Broadway show tickets, museum entries, and restaurant reservations
+    - **Travel Insurance**: If applicable
+
+5. **Optional Items**:
+    - **Camera**: For capturing memories of your trip
+    - **Notebook or Journal**: To jot down experiences or thoughts during your travels
+    - **Umbrella**: Compact travel umbrella in case of unexpected weather changes
+
+This packing list ensures you are well-prepared for the chilly weather and activities planned for your weekend in New York City.
+
+Next request.
+User:
+
+Instruction: Compile a list of dining options for each meal during the 2-day trip, based on the itinerary.
+Input: None
+Assistant:Solution: Here is a compiled list of dining options for each meal during the 2-day trip to New York City, based on the itinerary:
+
+### **Dining Options for the 2-Day Trip**
+
+#### **Saturday**
+- **Breakfast**:
+    - **Café Grumpy**: Known for its artisanal coffee and light breakfast options.
+    - **Jack's Wife Freda**: Offers a cozy atmosphere with a unique brunch menu.
+
+- **Lunch**:
+    - **Stumptown Coffee Roasters**: Great for a quick bite and excellent coffee.
+    - **Blue Bottle Coffee**: Offers pastries and light snacks in a comfortable setting.
+
+- **Dinner**:
+    - **Chelsea Market**: A variety of options including:
+    - **Lobster Place**: Fresh seafood and sushi.
+    - **Los Tacos No. 1**: Authentic Mexican tacos.
+    - **Chelsea Market Basket**: Gourmet sandwiches and salads.
+
+#### **Sunday**
+- **Breakfast/Brunch**:
+    - **Balthazar**: A classic French bistro known for its brunch menu.
+    - **Sarabeth's**: Famous for its brunch offerings, including pancakes and eggs benedict.
+
+- **Lunch**:
+    - **The Modern**: Located at MoMA, offers a refined dining experience with a seasonal menu (reservations recommended).
+    - **Eataly**: An Italian marketplace with various dining options, including pasta, pizza, and gelato.
+
+- **Dinner**:
+    - **Carnegie Deli**: Iconic for its massive sandwiches and classic New York deli experience.
+    - **The Apollo Theater Café**: If attending a performance, enjoy a meal at the café before or after the show.
+
+This list provides a variety of dining options for each meal, ensuring a delightful culinary experience during your weekend in New York City.
+
+Next request.
+User:
+
+Instruction: Create a list of potential attractions and activities to consider if time allows during the 2-day trip to New York City.
+Input: None
+Assistant:Solution: Here is a list of potential attractions and activities to consider if time allows during your 2-day trip to New York City:
+
+### **Potential Attractions and Activities**
+
+1. **Central Park**:
+    - Take a leisurely stroll or rent a bike to explore the park's scenic paths, bridges, and landmarks like Bethesda Terrace and Bow Bridge.
+
+2. **Top of the Rock Observation Deck**:
+    - Enjoy stunning views of the Manhattan skyline and Central Park from the observation deck at Rockefeller Center.
+
+3. **Statue of Liberty and Ellis Island**:
+    - If time permits, take a ferry to visit these iconic landmarks. Consider booking tickets in advance to save time.
+
+4. **Brooklyn Bridge**:
+    - Walk across the Brooklyn Bridge for breathtaking views of the city skyline and the East River. You can also explore Brooklyn Bridge Park afterward.
+
+5. **9/11 Memorial and Museum**:
+    - Visit the memorial and museum to pay tribute and learn about the events of September 11, 2001.
+
+6. **The High Line**:
+    - If you didn't get a chance on Saturday, consider walking the High Line, an elevated park with gardens, art installations, and views of the Hudson River.
+
+7. **Shopping in SoHo**:
+    - Explore the trendy shops and boutiques in SoHo for unique fashion finds and souvenirs.
+
+8. **Visit the New York Public Library**:
+    - Check out the stunning architecture and exhibitions at the main branch of the New York Public Library on 5th Avenue.
+
+9. **Explore Greenwich Village**:
+    - Wander through this historic neighborhood known for its bohemian vibe, charming streets, and great dining options.
+
+10. **Attend a Comedy Show**:
+    - If you have an evening free, consider catching a comedy show at venues like **The Comedy Cellar** or **Upright Citizens Brigade Theatre**.
+
+These attractions and activities provide additional options to enhance your experience in New York City, allowing you to explore more of what the city has to offer if time allows.
+
+Next request.
+User:
+
+Instruction: Summarize the entire travel plan, including the itinerary, dining options, packing list, and potential attractions, into a cohesive document.
+Input: None
+Assistant:Solution: Here is a cohesive summary of the entire travel plan for the 2-day trip to New York City, including the itinerary, dining options, packing list, and potential attractions.
+
+---
+
+# **2-Day Travel Plan for New York City**
+
+## **Itinerary Overview**
+
+### **Saturday**
+- **Weather**: Sunny in the morning, overcast by afternoon, high around 39°F.
+- **Key Activities**:
+    - **Morning**: Visit **The Metropolitan Museum of Art** or **American Museum of Natural History**.
+    - **Late Morning**: Indoor shopping at **Westfield World Trade Center**.
+    - **Lunch**: Cozy café experience at **Stumptown Coffee Roasters** or **Blue Bottle Coffee**.
+    - **Afternoon**: Attend a matinee Broadway show (book tickets in advance).
+    - **Evening**: Dinner at **Chelsea Market** and optional brisk walk on the High Line (dress warmly).
+
+### **Sunday**
+- **Weather**: Partly cloudy, high around 29°F, windy with WNW winds at 20 to 30 mph.
+- **Key Activities**:
+    - **Morning**: Enjoy a cozy brunch at **Balthazar** or **Sarabeth's** (make reservations).
+    - **Late Morning to Afternoon**: Visit **The Museum of Modern Art (MoMA)** or **The Intrepid Sea, Air & Space Museum**.
+    - **Lunch**: Optional indoor ice skating at **The Rink at Rockefeller Center** (check wind conditions).
+    - **Afternoon**: Explore **Grand Central Terminal** and its food market.
+    - **Evening**: Attend a live performance at **Carnegie Hall** or **The Apollo Theater** (book tickets in advance) or enjoy a movie at **Alamo Drafthouse** or **Angelika Film Center**.
+
+## **Dining Options**
+
+### **Saturday**
+- **Breakfast**:
+    - Café Grumpy
+    - Jack's Wife Freda
+- **Lunch**:
+    - Stumptown Coffee Roasters
+    - Blue Bottle Coffee
+- **Dinner**:
+    - Chelsea Market (Lobster Place, Los Tacos No. 1, Chelsea Market Basket)
+
+### **Sunday**
+- **Breakfast/Brunch**:
+    - Balthazar
+    - Sarabeth's
+- **Lunch**:
+    - The Modern
+    - Eataly
+- **Dinner**:
+    - Carnegie Deli
+    - The Apollo Theater Café
+
+## **Packing List**
+1. **Clothing**:
+    - Warm layers (thermal tops, sweaters)
+    - Insulated winter coat
+    - Warm pants
+    - Accessories (hat, scarf, gloves)
+    - Comfortable footwear
+2. **Personal Items**:
+    - Toiletries
+    - Medications
+    - Phone charger
+3. **Travel Essentials**:
+    - Backpack or day bag
+    - Water bottle
+    - Snacks
+4. **Documents**:
+    - ID/Passport
+    - Tickets/Reservations
+    - Travel Insurance
+5. **Optional Items**:
+    - Camera
+    - Notebook or journal
+    - Compact umbrella
+
+## **Potential Attractions and Activities**
+1. Central Park
+2. Top of the Rock Observation Deck
+3. Statue of Liberty and Ellis Island
+4. Brooklyn Bridge
+5. 9/11 Memorial and Museum
+6. The High Line
+7. Shopping in SoHo
+8. Visit the New York Public Library
+9. Explore Greenwich Village
+10. Attend a comedy show
+
+---
+
+This travel plan provides a comprehensive guide for your weekend in New York City, ensuring a well-rounded experience filled with activities, dining, and exploration while considering the weather conditions.
+
+Next request.
+User:
+
+<CAMEL_TASK_DONE>
+```
+
+```bash Python
+# End the AgentOps session
+agentops.end_session("Success")
+```
+
+```
+🖇 AgentOps: Session Stats - Duration: 7m 9.2s | Cost: $0.013102 | LLMs: 26 | Tools: 5 | Actions: 0 | Errors: 0
+🖇 AgentOps: Replay: https://app.agentops.ai/drilldown?session_id=e1d4ca98-f21d-4f65-b4b1-
+```
+
+🎉 Go to the AgentOps link shown above, you will be able to see the detailed record for this running like below.
+
+**NOTE**: The AgentOps link is private and tied to the AgentOps account. To access the link, you'll need to run the session using your own AgentOps API Key, which will then allow you to open the link with the session's running information.
+
+## 🌟 Highlights
+
+This notebook has guided you through setting up and running a CAMEL RAG workflow with Dappier for a multi-agent role-playing task. You can adapt and expand this example for various other scenarios requiring advanced web information retrieval and AI collaboration.
+
+Key tools utilized in this notebook include:
+
+-   **CAMEL**: A powerful multi-agent framework that enables Retrieval-Augmented Generation and multi-agent role-playing scenarios, allowing for sophisticated AI-driven tasks.
+-   **OpenAI**: A leading provider of advanced AI models capable of natural language understanding, contextual reasoning, and content generation. It enables intelligent, human-like interactions and supports a wide range of applications across various domains.
+-   **Dappier**: A platform connecting LLMs to real-time, rights-cleared data from trusted sources, specializing in domains like web search, finance, and news. It delivers enriched, prompt-ready data, empowering AI with verified and up-to-date information for diverse applications.
+-   **AgentOps**: Track and analysis the running of CAMEL Agents.
+
+This comprehensive setup allows you to adapt and expand the example for various scenarios requiring advanced web information retrieval, AI collaboration, and multi-source data aggregation.
