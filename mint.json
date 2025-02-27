@@ -129,6 +129,7 @@
         "cookbook/recipes/real-time-data",
         "cookbook/recipes/agent-ai-create-dappier-agent",
         "cookbook/recipes/agent-ai-dynamic-travel-planner",
+        "cookbook/recipes/agent-ai-real-time-stock-market-analysis",
         "cookbook/recipes/langchain-sports-news-summarizer",
         "cookbook/recipes/langchain-real-time-market-strategyzer",
         "cookbook/recipes/zapier-daily-news-letter",
