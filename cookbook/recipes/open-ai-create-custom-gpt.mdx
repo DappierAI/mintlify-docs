@@ -16,15 +16,15 @@ Before getting started, ensure you have:
 
 ---
 
-## Step 1: Create a New Custom GPT
+## Step 1: Access the GPT Builder
 
-1. Go to [OpenAI's Custom GPT Page](https://platform.openai.com/)
-2. Click on **"Create a GPT"**
-3. Follow the wizard to configure the GPT settings
+1. Navigate to OpenAI’s [Custom GPT Page](https://chat.openai.com/gpts/editor)
+2. Log in to your OpenAI account
+3. Click on **"Create a GPT"** to start the customization process
 
 ---
 
-## Step 2: Define GPT Properties
+## Step 2: Define GPT Characteristics
 
 ### Name
 
@@ -36,9 +36,23 @@ Use the following description:
 
 > Fetches real-time data and provides summaries, highlights, and reports.
 
+### Instructions
+
+Define specific guidelines for how the GPT should interact with users, such as:
+
+-   Asking for clarification when needed
+-   Maintaining a structured yet conversational tone
+-   Ensuring accuracy while simplifying complex information
+
 ---
 
-## Step 3: Configure API Integration
+## Step 3: Enhance with Additional Knowledge
+
+If needed, upload relevant documents or files to provide the GPT with additional context and knowledge.
+
+---
+
+## Step 4: Configure API Integration
 
 ### API Endpoint
 
@@ -77,14 +91,7 @@ curl -X POST "https://api.dappier.com/app/aimodel/am_01j06ytn18ejftedz6dyhz2b15"
 
 ---
 
-## Step 4: Define GPT Behavior
-
-Your GPT should be able to:
-
--   Summarize key points from the data.
--   Highlight important aspects.
--   Generate detailed reports.
--   Ask for clarification when needed to refine the request.
+## Step 5: Configure Capabilities
 
 ### Sample Conversation Starters
 
@@ -95,7 +102,7 @@ Your GPT should be able to:
 
 ---
 
-## Step 5: Import API Schema
+## Step 6: Import API Schema
 
 To ensure smooth interaction with the API, import the OpenAPI schema:
 
@@ -180,24 +187,30 @@ To ensure smooth interaction with the API, import the OpenAPI schema:
 
 ---
 
-## Step 6: Test Your GPT
+## Step 7: Test and Iterate
 
 1. Use the OpenAI GPT interface to test queries like:
     - "Fetch the latest news on AI"
     - "Summarize current weather updates"
     - "Highlight key deals for online shopping"
 2. Verify that the responses are accurate and formatted correctly.
-3. If needed, refine your GPT’s instructions to improve results.
+3. Refine GPT behavior by adjusting instructions as needed.
 
 ---
 
-## Step 7: Deploy and Share
+## Step 8: Deploy and Share
 
 Once tested, you can:
 
 -   Share your GPT with others
 -   Embed it in applications
 -   Continuously update its behavior based on feedback
+
+**Sharing Options:**
+
+-   **Private**: Only accessible to you
+-   **Unlisted**: Accessible via a direct link
+-   **Public**: Available in the GPT Store
 
 ---
 
