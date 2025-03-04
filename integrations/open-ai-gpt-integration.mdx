@@ -1,0 +1,271 @@
+---
+title: "OpenAI GPT"
+icon: "robot"
+---
+
+OpenAI’s Custom GPT models allow developers to create AI assistants tailored to specific use cases. These models can be fine-tuned with additional instructions, personality settings, and access to external tools or APIs, making them highly adaptable. Whether used for customer support, content generation, data analysis, or specialized research, Custom GPTs enable a more refined AI experience that aligns with user needs.
+
+[**Dappier**](https://dappier.com/developers/) is a platform that connects LLMs and Agentic AI agents to real-time, rights-cleared data from trusted sources, including web search, finance, and news. By providing enriched, prompt-ready data, Dappier empowers AI with verified and up-to-date information for a wide range of applications.
+
+Explore a wide range of data models in our marketplace at [marketplace.dappier.com](https://marketplace.dappier.com/marketplace).
+
+## Dappier APIs
+
+Dappier provides AI-driven APIs for real-time search and AI-powered recommendations. These APIs enable users to access the latest information from trusted sources and receive relevant recommendations based on their queries.
+
+### **Real-Time Search API**
+
+The Real-Time Search API allows users to fetch real-time information from the web, financial news, and stock markets using AI models. The response varies based on the AI model ID used.
+
+#### **API Endpoint**
+
+```plaintext
+POST https://api.dappier.com/app/aimodel/{ai_model_id}
+```
+
+Explore a wide range of AI model ids in our marketplace at [marketplace.dappier.com](https://marketplace.dappier.com/marketplace).
+
+#### **Headers**
+
+-   `Authorization`: Bearer token for authentication
+-   `Content-Type`: `application/json`
+
+#### **Input Payload**
+
+-   `query` (string, required): The search query for retrieving real-time data.
+
+#### Output Response
+
+Response to the original user query.
+
+---
+
+### **AI Recommendations API**
+
+The AI Recommendations API provides personalized content suggestions based on the user's query and selected data model. It uses various search algorithms to return relevant articles.
+
+#### **API Endpoint**
+
+```plaintext
+POST https://api.dappier.com/app/datamodel/{datamodel_id}
+```
+
+Explore a wide range of AI model ids in our marketplace at [marketplace.dappier.com](https://marketplace.dappier.com/marketplace).
+
+#### **Headers**
+
+-   `Authorization`: Bearer token for authentication
+-   `Content-Type`: `application/json`
+
+#### **Input Payload**
+
+-   `query` (string, required): The search query for recommendations.
+-   `similarity_top_k` (int, optional): The number of top results to retrieve. Defaults to 9.
+-   `ref` (string, optional): The reference domain to prioritize content from.
+-   `num_articles_ref` (int, optional): The minimum number of articles from the reference domain. Defaults to 0.
+-   `search_algorithm` (string, optional): Defines the retrieval method (`"most_recent"`, `"semantic"`, `"trending"`, etc.). Defaults to `"most_recent"`.
+
+#### Output Response
+
+Returns a list of AI-generated recommendations, including titles, summaries, source URLs, authors, publication dates and more.
+
+Here's the updated section with the **Dappier Travel Concierge** GPT link included:
+
+---
+
+## Dappier Travel Concierge
+
+[Dappier Travel Concierge](https://chatgpt.com/g/g-67c59b31ed948191a14d1d598060897c-dappier-travel-concierge) is a smart AI-powered travel assistant built using Dappier’s Real-Time Search API. It provides personalized travel recommendations, real-time updates, and itinerary planning. Designed to assist both leisure and business travelers, it offers:
+
+-   Flight and hotel booking recommendations
+-   Real-time weather updates and travel advisories
+-   Local events, festivals, and must-visit attractions
+-   Day-wise structured itineraries
+-   Transportation options, including public transit and car rentals
+-   Dining suggestions based on user preferences
+
+By leveraging real-time data, the Travel Concierge ensures accuracy and relevance, making travel planning seamless and efficient.
+
+---
+
+### **Technical Details**
+
+Dappier Travel Concierge integrates with Dappier’s Real-Time Search API to fetch up-to-date travel-related data. The AI model constructs detailed queries based on user requests, ensuring that responses include:
+
+-   **Dynamic Data Retrieval:** Uses Dappier’s AI model (`am_01j06ytn18ejftedz6dyhz2b15`) to fetch real-time travel data.
+-   **API Authentication:** Requires an API Key for secure access.
+-   **Structured Query Processing:** Before making a request, the AI structures the query with relevant parameters, such as travel dates, booking links, local events, and weather conditions.
+-   **Personalized Responses:** Uses machine learning to tailor recommendations based on user preferences and contextual data.
+-   **Verified Information:** Avoids speculative data and relies on trusted sources for accurate travel insights.
+
+The AI ensures a friendly, professional, and proactive interaction, making travel planning more interactive and reliable.
+
+---
+
+### **Example**
+
+#### **Example Input:**
+
+_User Query:_  
+_"Suggest a 5-day itinerary for Bali this coming weekend, including flights, hotels, top attractions, and weather updates."_
+
+#### **Example API Request:**
+
+```json
+{
+    "query": "5-day itinerary for Bali from March 8-12. Include best flight deals, top-rated hotels, must-visit attractions, local events, weather forecast, and dining recommendations."
+}
+```
+
+#### **Example Output:**
+
+```json
+{
+  "response": "Here is your personalized 5-day Bali itinerary from March 8-12:\n\n
+  **Day 1:** Arrival & Beach Relaxation\n- Flight: Best deals available from $350 (Book here: [link])\n- Hotel: Recommended stays include Alila Villas Uluwatu & The Mulia\n- Activity: Sunset at Uluwatu Temple, Kecak Fire Dance Show\n- Weather: 29°C, partly cloudy\n\n
+  **Day 2:** Ubud Exploration\n- Visit: Sacred Monkey Forest, Tegallalang Rice Terraces\n- Dining: Organic lunch at Clear Café\n- Transport: Private car rental available from $30/day\n\n
+  **Day 3:** Island Adventures\n- Boat trip to Nusa Penida, snorkeling at Crystal Bay\n- Event: Beach party at La Brisa Bali\n- Weather: 30°C, sunny\n\n
+  **Day 4:** Cultural Immersion\n- Explore: Tanah Lot Temple, Art Market\n- Food: Traditional Balinese dinner at Locavore\n- Special: Balinese dance show at Ubud Palace\n\n
+  **Day 5:** Departure & Last-Minute Shopping\n- Check-out and airport transfer options available\n\nFor more details and live updates, visit [Dappier Travel Updates](https://dappier.com)."
+}
+```
+
+This AI-powered concierge provides a structured, real-time itinerary with travel details, ensuring users receive the most relevant and updated travel insights.
+
+---
+
+Here’s the section for **Dappier Stock & Financial News Analyst**, following the same format as before:
+
+---
+
+## Dappier Stock & Financial News Analyst
+
+[Dappier Stock & Financial News Analyst](https://chatgpt.com/g/g-67c5b9dd9c708191bd40330e045aefd7-dappier-stock-financial-news-analyst) is an AI-powered financial assistant that provides structured insights on stock trends, financial news, and investment contexts. Built using Dappier’s Real-Time Search API, this GPT analyzes market movements, retrieves real-time stock prices, and offers trend-based insights.
+
+Key capabilities include:
+
+-   **Stock Trend Analysis** – Monitors and evaluates stock performance over time.
+-   **Financial News Summaries** – Fetches up-to-date news impacting the stock market.
+-   **Investment Context Insights** – Provides context on how market trends affect specific stocks.
+-   **Ticker-Based Search** – Ensures all queries include stock ticker symbols for accurate financial insights.
+-   **Portfolio Strategy Support** – Helps users make informed decisions by summarizing relevant trends.
+
+This GPT **does not provide direct investment advice** but offers data-driven insights to assist users in evaluating financial trends.
+
+---
+
+### **Technical Details**
+
+Dappier Stock & Financial News Analyst integrates with Dappier’s Real-Time Search API to retrieve the latest financial news, market trends, and stock performance data. The AI ensures that all queries are structured correctly before making API requests.
+
+-   **AI Model for Financial Insights** – Uses Dappier’s financial AI model (`am_01j749h8pbf7ns8r1bq9s2evrh`).
+-   **API Authentication** – Requires an API Key for secure data access.
+-   **Structured Query Processing** – Reformulates user queries to ensure they include necessary stock ticker symbols.
+-   **Comprehensive Financial Data Retrieval** – Aggregates financial news, stock movements, and investment insights from trusted sources.
+-   **Actionable Market Insights** – Summarizes key financial takeaways in a concise and structured format.
+
+This AI model strictly avoids speculative advice and instead provides factual financial data to aid decision-making.
+
+---
+
+### **Example**
+
+#### **Example Input:**
+
+_User Query:_  
+_"What are the latest market trends impacting major stocks like AAPL and MSFT?"_
+
+#### **Example API Request:**
+
+```json
+{
+    "query": "Analyze recent financial news and stock movements for AAPL and MSFT. Include key market trends, stock price changes, and economic factors affecting these companies."
+}
+```
+
+#### **Example Output:**
+
+```json
+{
+  "response": "Here is the latest market trend analysis for AAPL and MSFT:\n\n
+  **Apple Inc. (AAPL):**\n- Stock Price: $185.42 (-0.8% today)\n- Recent News: Apple faces regulatory scrutiny over App Store policies, impacting investor sentiment.\n- Key Takeaway: Market analysts predict short-term volatility, but long-term growth remains strong due to upcoming AI and hardware innovations.\n\n
+  **Microsoft Corp. (MSFT):**\n- Stock Price: $402.18 (+1.2% today)\n- Recent News: Microsoft’s AI partnership with OpenAI strengthens its position in cloud computing and enterprise AI solutions.\n- Key Takeaway: Analysts expect continued stock growth due to expanding AI integration in Microsoft’s product ecosystem.\n\n
+  **Market Summary:**\n- Tech stocks remain volatile as investors react to regulatory developments and AI industry growth.\n- The S&P 500 and Nasdaq show slight gains amid optimism in the AI sector.\n\nFor more financial insights, visit [Dappier Financial Updates](https://dappier.com)."
+}
+```
+
+Dappier Stock & Financial News Analyst ensures users receive structured, up-to-date financial insights, making market trends easier to analyze.
+
+---
+
+Here’s the section for **Dappier News & Media Companion**, following the same format as before:
+
+---
+
+## Dappier News & Media Companion
+
+[Dappier News & Media Companion](https://chatgpt.com/g/g-67c5ca01b0d88191a65bc36b7224aeaf-dappier-news-media-companion) is an AI-powered assistant designed to process, analyze, and summarize AI-recommended news content. Using Dappier’s AI Recommendations API, it retrieves articles and provides structured insights, including:
+
+-   **Summarization** – Condenses articles into key points for quick understanding.
+-   **Reactions & Insights** – Highlights expert opinions and key takeaways.
+-   **Trend Analysis** – Identifies emerging topics across multiple sources.
+-   **Comparative Analysis** – Compares different perspectives on the same story.
+-   **Source Evaluation** – Assesses credibility and relevance based on metadata.
+
+This GPT is built to ensure factual accuracy, clarity, and relevance while avoiding speculation. Users can request trending news, the latest headlines, or in-depth topic analysis.
+
+---
+
+### **Technical Details**
+
+Dappier News & Media Companion integrates with Dappier’s AI Recommendations API to retrieve and analyze news content dynamically. The AI tailors its responses based on the type of insights requested.
+
+-   **AI-Powered Content Retrieval** – Uses Dappier’s data model (`dm_01j0pb465keqmatq9k83dthx34`) for fetching recommended news articles.
+-   **API Authentication** – Requires an API Key for secure access.
+-   **Customizable Insights** – Supports multiple search algorithms (`"most_recent"`, `"semantic"`, `"trending"`).
+-   **Structured Query Processing** – Ensures queries align with user needs, such as requesting sports updates, financial news, or breaking headlines.
+-   **Multi-Article Analysis** – Compares news sources to provide a balanced perspective on trending topics.
+
+The AI dynamically adapts to user requests, ensuring accurate and useful news summaries.
+
+---
+
+### **Example**
+
+#### **Example Input:**
+
+_User Query:_  
+_"Summarize today’s top tech news and highlight key industry trends."_
+
+#### **Example API Request:**
+
+```json
+{
+    "query": "Summarize today's top tech news. Identify major industry trends, key insights, and expert reactions.",
+    "search_algorithm": "most_recent",
+    "similarity_top_k": 5
+}
+```
+
+#### **Example Output:**
+
+```json
+{
+  "response": "Here’s a summary of today’s top tech news:\n\n
+  **1. AI Developments Lead the Industry:**\n- OpenAI announces new multimodal AI model enhancing real-time data processing.\n- NVIDIA sees a surge in demand for AI-powered GPUs as companies invest heavily in machine learning.\n\n
+  **2. Tech Market Updates:**\n- Apple’s stock rises by 3% following the announcement of its AI-integrated iPhone lineup.\n- Tesla faces regulatory scrutiny over its self-driving technology.\n\n
+  **3. Cybersecurity Concerns Grow:**\n- Google warns users about new phishing scams targeting financial platforms.\n- Microsoft patches a major vulnerability in Windows cloud security services.\n\nFor more details, visit [Dappier News Updates](https://dappier.com)."
+}
+```
+
+Dappier News & Media Companion ensures users get real-time, structured insights tailored to their interests, making news consumption faster and more informative.
+
+---
+
+### **Conclusion**
+
+Dappier’s suite of AI-powered tools, including **Dappier Travel Concierge**, **Dappier Stock & Financial News Analyst**, and **Dappier News & Media Companion**, showcase the power of real-time data integration with intelligent AI models. By leveraging **Dappier’s Real-Time Search API** and **AI Recommendations API**, these GPTs provide accurate, timely, and structured insights tailored to users' needs.
+
+Whether planning a trip, analyzing stock market trends, or staying updated with the latest news, Dappier’s AI solutions ensure a seamless and informative experience. Each GPT is designed to prioritize reliability, factual accuracy, and user-friendly engagement, making AI-driven insights more accessible than ever.
+
+As Dappier continues to enhance its AI capabilities, its tools will evolve to deliver even more advanced, data-driven solutions. For more information and to explore Dappier’s AI-powered offerings, visit [Dappier’s Developer Hub](https://dappier.com/developers/).

@@ -76,6 +76,7 @@
                             "integrations/anthropic-mcp-integration",
                             "integrations/camel-integration",
                             "integrations/langchain-integration",
+                            "integrations/open-ai-gpt-integration",
                             "integrations/replit-integration",
                             "integrations/zapier-integration"
                         ]
@@ -107,7 +108,7 @@
                         ]
                     },
                     {
-                        "group": "Langchain",
+                        "group": "LangChain",
                         "pages": [
                             "cookbook/recipes/langchain-real-time-market-strategyzer",
                             "cookbook/recipes/langchain-sports-news-summarizer"
