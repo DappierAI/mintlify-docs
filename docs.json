@@ -115,6 +115,10 @@
                         ]
                     },
                     {
+                        "group": "OpenAI",
+                        "pages": ["cookbook/recipes/open-ai-create-custom-gpt"]
+                    },
+                    {
                         "group": "Zapier",
                         "pages": [
                             "cookbook/recipes/zapier-daily-news-letter",
