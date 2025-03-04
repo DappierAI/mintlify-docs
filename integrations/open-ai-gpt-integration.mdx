@@ -69,8 +69,6 @@ Explore a wide range of AI model ids in our marketplace at [marketplace.dappier.
 
 Returns a list of AI-generated recommendations, including titles, summaries, source URLs, authors, publication dates and more.
 
-Here's the updated section with the **Dappier Travel Concierge** GPT link included:
-
 ---
 
 ## Dappier Travel Concierge
@@ -134,10 +132,6 @@ This AI-powered concierge provides a structured, real-time itinerary with travel
 
 ---
 
-Here’s the section for **Dappier Stock & Financial News Analyst**, following the same format as before:
-
----
-
 ## Dappier Stock & Financial News Analyst
 
 [Dappier Stock & Financial News Analyst](https://chatgpt.com/g/g-67c5b9dd9c708191bd40330e045aefd7-dappier-stock-financial-news-analyst) is an AI-powered financial assistant that provides structured insights on stock trends, financial news, and investment contexts. Built using Dappier’s Real-Time Search API, this GPT analyzes market movements, retrieves real-time stock prices, and offers trend-based insights.
@@ -198,10 +192,6 @@ Dappier Stock & Financial News Analyst ensures users receive structured, up-to-d
 
 ---
 
-Here’s the section for **Dappier News & Media Companion**, following the same format as before:
-
----
-
 ## Dappier News & Media Companion
 
 [Dappier News & Media Companion](https://chatgpt.com/g/g-67c5ca01b0d88191a65bc36b7224aeaf-dappier-news-media-companion) is an AI-powered assistant designed to process, analyze, and summarize AI-recommended news content. Using Dappier’s AI Recommendations API, it retrieves articles and provides structured insights, including:
@@ -220,7 +210,7 @@ This GPT is built to ensure factual accuracy, clarity, and relevance while avoid
 
 Dappier News & Media Companion integrates with Dappier’s AI Recommendations API to retrieve and analyze news content dynamically. The AI tailors its responses based on the type of insights requested.
 
--   **AI-Powered Content Retrieval** – Uses Dappier’s data model (`dm_01j0pb465keqmatq9k83dthx34`) for fetching recommended news articles.
+-   **AI-Powered Content Retrieval** – Uses Dappier’s [data models](https://marketplace.dappier.com/marketplace) for fetching recommended news articles.
 -   **API Authentication** – Requires an API Key for secure access.
 -   **Customizable Insights** – Supports multiple search algorithms (`"most_recent"`, `"semantic"`, `"trending"`).
 -   **Structured Query Processing** – Ensures queries align with user needs, such as requesting sports updates, financial news, or breaking headlines.
@@ -242,6 +232,7 @@ _"Summarize today’s top tech news and highlight key industry trends."_
 ```json
 {
     "query": "Summarize today's top tech news. Identify major industry trends, key insights, and expert reactions.",
+    "datamodel_id": "dm_01j0pb465keqmatq9k83dthx34"
     "search_algorithm": "most_recent",
     "similarity_top_k": 5
 }
