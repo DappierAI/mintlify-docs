@@ -115,7 +115,8 @@
             "group": "MCP/Anthropic",
             "pages": [
               "cookbook/recipes/anthropic-mcp-dappier",
-              "cookbook/recipes/dappier-mcp-5ire"
+              "cookbook/recipes/dappier-mcp-5ire",
+              "cookbook/recipes/dappier-mcp-cursor"
             ]
           },
           {

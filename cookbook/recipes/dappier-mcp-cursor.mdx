@@ -1,0 +1,240 @@
+---
+title: "⚙️ Integrate Dappier MCP with Cursor for AI-Powered Development
+
+"
+---
+
+[**Cursor**](https://www.cursor.com) is an AI-powered code editor that allows developers to integrate external AI models through Model Context Protocol (MCP). By configuring MCP servers, Cursor can fetch real-time data, AI-powered recommendations, and intelligent search results—helping developers with coding, debugging, and research
+
+[**Dappier**](https://dappier.com/developers/) is a real-time AI-powered data platform that connects LLMs and AI-driven applications to live, verified data from trusted sources, including web search, finance, sports, and news. This integration enables Cursor to leverage Dappier MCP for real-time AI-driven insights directly within the coding environment.
+
+This guide provides a step-by-step walkthrough for integrating Dappier MCP Server into Cursor, enabling AI-enhanced search, content recommendations, and real-time insights.
+
+---
+
+## Prerequisites
+
+Before starting the setup process, ensure you have the following:
+
+- **Download Cursor** - Get the latest version of Cursor AI Code Editor from [Cursor Official Website](https://www.cursor.com).
+
+- **Dappier API Key** - Get it from [Dappier API Keys](https://platform.dappier.com/profile/api-keys).
+
+---
+
+## **Watch the Tutorial**
+
+To see the full setup process in action, watch the video below:
+
+## Watch the Setup Process:
+
+<iframe
+  src="https://drive.google.com/file/d/1w/preview"
+  width="100%"
+  height="400"
+  allowfullscreen
+></iframe>
+
+---
+
+## Step 1: Install UV Package Manager
+
+To use Dappier MCP within Cursor, **UV** must be installed first.
+
+For **MacOS/Linux**, run:
+
+```json
+
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+```
+
+For **Windows**, run:
+
+```json
+
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+
+```
+
+**Verify installation:**
+
+```json
+
+uv --version
+
+```
+
+## Step 2: Install Dappier MCP Server
+
+Once **UV** is installed, the next step is to install the **Dappier MCP Server**.
+
+### Install using pip
+
+For users preferring **pip**, run the following command:
+
+```json
+
+pip install mcp-dappier
+
+```
+
+### Install using UV
+
+For users preferring **UV**, run the following command:
+
+```json
+
+uv pip install mcp-dappier
+
+```
+
+## Step 3: Locate UVX Path
+
+To ensure **Cursor** can access the **Dappier MCP Server**, you need to find the **UVX** path.
+
+### For MacOS/Linux:
+
+Run the following command to locate the **UVX** path:
+
+```json
+
+which uvx
+
+```
+
+### For windows:
+
+```json
+
+where uvx
+
+```
+
+---
+
+## Step 4: Install Cursor
+
+To integrate **Dappier MCP** with **Cursor**, you must first install **Cursor**.
+
+### Download and Install Cursor
+
+Download the **Cursor** from the official source:
+
+👉 **[Download Cursor](https://www.cursor.com)**
+
+---
+
+## Step 5: Configure Dappier MCP in Cursor
+
+    ### 1️.Open Cursor Settings
+
+    - Open Cursor and navigate to Settings.
+
+    - Click on Cursor Settings → Features.
+
+    ### 2️. Add a New MCP Server
+
+    - Under MCP Servers, click + Add New MCP Server.
+    - In the Name field, enter Dappier Tool.
+    - In the Type dropdown, select Command.
+
+
+    ### 3️. Enter the Command for Dappier MCP
+
+    - In the Command field, enter the path where Dappier MCP’s UVX is installed.
+
+    - Example command:
+
+    ```json
+
+    env DAPPIER_API_KEY=YOUR_API_KEY_HERE /Users/yourusername/.local/bin/uvx dappier-mcp
+
+    ```
+    Replace YOUR_API_KEY_HERE with your actual [Dappier API Keys](https://platform.dappier.com/profile/api-keys)
+
+
+    ### 4️. Save the Configuration
+
+    - Click **Save** to apply the changes.
+    - This ensures that the tool is properly configured before proceeding.
+
+---
+
+## Step 6: Enable Dappier MCP in Cursor
+
+    ### 1️. Enable the Integration
+
+    - Open Cursor and navigate to Settings → MCP.
+    - Locate Dappier MCP Tool.
+
+    ### 2️. Activate Dappier MCP
+
+    - Locate the **Dappier MCP Tool** in the tools list.
+    - Ensure the tool is in an **active state** before proceeding.
+
+    ### 3️. Confirmation
+
+    - Once enabled, Dappier MCP is now integrated into Cursor.
+    - You can now run real-time search queries and AI-powered content recommendations directly within the development environment.
+
+---
+
+## Step 7: Test Prompts with Dappier MCP in Cursor
+
+Now that Dappier MCP is integrated, test real-time AI-powered queries in Cursor.
+
+### Sample Queries & Expected Outputs
+
+    #### 1️⃣ **User Query:**(dappier_real_time_search)
+
+    "Are there any new CVEs or security vulnerabilities in Node.js?"
+
+    #### 🔹 **Expected AI Response:**
+
+    - Fetches real-time security advisories from official CVE databases.
+    - Highlights recent exploits, patches, and best security practices.
+
+
+    #### 2️⃣ **User Query:**(dappier_ai_recommendations)
+
+    "Recommend the best learning resources for mastering Kubernetes?"
+
+    #### 🔹 **Expected AI Response:**
+
+    - Lists handpicked AI-powered recommendations on Kubernetes architecture, deployments, and management.
+    -Suggests free & paid courses, books, and hands-on tutorials.
+
+
+    #### 3️⃣ **User Query:**(dappier_real_time_search)
+
+    "Find solutions for fixing circular import errors in Python?"
+
+    #### 🔹 **Expected AI Response:**
+
+    - Searches Stack Overflow and developer forums for verified solutions.
+    - Provides best answers, code fixes, and alternative approaches.
+
+
+    #### 4️⃣ **User Query:** (dappier_real_time_search)
+
+    "What are the trending repositories on GitHub for AI-powered coding?"
+
+    #### 🔹 **Expected AI Response:**
+
+    - Fetches real-time GitHub trending repos related to AI, machine learning, and automation.
+    - Provides links to popular projects and emerging tools.
+
+
+    #### 5️⃣ **User Query:** (dappier_ai_recommendations)
+
+    "Recommend articles on improving Python performance and best coding practices?"
+
+    #### 🔹 **Expected AI Response:**
+
+    - Curates AI-powered recommendations from trusted dev blogs (e.g., Real Python, Dev.to, Medium).
+    - Highlights best practices for performance tuning and code readability.
+
+---
+
+Experience the power of real-time AI-driven insights with Dappier MCP in Cursor! Boost your coding workflow with live search, AI-powered recommendations, and up-to-the-minute information—all within your AI-enhanced development environment.
