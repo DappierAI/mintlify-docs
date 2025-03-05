@@ -1,0 +1,268 @@
+---
+title: "💥 Build an AI-Powered Assistant with Anthropic MCP & Dappier"
+---
+
+## Introduction
+
+This guide walks you through the step-by-step process of integrating Dappier’s Real-Time Data API with Anthropic Claude using Model Context Protocol (MCP). This integration enables Claude to fetch real-time news, weather, stock updates, and AI-powered recommendations.
+
+## Prerequisites
+
+Before getting started, ensure you have:
+
+-   Install Claude for Desktop [Download here](https://claude.ai/download)
+-   A Dappier API key [Dappier API Keys](https://platform.dappier.com/profile/api-keys)
+
+---
+
+## **Watch the Tutorial**
+
+To see the full setup process in action, watch the video below:
+
+## Watch the Setup Process:
+
+<iframe
+    src="https://drive.google.com/file/d/1zUBQUvZdX9XxQ3TB7yrD8AN8MjPAEOWT/preview"
+    width="100%"
+    height="400"
+    allowfullscreen
+></iframe>
+
+## See Dappier MCP in Action:
+
+<iframe
+src="https://drive.google.com/file/d/16iKPojWanFuhGgSjoBf6bj2vv1J4GoGK/preview"
+width="100%"
+height="400"
+allowfullscreen
+
+> </iframe>
+
+---
+
+## Step 1: Install UV Package Manager
+
+To use Dappier MCP within Claude, **UV** must be installed first.
+
+For **MacOS/Linux**, run:
+
+```json
+
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+```
+
+For **Windows**, run:
+
+```json
+
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+
+```
+
+**Verify installation:**
+
+```json
+
+uv --version
+
+```
+
+## Step 2: Install Dappier MCP Server
+
+Once **UV** is installed, the next step is to install the **Dappier MCP Server**.
+
+### Install using pip
+
+For users preferring **pip**, run the following command:
+
+```json
+
+pip install mcp-dappier
+
+```
+
+### Install using UV
+
+For users preferring **UV**, run the following command:
+
+```json
+
+uv pip install mcp-dappier
+
+```
+
+## Step 3: Locate UVX Path
+
+To ensure **claude** can access the **Dappier MCP Server**, you need to find the **UVX** path.
+
+### For MacOS/Linux:
+
+Run the following command to locate the **UVX** path:
+
+```json
+
+which uvx
+
+```
+
+### For windows:
+
+```json
+
+where uvx
+
+```
+
+---
+
+## Step 4: Install & Open Claude for Desktop
+
+1. Download Claude for Desktop from the [Official site](https://claude.ai/download)
+
+2. Install and update to the latest version for full MCP support.
+
+3. Open Claude and navigate to Settings → Developer Mode.
+
+---
+
+## Step 5: Configure MCP Integration
+
+### Edit the Configuration File
+
+1.In Claude, go to Settings → Developer → Edit Config
+
+2.Replace the contents of claude_desktop_config.json with the following:
+
+```json
+{
+    "mcpServers": {
+        "dappier": {
+            "command": "uvx",
+            "args": ["dappier-mcp"],
+            "env": {
+                "DAPPIER_API_KEY": "YOUR_API_KEY_HERE"
+            }
+        }
+    }
+}
+```
+
+### Instructions
+
+1.Replace YOUR_API_KEY_HERE with your Dappier API Key.
+
+2.On Mac/Linux, find the full path for uvx using "which uv".
+
+3.On Windows, use "where uv" to locate uvx.
+
+---
+
+## Step 6: Restart Claude & Verify Setup
+
+1.Restart Claude for Desktop after saving the configuration.
+
+2.Look for the 🔨 hammer icon at the bottom of the chat input.
+
+3.Click on it to verify that Dappier tools are available.
+
+If the **Dappier MCP Server** is configured correctly, you will see these tools:
+
+-   **Real-Time Web Search**
+-   **AI-Powered Recommendations**
+
+---
+
+## Step 7: Tools & Capabilities
+
+Dappier MCP provides two core AI-powered tools that enable real-time data retrieval and AI-driven content recommendations. These tools allow Claude to fetch the latest insights from trusted sources, ensuring users receive accurate, real-time information across different domains.
+
+    **1.Real-Time Data Search**
+
+    **What It Does**
+
+    The Real-Time Data Search tool enables Claude to retrieve direct answers to real-time queries using AI-powered search. This includes live news, financial data, weather updates, stock market information, and general web search results.
+
+    **How It Works**
+
+    When a user asks a real-time query, Claude processes the request and fetches data from trusted sources via Dappier's AI model.
+
+    **Example Query:** "What is the latest stock price for Tesla?"
+
+    **Configuration Details**
+
+    Tool Name: dappier_real_time_search
+
+    Response Type: Direct real-time answer
+
+    Required Input:query (string) → User-provided input for retrieving real-time data.
+
+    **2.AI-Powered Recommendations**
+
+    **What It Does**
+
+    The AI-Powered Recommendations tool delivers curated content recommendations based on structured data models. It retrieves and ranks relevant articles, providing summaries, source links, and key insights for users interested in specific topics.
+
+    **How It Works**
+
+    When a user asks for content suggestions, Claude uses Dappier’s AI recommendation engine to find, rank, and present the most relevant articles from trusted publishers.
+
+    **Example Query:** "Find trending articles on mindfulness and mental well-being?"
+
+    **Configuration Details**
+
+    Tool Name: dappier_ai_recommendations
+
+    Response Type: Curated list of relevant articles
+
+    Required Input:query (string) → User-provided input for AI recommendations
+
+---
+
+## Step 8: Configuring AI Capabilities & Sample Queries
+
+Once Dappier MCP is successfully integrated into Claude, you can start interacting with real-time data sources. This step will guide you on how to configure your AI assistant to understand user queries, retrieve relevant information, and generate structured responses.
+
+### Defining AI Capabilities
+
+The Dappier Real-Time Data API enables Claude AI to:
+
+✅ Retrieve live traffic conditions for optimized navigation
+
+✅ Fetch stock market insights with the latest trading trends
+
+✅ Provide weather updates and flight delay alerts in real time
+
+✅ Summarize breaking global news from trusted sources
+
+✅ Deliver AI-powered content recommendations for personalized insights
+
+To configure your AI assistant with these capabilities, you can predefine sample conversation starters that guide users on the types of queries they can ask.
+
+### Sample Queries & How They Work
+
+    **User Query 1 :** What is the live traffic update for downtown Los Angeles to University Park?
+
+    **Expected Response :** The AI retrieves the latest road conditions, estimated travel time, and congestion updates between the two locations. It ensures users stay updated on real-time traffic data for efficient route planning.
+
+    **User Query 2 :** What are the latest stock market updates and trends in the technology sector?
+
+    **Expected Response :** The AI fetches real-time stock performance data for leading tech companies like Apple, Tesla, and Nvidia. This helps users track market trends and make informed investment decisions
+
+    **User Query 3 :** What is the current weather and any flight delays for New York City?
+
+    **Expected Response :** The AI provides current weather conditions and real-time flight delay information for major airports in New York City. It helps travelers plan their trips with up-to-date forecasts and flight status alerts.
+
+    **User Query 4 :** Show me the latest global news on climate change?
+
+    **Expected Response :** Claude retrieves summarized news articles on climate-related updates, government policies, and scientific findings. This ensures users stay informed about the latest global climate developments.
+
+    **User Query 5 :** Find trending articles on mindfulness and mental well-being?
+
+    **Expected Response :** Dappier’s AI-powered recommendations deliver curated content from trusted sources covering mindfulness, mental health, and self-care strategies. This allows users to explore scientifically backed techniques for improving mental well-being.
+
+    **User Query 6 :** Give me articles on today's sports highlights from AI recommendations."
+
+    **Expected Response :** Claude summarizes the latest game results, scores, and player highlights from top sports events. The AI curates news from sports networks, offering a quick rundown of key matches and performances.
+
+These tools empower Claude to function as a **real-time AI assistant**, seamlessly integrating **live insights, AI-driven recommendations, and up-to-the-minute information** from trusted sources. Whether users need **breaking news, stock market trends, travel updates, or personalized content**, Dappier’s API ensures that Claude delivers **relevant, accurate, and actionable data**—making it a powerful tool for decision-making, research, and everyday queries. 🚀
