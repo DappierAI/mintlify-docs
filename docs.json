@@ -89,8 +89,8 @@
                     {
                         "group": "General",
                         "pages": [
-                            "cookbook/recipes/ai-recommendations",
-                            "cookbook/recipes/real-time-data"
+                            "cookbook/recipes/dappier-ai-recommendations",
+                            "cookbook/recipes/dappier-real-time-data"
                         ]
                     },
                     {
@@ -99,6 +99,14 @@
                             "cookbook/recipes/agent-ai-create-dappier-agent",
                             "cookbook/recipes/agent-ai-dynamic-travel-planner",
                             "cookbook/recipes/agent-ai-real-time-stock-market-analysis"
+                        ]
+                    },
+                    {
+                        "group": "Anthropic MCP",
+                        "pages": [
+                            "cookbook/recipes/anthropic-mcp-claude-integration",
+                            "cookbook/recipes/anthropic-mcp-5ire-integration",
+                            "cookbook/recipes/anthropic-mcp-cursor-integration"
                         ]
                     },
                     {
@@ -112,14 +120,6 @@
                         "pages": [
                             "cookbook/recipes/langchain-real-time-market-strategyzer",
                             "cookbook/recipes/langchain-sports-news-summarizer"
-                        ]
-                    },
-                    {
-                        "group": "MCP/Anthropic",
-                        "pages": [
-                            "cookbook/recipes/anthropic-mcp-dappier",
-                            "cookbook/recipes/dappier-mcp-5ire",
-                            "cookbook/recipes/dappier-mcp-cursor"
                         ]
                     },
                     {
