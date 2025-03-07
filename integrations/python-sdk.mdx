@@ -1,95 +1,218 @@
 ---
-title: 'Python SDK'
-icon: 'python'
+title: "Python SDK"
+icon: "python"
 ---
 
-## Overview
+The Dappier Python SDK provides an easy-to-use interface for interacting with the Dappier API.
 
-`dappier-py` provides a straightforward way to interact with Dappier's API's, which allows for real-time data search on the internet and other datamodels from the marketplace. The library is designed to be easy to use and integrate into existing Python projects.
+**GitHub Repository:** [Dappier Python SDK](https://github.com/DappierAI/dappier-py-sdk)
+
+---
 
 ## Installation
 
-To install the package, run:
+Install the SDK using pip:
 
 ```bash
 pip install dappier
-
 ```
 
-Alternatively, you can clone the repository and install the dependencies:
-
-```bash
-git clone https://github.com/DappierAI/dappier-py
-cd dappier-py
-pip install -r requirements.txt
-```
+---
 
 ## Initialization
 
-You can get your API key from your [Dappier account](https://platform.dappier.com).
+Set up your API key and initialize the SDK:
 
-```python
-from dappier.dappier import DappierApp
+```bash Python
+import os
+from dappier import Dappier
 
-app = DappierApp(api_key='your_api_key')
+# Set your API key as an environment variable
+os.environ["DAPPIER_API_KEY"] = "<YOUR_API_KEY>"
 
+# Initialize the Dappier SDK
+app = Dappier()
 ```
+
+Replace `<YOUR_API_KEY>` with your actual API key, which you can get from your [Dappier Account](https://platform.dappier.com/profile/api-keys).
+
+---
+
 ## Real-Time Search
 
-You can perform a real-time search by providing a query. This will search for real-time data related to your query.
+Perform a real-time search for live data:
 
-```python
-result = app.realtime_search_api("When is the next election?")
-print(result.response['response']["results"])
-
-```
-
-## AI Recommendations
-The AI Recommendations feature allows you to query for articles and other content using a specific data model.
-You can pick a specific datamodel from [marketplace](https://marketplace.dappier.com/)
-
-### Default Options:
-
-```python
-ai_result = app.ai_recommendations(query="latest tech news", datamodel_id="dm_02hr75e8ate6adr15hjrf3ikol")
-print(ai_result.results)
-```
-
-### Custom Options:
-You can pass custom parameters such as `similarity_top_k`, `ref` and `num_articles_ref`:
-
-```python
-ai_custom_result = app.ai_recommendations(
-    query="latest tech news",
-    datamodel_id="dm_02hr75e8ate6adr15hjrf3ikol",
-    similarity_top_k=5,
-    ref="techcrunch.com",
-    num_articles_ref=2
+```bash Python
+response = app.search_real_time_data(
+    query="What is the stock price of Apple?",
+    ai_model_id="am_01j06ytn18ejftedz6dyhz2b15"
 )
-print(ai_custom_result.results)
-
 ```
 
-## Parameters
+## Parameters (Real Time Search)
 
 ### `query` (string):
-- A natural language query or URL.
-- If a URL is passed, the AI analyzes the page, creates a summary, and performs a semantic search query based on the content.
+
+-   A natural language query representing the information being searched for in real time.
+
+### `ai_model_id` (string):
+
+-   The ID of the AI model to be used for real-time data search.
+-   This must be a valid model ID from the [Dappier Marketplace](https://marketplace.dappier.com/).
+
+---
+
+## AI Recommendations
+
+Retrieve AI-powered content recommendations based on a query:
+
+```bash Python
+response = app.get_ai_recommendations(
+    query="latest trending news",
+    data_model_id="dm_01jagy9nqaeer9hxx8z1sk1jx6",
+    similarity_top_k=5,
+    ref="techcrunch.com",
+    num_articles_ref=2,
+    search_algorithm="most_recent"
+)
+```
+
+## Parameters (AI Recommendations)
+
+### `query` (string):
+
+-   A natural language query or URL.
+-   If a URL is passed, the AI analyzes the page, creates a summary, and performs a semantic search query based on the content.
+
+### `data_model_id` (string):
+
+-   The ID of the data model to be used for recommendations.
+-   This must be a valid model ID from the [Dappier Marketplace](https://marketplace.dappier.com/).
 
 ### `similarity_top_k` (integer):
-- The number of articles to return (default is 9).
+
+-   The number of articles to return (default is 9).
 
 ### `ref` (string):
-- The domain of the site from which the recommendations should come.
-- Example: `techcrunch.com`.
+
+-   The domain of the site from which the recommendations should come.
+-   Example: `techcrunch.com`.
 
 ### `num_articles_ref` (integer):
-- Specifies how many articles should be guaranteed to match the domain specified in `ref`.
-- Use this to ensure a set number of articles from the desired domain appear in the results.
+
+-   Specifies how many articles should be guaranteed to match the domain specified in `ref`.
+-   Use this to ensure a set number of articles from the desired domain appear in the results.
 
 ### `search_algorithm` (string):
-- Options: `"most_recent"` or `"semantic"`.
-- `"semantic"` (default): Contextual matching of the query to retrieve articles.
-- `"most_recent"`: Retrieves articles sorted by the most recent publication date.
 
-Checkout [example.py](https://github.com/DappierAI/dappier-py/blob/main/examples/example.py) in this repository for a working example.
+-   Options: `"most_recent"` or `"semantic"`.
+-   `"semantic"` (default): Contextual matching of the query to retrieve articles.
+-   `"most_recent"`: Retrieves articles sorted by the most recent publication date.
+
+You can select a specific Data model from the [Dappier Marketplace](https://marketplace.dappier.com/).
+
+---
+
+## Async Functionality
+
+Dappier SDK supports asynchronous operations for better performance.
+
+### Async Real Time Search:
+
+```bash Python
+import asyncio
+from dappier import DappierAsync
+
+async def fetch_real_time_data(query):
+    dp_client = DappierAsync(api_key=os.environ["DAPPIER_API_KEY"])
+    async with dp_client as client:
+        response = await client.search_real_time_data_async(
+            query=query,
+            ai_model_id="am_01j06ytn18ejftedz6dyhz2b15"
+        )
+
+        if response is None:
+            raise Exception("An error occurred while retrieving the response.")
+        return response.message
+
+query = "What is the stock price of Apple?"
+result = asyncio.run(fetch_real_time_data(query))
+print(result)
+```
+
+## Parameters (Real Time Search)
+
+### `query` (string):
+
+-   A natural language query representing the information being searched for in real time.
+
+### `ai_model_id` (string):
+
+-   The ID of the AI model to be used for real-time data search.
+-   This must be a valid model ID from the [Dappier Marketplace](https://marketplace.dappier.com/).
+
+---
+
+### Async AI Recommendations:
+
+```bash Python
+import asyncio
+from dappier import DappierAsync
+
+async def fetch_ai_recommendations(query):
+    dp_client = DappierAsync(api_key=os.environ["DAPPIER_API_KEY"])
+    async with dp_client as client:
+        response = await client.get_ai_recommendations_async(
+            query=query,
+            data_model_id="dm_01jagy9nqaeer9hxx8z1sk1jx6",
+            similarity_top_k=5,
+            ref="techcrunch.com",
+            num_articles_ref=2,
+            search_algorithm="most_recent"
+        )
+
+        if response is None or response.status != "success":
+            raise Exception("An error occurred while retrieving the response.")
+
+        return response.results
+
+query = "latest trending news"
+result = asyncio.run(fetch_ai_recommendations(query))
+print(result)
+```
+
+You can select a specific Data model from the [Dappier Marketplace](https://marketplace.dappier.com/).
+
+The async SDK version improves performance, especially for large-scale requests.
+
+## Parameters (AI Recommendations)
+
+### `query` (string):
+
+-   A natural language query or URL.
+-   If a URL is passed, the AI analyzes the page, creates a summary, and performs a semantic search query based on the content.
+
+### `data_model_id` (string):
+
+-   The ID of the data model to be used for recommendations.
+-   This must be a valid model ID from the [Dappier Marketplace](https://marketplace.dappier.com/).
+
+### `similarity_top_k` (integer):
+
+-   The number of articles to return (default is 9).
+
+### `ref` (string):
+
+-   The domain of the site from which the recommendations should come.
+-   Example: `techcrunch.com`.
+
+### `num_articles_ref` (integer):
+
+-   Specifies how many articles should be guaranteed to match the domain specified in `ref`.
+-   Use this to ensure a set number of articles from the desired domain appear in the results.
+
+### `search_algorithm` (string):
+
+-   Options: `"most_recent"` or `"semantic"`.
+-   `"semantic"` (default): Contextual matching of the query to retrieve articles.
+-   `"most_recent"`: Retrieves articles sorted by the most recent publication date.
