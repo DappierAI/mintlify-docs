@@ -1,0 +1,241 @@
+---
+title: "🌎 Build Dapper Travel Concierge using OpenAI's Custom GPT"
+---
+
+## Introduction
+
+This guide will walk you through the step-by-step process of setting up **Dappier Travel Concierge**, a custom OpenAI GPT model that integrates with Dappier's [Real-Time Data API](https://docs.dappier.com/api-reference/endpoint/real-time-data) to provide smart, personalized travel recommendations. Whether you're planning a vacation or a business trip, this concierge will assist you with flights, hotels, attractions, transportation, and more.
+
+## Prerequisites
+
+Before you begin, ensure you have:
+
+-   An OpenAI account
+-   API access to create and configure custom GPTs
+-   A **Dappier API Key** (Get it from [Dappier API Keys](https://platform.dappier.com/profile/api-keys))
+
+---
+
+## Step 1: Access the GPT Builder
+
+1. Navigate to OpenAI’s [Custom GPT Page](https://chat.openai.com/gpts/editor)
+2. Log in to your OpenAI account
+3. Click on **"Create a GPT"** to begin customization
+
+---
+
+## Step 2: Define GPT Characteristics
+
+### Name
+
+Set the GPT’s name to **Dappier Travel Concierge**
+
+### Description
+
+Use the following description:
+
+> A smart travel concierge using Dappier's real-time data API for personalized recommendations.
+
+### Instructions
+
+This GPT acts as a **Travel Concierge** that provides personalized travel recommendations, real-time travel updates, and itinerary planning. It helps users with:
+
+-   Flight information
+-   Hotel bookings
+-   Local attractions
+-   Travel tips
+
+The concierge ensures:
+
+-   **Highly structured queries** before interacting with the API
+-   **Accuracy, efficiency, and personalization** in recommendations
+-   **Friendly, professional, and proactive** tone
+
+Each API query must include:
+
+-   **Today’s date**
+-   **Booking links** (flights, hotels, and activities)
+-   **Structured day-wise itinerary**
+-   **Local events, festivals, and special experiences**
+-   **Transportation options** (local transit, car rentals, airport transfers)
+-   **Dining recommendations**
+-   **Weather updates & travel advisories**
+
+This concierge caters to **both leisure and business travelers**, avoiding speculation and relying on verified sources.
+
+---
+
+## Step 3: Configure API Integration
+
+### API Endpoint
+
+Your GPT will communicate with the **Dappier Travel Data API** at:
+
+```
+https://api.dappier.com/app/aimodel/am_01j06ytn18ejftedz6dyhz2b15
+```
+
+### Authentication
+
+Use **Bearer Token** authentication. Include the API key in the `Authorization` header:
+
+```
+Authorization: Bearer <your_api_key>
+```
+
+### Request Body Format
+
+Send queries in JSON format:
+
+```json
+{
+    "query": "Find the best flight and hotel deals to Miami next weekend. Include weather updates."
+}
+```
+
+### Example API Request (cURL)
+
+```sh
+curl -X POST "https://api.dappier.com/app/aimodel/am_01j06ytn18ejftedz6dyhz2b15" \
+-H "Authorization: Bearer YOUR_API_KEY" \
+-H "Content-Type: application/json" \
+-d '{"query": "Find the best flight and hotel deals to Miami next weekend. Include weather updates."}'
+```
+
+---
+
+## Step 4: Configure Capabilities
+
+### Sample Conversation Starters
+
+-   **Find me the best flight and hotel deal to Miami next weekend with weather updates.**
+-   **Find major events in Austin from current month 24-30 and suggest must-attend activities.**
+-   **Check next week’s San Francisco weather and list essential items to pack.**
+-   **Suggest a 5-day itinerary for Bali this coming weekend.**
+
+---
+
+## Step 5: Import API Schema
+
+To ensure proper interaction, import the **OpenAPI schema**:
+
+```json
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "Dappier Real Time Travel Data",
+        "description": "Fetch real-time travel-related data including news, weather, flight deals, and more using Dappier's API.",
+        "version": "v1.0.0"
+    },
+    "servers": [
+        {
+            "url": "https://api.dappier.com"
+        }
+    ],
+    "paths": {
+        "/app/aimodel/am_01j06ytn18ejftedz6dyhz2b15": {
+            "post": {
+                "description": "Query real-time travel data from Dappier, including flight details, weather, news, and deals.",
+                "operationId": "getRealTimeTravelData",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/QueryRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful response with real-time travel data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/QueryResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "ApiKeyBearer": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "QueryRequest": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "description": "A natural language query for real-time travel information. Example: 'What's the weather in Paris?' or 'Find me the best flight deals to Tokyo.'"
+                    }
+                },
+                "required": ["query"]
+            },
+            "QueryResponse": {
+                "type": "object",
+                "properties": {
+                    "response": {
+                        "type": "string",
+                        "description": "The response from Dappier's AI model based on the query."
+                    }
+                },
+                "required": ["response"]
+            }
+        },
+        "securitySchemes": {
+            "ApiKeyBearer": {
+                "type": "http",
+                "scheme": "bearer"
+            }
+        }
+    }
+}
+```
+
+---
+
+## Step 6: Test and Iterate
+
+1. Use the OpenAI GPT interface to test queries like:
+    - "Find the best flight and hotel deal to Miami next weekend."
+    - "Suggest a 5-day itinerary for Bali."
+2. Ensure responses are **accurate and formatted correctly**.
+3. Refine GPT behavior by adjusting **instructions** as needed.
+
+---
+
+## Step 7: Deploy and Share
+
+Once finalized, you can:
+
+-   **Share your GPT** publicly or privately
+-   **Embed it in travel applications**
+-   **Continuously refine it** based on feedback
+
+**Sharing Options:**
+
+-   **Private**: Only accessible to you
+-   **Unlisted**: Accessible via a direct link
+-   **Public**: Available in the GPT Store
+
+---
+
+## Privacy & Security
+
+-   All API interactions must comply with **OpenAI and Dappier’s terms**.
+-   Keep your API key **secure** and do not expose it publicly.
+-   Review Dappier’s [Privacy Policy](https://dappier.com/privacy-policy/) for more details.
+
+---
+
+## Conclusion
+
+You have now successfully created a **Dappier Travel Concierge GPT**, integrating real-time travel data for smart recommendations. Keep refining it for better user experience!

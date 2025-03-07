@@ -46,6 +46,73 @@ Using the Real Time Stock Analysis is simple and intuitive. Follow the steps bel
 
 ---
 
+## **SmartFlow Actions**
+
+This agent is designed to provide users with a comprehensive stock market analysis, including financial news and market trends, to help them make informed investment decisions. Below are the SmartFlow actions configured for this agent:
+
+### **1. Collect Sector Interest**
+
+-   **Action Type:** Get user input (text)
+-   **Prompt:** "Which sector are you interested in investing in?"
+-   **Variable:** `sector_name`
+-   **Functionality:** This step collects the user’s preferred investment sector and stores it in the variable `sector_name`.
+
+### **2. Collect User Email Address**
+
+-   **Action Type:** Get user input (text)
+-   **Prompt:** "Please provide your email address to send a detailed analysis."
+-   **Variable:** `user_email`
+-   **Functionality:** The agent asks the user to enter their email address, which is stored in `user_email` for sending the final report.
+
+### **3. Fetch Stock Market Trends**
+
+-   **Action Type:** Make REST API call
+-   **Endpoint:** `https://api.dappier.com/app/aimodel/am_01j06ytn18ejftedz6dyhz2b15`
+-   **Save Response To:** `stock_market_trends`
+-   **Functionality:** This step queries the Dappier API to retrieve real-time stock market trends, which are stored in `stock_market_trends` for further analysis.
+
+### **4. Fetch Financial News**
+
+-   **Action Type:** Make REST API call
+-   **Endpoint:** `https://api.dappier.com/app/aimodel/am_01j06ytn18ejftedz6dyhz2b15`
+-   **Save Response To:** `financial_news`
+-   **Functionality:** This step queries the Dappier API to fetch the latest financial news, which is stored in `financial_news` for detailed stock analysis.
+
+### **5. Generate Stock Analysis and Trading Strategy**
+
+-   **Action Type:** Invoke `o3-mini`
+-   **Prompt:**
+
+```
+You are an expert stock trader analyst who creates a detailed trading strategy and provides the top stocks to invest in based on financial news and market trends.
+
+**Financial News:**
+`{{financial_news}}`
+
+**Stock Market Trends:**
+`{{stock_market_trends}}`
+
+**Output:**
+The output should be formatted as HTML for emails.
+```
+
+-   **Save Response To:** `assistant_response`
+-   **Functionality:** The AI processes real-time financial news and stock market trends to generate a structured trading strategy, including top stock recommendations. The response is formatted as an HTML email for easy readability.
+
+### **6. Send Email with Stock Analysis**
+
+-   **Action Type:** Send Email
+-   **Recipient:** `user_email`
+-   **Email Content:** `assistant_response`
+-   **Functionality:** The formatted HTML stock market analysis is sent to the user’s provided email address.
+
+### **7. Display Confirmation Message**
+
+-   **Action Type:** Output result
+-   **Message:** "Please check your inbox for the detailed trading strategy."
+-   **Format:** Auto-format under the heading **Email sent to - `user_email`**
+-   **Functionality:** This step confirms to the user that the stock analysis report has been successfully sent to their email.
+
 ## Example Prompts
 
 Here are some example prompts to help you get started with the Real Time Stock Analysis:

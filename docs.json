@@ -1,193 +1,196 @@
 {
-  "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
-  "name": "Dappier API Guide",
-  "colors": {
-    "primary": "#8353E2",
-    "light": "#AB8AEB",
-    "dark": "#8353E2"
-  },
-  "favicon": "/dappier_icon.png",
-  "navigation": {
-    "tabs": [
-      {
-        "tab": "Home",
-        "groups": [
-          {
-            "group": "Get Started",
-            "pages": ["quickstart"]
-          },
-          {
-            "group": "Developers",
-            "pages": [
-              "rag-marketplace",
-              "real-time-data-api",
-              "real-time-data-openai-schema"
+    "$schema": "https://mintlify.com/docs.json",
+    "theme": "mint",
+    "name": "Dappier API Guide",
+    "colors": {
+        "primary": "#8353E2",
+        "light": "#AB8AEB",
+        "dark": "#8353E2"
+    },
+    "favicon": "/dappier_icon.png",
+    "navigation": {
+        "tabs": [
+            {
+                "tab": "Home",
+                "groups": [
+                    {
+                        "group": "Get Started",
+                        "pages": ["quickstart"]
+                    },
+                    {
+                        "group": "Developers",
+                        "pages": [
+                            "rag-marketplace",
+                            "real-time-data-api",
+                            "real-time-data-openai-schema"
+                        ]
+                    },
+                    {
+                        "group": "Publishers",
+                        "pages": [
+                            "publish-and-monetize",
+                            "configure-ask-ai",
+                            "configure-ai-agent",
+                            "ai_recommendations_api",
+                            "embed-widgets",
+                            "bot-deterrence"
+                        ]
+                    }
+                ]
+            },
+            {
+                "tab": "API Reference",
+                "groups": [
+                    {
+                        "group": "Developer APIs",
+                        "pages": ["api-reference/endpoint/real-time-data"]
+                    },
+                    {
+                        "group": "Publisher APIs",
+                        "pages": ["api-reference/endpoint/ai-recommendations"]
+                    }
+                ]
+            },
+            {
+                "tab": "Integrations",
+                "groups": [
+                    {
+                        "group": "Integrations",
+                        "pages": ["integrations/introduction-integration"]
+                    },
+                    {
+                        "group": "SDKs",
+                        "pages": [
+                            "integrations/python-sdk",
+                            "integrations/go-sdk"
+                        ]
+                    },
+                    {
+                        "group": "Platform Integrations",
+                        "pages": [
+                            "integrations/agent-ai-integration",
+                            "integrations/anthropic-mcp-integration",
+                            "integrations/camel-integration",
+                            "integrations/langchain-integration",
+                            "integrations/open-ai-gpt-integration",
+                            "integrations/replit-integration",
+                            "integrations/zapier-integration"
+                        ]
+                    }
+                ]
+            },
+            {
+                "tab": "Cookbook",
+                "groups": [
+                    {
+                        "group": "General",
+                        "pages": [
+                            "cookbook/recipes/dappier-ai-recommendations",
+                            "cookbook/recipes/dappier-real-time-data"
+                        ]
+                    },
+                    {
+                        "group": "Agent.ai",
+                        "pages": [
+                            "cookbook/recipes/agent-ai-create-dappier-agent",
+                            "cookbook/recipes/agent-ai-dynamic-travel-planner",
+                            "cookbook/recipes/agent-ai-real-time-stock-market-analysis"
+                        ]
+                    },
+                    {
+                        "group": "Anthropic MCP",
+                        "pages": [
+                            "cookbook/recipes/anthropic-mcp-claude-integration",
+                            "cookbook/recipes/anthropic-mcp-5ire-integration",
+                            "cookbook/recipes/anthropic-mcp-cursor-integration"
+                        ]
+                    },
+                    {
+                        "group": "CAMEL",
+                        "pages": [
+                            "cookbook/recipes/camel-dynamic-travel-planner-role-playing"
+                        ]
+                    },
+                    {
+                        "group": "LangChain",
+                        "pages": [
+                            "cookbook/recipes/langchain-real-time-market-strategyzer",
+                            "cookbook/recipes/langchain-sports-news-summarizer"
+                        ]
+                    },
+                    {
+                        "group": "OpenAI",
+                        "pages": [
+                            "cookbook/recipes/open-ai-dappier-travel-concierge",
+                            "cookbook/recipes/open-ai-dappier-stock-analyst",
+                            "cookbook/recipes/open-ai-dappier-news-companion"
+                        ]
+                    },
+                    {
+                        "group": "Zapier",
+                        "pages": [
+                            "cookbook/recipes/zapier-daily-news-letter",
+                            "cookbook/recipes/zapier-my-ai-news-agent",
+                            "cookbook/recipes/zapier-stock-market-alerts",
+                            "cookbook/recipes/zapier-travel-itinerary"
+                        ]
+                    }
+                ]
+            }
+        ],
+        "global": {
+            "anchors": [
+                {
+                    "anchor": "Playground",
+                    "href": "https://docs.dappier.com/api-reference/endpoint/real-time-data",
+                    "icon": "play"
+                },
+                {
+                    "anchor": "Blog",
+                    "href": "https://dappier.com/blog",
+                    "icon": "blogger"
+                },
+                {
+                    "anchor": "Community",
+                    "href": "https://discord.com/invite/sSG77qEUSU",
+                    "icon": "discord"
+                },
+                {
+                    "anchor": "Talk to Us",
+                    "href": "https://dappier.com/demo/",
+                    "icon": "comments"
+                }
             ]
-          },
-          {
-            "group": "Publishers",
-            "pages": [
-              "publish-and-monetize",
-              "configure-ask-ai",
-              "configure-ai-agent",
-              "ai_recommendations_api",
-              "embed-widgets",
-              "bot-deterrence"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "API Reference",
-        "groups": [
-          {
-            "group": "Developer APIs",
-            "pages": ["api-reference/endpoint/real-time-data"]
-          },
-          {
-            "group": "Publisher APIs",
-            "pages": ["api-reference/endpoint/ai-recommendations"]
-          }
-        ]
-      },
-      {
-        "tab": "Integrations",
-        "groups": [
-          {
-            "group": "Developers",
-            "pages": ["integrations"]
-          },
-          {
-            "group": "Integrations",
-            "pages": ["integrations/introduction-integration"]
-          },
-          {
-            "group": "SDKs",
-            "pages": ["integrations/python-sdk", "integrations/go-sdk"]
-          },
-          {
-            "group": "Platform Integrations",
-            "pages": [
-              "integrations/agent-ai-integration",
-              "integrations/anthropic-mcp-integration",
-              "integrations/camel-integration",
-              "integrations/langchain-integration",
-              "integrations/open-ai-gpt-integration",
-              "integrations/replit-integration",
-              "integrations/zapier-integration"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "Cookbook",
-        "groups": [
-          {
-            "group": "General",
-            "pages": [
-              "cookbook/recipes/ai-recommendations",
-              "cookbook/recipes/real-time-data"
-            ]
-          },
-          {
-            "group": "Agent.ai",
-            "pages": [
-              "cookbook/recipes/agent-ai-create-dappier-agent",
-              "cookbook/recipes/agent-ai-dynamic-travel-planner",
-              "cookbook/recipes/agent-ai-real-time-stock-market-analysis"
-            ]
-          },
-          {
-            "group": "CAMEL",
-            "pages": [
-              "cookbook/recipes/camel-dynamic-travel-planner-role-playing"
-            ]
-          },
-          {
-            "group": "LangChain",
-            "pages": [
-              "cookbook/recipes/langchain-real-time-market-strategyzer",
-              "cookbook/recipes/langchain-sports-news-summarizer"
-            ]
-          },
-          {
-            "group": "MCP/Anthropic",
-            "pages": [
-              "cookbook/recipes/anthropic-mcp-dappier",
-              "cookbook/recipes/dappier-mcp-5ire",
-              "cookbook/recipes/dappier-mcp-cursor"
-            ]
-          },
-          {
-            "group": "OpenAI",
-            "pages": ["cookbook/recipes/open-ai-create-custom-gpt"]
-          },
-          {
-            "group": "Zapier",
-            "pages": [
-              "cookbook/recipes/zapier-daily-news-letter",
-              "cookbook/recipes/zapier-my-ai-news-agent",
-              "cookbook/recipes/zapier-stock-market-alerts",
-              "cookbook/recipes/zapier-travel-itinerary"
-            ]
-          }
-        ]
-      }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Playground",
-          "href": "https://docs.dappier.com/api-reference/endpoint/real-time-data",
-          "icon": "play"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://dappier.com/blog",
-          "icon": "blogger"
-        },
-        {
-          "anchor": "Community",
-          "href": "https://discord.com/invite/sSG77qEUSU",
-          "icon": "discord"
-        },
-        {
-          "anchor": "Talk to Us",
-          "href": "https://dappier.com/demo/",
-          "icon": "comments"
         }
-      ]
+    },
+    "logo": {
+        "light": "/logo/dappier_logo.png",
+        "dark": "/logo/dappier_logo_white.png"
+    },
+    "navbar": {
+        "links": [
+            {
+                "label": "Support",
+                "href": "mailto:aibuilders@dappier.com"
+            },
+            {
+                "label": "Dashboard",
+                "href": "https://platform.dappier.com"
+            }
+        ],
+        "primary": {
+            "type": "button",
+            "label": "View on GitHub",
+            "href": "https://github.com/DappierAI"
+        }
+    },
+    "footer": {
+        "socials": {
+            "instagram": "https://www.instagram.com/dappierai",
+            "twitter": "https://twitter.com/dappierai",
+            "linkedin": "https://www.linkedin.com/company/dappier",
+            "discord": "https://discord.com/invite/sSG77qEUSU",
+            "github": "https://github.com/DappierAI"
+        }
     }
-  },
-  "logo": {
-    "light": "/logo/dappier_logo.png",
-    "dark": "/logo/dappier_logo_white.png"
-  },
-  "navbar": {
-    "links": [
-      {
-        "label": "Support",
-        "href": "mailto:support@dappier.com"
-      },
-      {
-        "label": "Dashboard",
-        "href": "https://platform.dappier.com"
-      }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "View on GitHub",
-      "href": "https://github.com/DappierAI"
-    }
-  },
-  "footer": {
-    "socials": {
-      "instagram": "https://www.instagram.com/dappierai",
-      "twitter": "https://twitter.com/dappierai",
-      "linkedin": "https://www.linkedin.com/company/dappier",
-      "discord": "https://discord.com/invite/sSG77qEUSU",
-      "github": "https://github.com/DappierAI"
-    }
-  }
 }

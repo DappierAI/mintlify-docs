@@ -1,0 +1,295 @@
+---
+title: "🌎 Build Dappier News & Media Companion using OpenAI's Custom GPT"
+---
+
+## Introduction
+
+This guide walks you through setting up **Dappier News & Media Companion**, a custom OpenAI GPT model that integrates with Dappier's [AI Recommendations API](https://docs.dappier.com/api-reference/endpoint/ai-recommendations) to dynamically process and analyze news content. This GPT retrieves AI-powered articles, summarizes key insights, and provides trend analysis across various media categories.
+
+## Prerequisites
+
+Before you begin, ensure you have:
+
+-   An OpenAI account
+-   API access to create and configure custom GPTs
+-   A **Dappier API Key** (Get it from [Dappier API Keys](https://platform.dappier.com/profile/api-keys))
+
+---
+
+## Step 1: Access the GPT Builder
+
+1. Navigate to OpenAI’s [Custom GPT Page](https://chat.openai.com/gpts/editor)
+2. Log in to your OpenAI account
+3. Click on **"Create a GPT"** to begin customization
+
+---
+
+## Step 2: Define GPT Characteristics
+
+### Name
+
+Set the GPT’s name to **Dappier News & Media Companion**
+
+### Description
+
+Use the following description:
+
+> Processes AI-recommended news to summarize, analyze, and react to content dynamically.
+
+### Instructions
+
+This GPT interacts with the **Dappier AI Recommendations API** to retrieve and process AI-powered news content. Upon receiving data from the API, it can perform multiple actions, including:
+
+-   **Summarization**: Condenses articles into key points for quick understanding.
+-   **Reactions & Insights**: Provides top reactions and expert insights based on the article content.
+-   **Trend Analysis**: Identifies trending topics across different sources and highlights patterns.
+-   **Comparative Analysis**: Compares multiple articles on the same topic to provide a well-rounded view.
+-   **Source Evaluation**: Highlights credibility and relevance based on metadata such as publication date, author, and source domain.
+
+Users can specify the type of insights they want, such as **trending news, semantic matches, or the latest articles**. The GPT adapts its response based on API parameters, ensuring accurate and valuable output. It prioritizes **clarity, factual reporting, and relevance** while avoiding speculation.
+
+---
+
+## Step 3: Configure API Integration
+
+### API Endpoint
+
+Your GPT will communicate with the **Dappier AI Recommendations API** at:
+
+```
+https://api.dappier.com/app/datamodel/{datamodel_id}
+```
+
+### Authentication
+
+Use **Bearer Token** authentication. Include the API key in the `Authorization` header:
+
+```
+Authorization: Bearer <your_api_key>
+```
+
+### Request Body Format
+
+Send queries in JSON format:
+
+```json
+{
+    "query": "Summarize the latest trends in sustainability and green living."
+}
+```
+
+### Example API Request (cURL)
+
+```sh
+curl -X POST "https://api.dappier.com/app/datamodel/dm_01j0pb465keqmatq9k83dthx34" \
+-H "Authorization: Bearer YOUR_API_KEY" \
+-H "Content-Type: application/json" \
+-d '{"query": "Summarize the latest trends in sustainability and green living."}'
+```
+
+---
+
+## Step 4: Configure Capabilities
+
+### Sample Conversation Starters
+
+-   **Give me a quick summary of today's top sports news.**
+-   **What’s trending in lifestyle right now? Summarize the latest insights.**
+-   **Find and summarize the latest expert advice on pet care.**
+-   **Show me the most recent updates on sustainability and green living.**
+
+---
+
+## Step 5: Import API Schema
+
+To ensure proper interaction, import the **OpenAPI schema**:
+
+```json
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "Dappier AI Recommendations API",
+        "description": "Provides AI-powered content recommendations based on structured data models. Returns a list of articles with titles, summaries, images, and source URLs.",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "https://api.dappier.com",
+            "description": "Dappier AI API Server"
+        }
+    ],
+    "paths": {
+        "/app/datamodel/{datamodel_id}": {
+            "post": {
+                "operationId": "getRecommendations",
+                "summary": "Fetch AI-powered recommendations",
+                "description": "Retrieves AI-powered recommendations based on structured data models. The response includes articles with metadata such as title, author, publication date, source, and relevance score.",
+                "parameters": [
+                    {
+                        "name": "datamodel_id",
+                        "in": "path",
+                        "required": true,
+                        "description": "The unique ID of the data model to use for recommendations. Each ID starts with 'dm_'.\n\nAvailable Data Models include:\n- Sports News: Covers real-time updates from top sports sources.\n- Lifestyle News: Offers lifestyle trends and analysis.\n- iHeartDogs & iHeartCats AI: Provides expert pet care insights.\n- GreenMonster: Focuses on eco-conscious living.\n- WISH-TV AI: Covers a variety of news categories.\n\nDefaults to 'dm_01j0pb465keqmatq9k83dthx34'. Full list at: https://marketplace.dappier.com/marketplace",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "dm_01j0pb465keqmatq9k83dthx34",
+                                "dm_01j0q82s4bfjmsqkhs3ywm3x6y",
+                                "dm_01j1sz8t3qe6v9g8ad102kvmqn",
+                                "dm_01j1sza0h7ekhaecys2p3y0vmj",
+                                "dm_01j5xy9w5sf49bm6b1prm80m27",
+                                "dm_01jagy9nqaeer9hxx8z1sk1jx6"
+                            ]
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "query": {
+                                        "type": "string",
+                                        "description": "The user-provided input string for AI recommendations across multiple domains."
+                                    },
+                                    "similarity_top_k": {
+                                        "type": "integer",
+                                        "default": 9,
+                                        "description": "The number of top articles to retrieve based on similarity."
+                                    },
+                                    "ref": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "description": "The site domain where AI recommendations should be prioritized."
+                                    },
+                                    "num_articles_ref": {
+                                        "type": "integer",
+                                        "default": 0,
+                                        "description": "The minimum number of articles to return from the specified reference domain (`ref`)."
+                                    },
+                                    "search_algorithm": {
+                                        "type": "string",
+                                        "enum": [
+                                            "most_recent",
+                                            "semantic",
+                                            "most_recent_semantic",
+                                            "trending"
+                                        ],
+                                        "default": "most_recent",
+                                        "description": "The search algorithm to use for retrieving articles."
+                                    }
+                                },
+                                "required": ["query"]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "A list of recommended articles.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "title": {
+                                                "type": "string",
+                                                "description": "The title of the article."
+                                            },
+                                            "author": {
+                                                "type": "string",
+                                                "description": "The author of the article."
+                                            },
+                                            "published_on": {
+                                                "type": "string",
+                                                "format": "date-time",
+                                                "description": "The publication date of the article."
+                                            },
+                                            "source": {
+                                                "type": "string",
+                                                "description": "The name of the source website."
+                                            },
+                                            "source_domain": {
+                                                "type": "string",
+                                                "description": "The domain of the source website."
+                                            },
+                                            "url": {
+                                                "type": "string",
+                                                "format": "uri",
+                                                "description": "The full URL of the article."
+                                            },
+                                            "image_url": {
+                                                "type": "string",
+                                                "format": "uri",
+                                                "description": "The thumbnail image URL of the article."
+                                            },
+                                            "summary": {
+                                                "type": "string",
+                                                "description": "A brief summary of the article."
+                                            },
+                                            "score": {
+                                                "type": "number",
+                                                "description": "The relevance score of the article."
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request parameters."
+                    },
+                    "404": {
+                        "description": "Data model not found."
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+---
+
+## Step 6: Test and Iterate
+
+1. Use the OpenAI GPT interface to test queries like:
+    - "Summarize today's top financial news."
+    - "Compare multiple news sources on the same political topic."
+2. Ensure responses are **accurate and formatted correctly**.
+3. Refine GPT behavior by adjusting **instructions** as needed.
+
+---
+
+## Step 7: Deploy and Share
+
+Once finalized, you can:
+
+-   **Share your GPT** publicly or privately
+-   **Embed it in media applications**
+-   **Continuously refine it** based on feedback
+
+**Sharing Options:**
+
+-   **Private**: Only accessible to you
+-   **Unlisted**: Accessible via a direct link
+-   **Public**: Available in the GPT Store
+
+---
+
+## Privacy & Security
+
+-   All API interactions must comply with **OpenAI and Dappier’s terms**.
+-   Keep your API key **secure** and do not expose it publicly.
+-   Review Dappier’s [Privacy Policy](https://dappier.com/privacy-policy/) for more details.
+
+---
+
+## Conclusion
+
+You have now successfully created a **Dappier News & Media Companion GPT**, integrating real-time AI-powered news recommendations for summarization, insights, and analysis. Keep refining it to enhance user experience!
