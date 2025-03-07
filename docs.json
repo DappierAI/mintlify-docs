@@ -55,10 +55,6 @@
                 "tab": "Integrations",
                 "groups": [
                     {
-                        "group": "Developers",
-                        "pages": ["integrations"]
-                    },
-                    {
                         "group": "Integrations",
                         "pages": ["integrations/introduction-integration"]
                     },
