@@ -50,6 +50,76 @@ Using the Dynamic Travel Planner is simple and intuitive. Follow the steps below
 
 ---
 
+## SmartFlow Actions
+
+This agent is designed to provide users with a dynamic and personalized travel itinerary based on real-time data. Below are the SmartFlow actions configured for this agent:
+
+### **1. Collect Destination Input**
+
+-   **Action Type:** Get user input (text)
+-   **Prompt:** "Where would you like to go?"
+-   **Variable:** `destination_city`
+-   **Functionality:** This step collects the user's desired travel destination and stores it in the variable `destination_city`.
+
+### **2. Fetch Local News for Destination**
+
+-   **Action Type:** Make REST API call
+-   **Endpoint:** `https://api.dappier.com/app/aimodel/am_01j06ytn18ejftedz6dyhz2b15`
+-   **Save Response To:** `local_news`
+-   **Functionality:** This step queries the Dappier API to retrieve real-time local news for the destination specified by the user. The response is saved in `local_news` for further use.
+
+### **3. Collect Trip Start Date**
+
+-   **Action Type:** Get user input (text)
+-   **Prompt:** "When would you like to leave for `{{destination_city}}`?"
+-   **Variable:** `trip_start_date`
+-   **Functionality:** The agent prompts the user to specify their preferred departure date for the trip, storing it in the variable `trip_start_date`.
+
+### **4. Collect Trip Duration**
+
+-   **Action Type:** Get user input (number)
+-   **Prompt:** "How long will this trip be? (in number of days)"
+-   **Variable:** `trip_duration`
+-   **Functionality:** The agent asks the user to enter the trip duration in days, which is then stored in `trip_duration`.
+
+### **5. Fetch Real-Time Weather Forecast**
+
+-   **Action Type:** Make REST API call
+-   **Endpoint:** `https://api.dappier.com/app/aimodel/am_01j06ytn18ejftedz6dyhz2b15`
+-   **Save Response To:** `weather_forecast`
+-   **Functionality:** This step queries the Dappier API to retrieve a real-time weather forecast for the specified destination city. The weather forecast data is stored in `weather_forecast` for itinerary customization.
+
+### **6. Generate Travel Itinerary with AI**
+
+-   **Action Type:** Invoke `gpt-4o-mini`
+-   **Prompt:**
+
+```
+You are a helpful dynamic travel planning assistant. Follow these steps:
+
+**Display Local News:**
+Format and display today's local news for the `{{destination_city}}`:
+`{{local_news}}`
+
+**Design the Itinerary:**
+Generate a `{{trip_duration}}`-day travel itinerary for `{{destination_city}}`, tailored to the real-time weather forecast starting from `{{trip_start_date}}`. Use the below weather forecast information to create the customized itinerary:
+
+`{{weather_forecast}}`
+
+**Output:**
+Present local news along with a detailed itinerary including dates, timing, activities, and weather forecast for each day.
+```
+
+-   **Save Response To:** `assistant_response`
+-   **Functionality:** The AI processes user inputs (`destination_city`, `trip_start_date`, `trip_duration`, and `weather_forecast`) to generate a travel itinerary. It incorporates real-time local news and weather conditions to offer a fully customized trip plan.
+
+### **7. Display Final Output**
+
+-   **Action Type:** Output result
+-   **Variable:** `assistant_response`
+-   **Format:** Auto-format under the heading **Output**
+-   **Functionality:** The generated itinerary along with local news is presented to the user in a well-structured format.
+
 ## Example Prompts
 
 Here are some example prompts to help you get started with the Dynamic Travel Planner:
