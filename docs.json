@@ -124,7 +124,11 @@
                     },
                     {
                         "group": "OpenAI",
-                        "pages": ["cookbook/recipes/open-ai-create-custom-gpt"]
+                        "pages": [
+                            "cookbook/recipes/open-ai-dappier-travel-concierge",
+                            "cookbook/recipes/open-ai-dappier-stock-analyst",
+                            "cookbook/recipes/open-ai-dappier-news-companion"
+                        ]
                     },
                     {
                         "group": "Zapier",
