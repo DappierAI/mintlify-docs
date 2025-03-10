@@ -71,6 +71,7 @@
                             "integrations/agent-ai-integration",
                             "integrations/anthropic-mcp-integration",
                             "integrations/camel-integration",
+                            "integrations/cursor-mcp-integration",
                             "integrations/langchain-integration",
                             "integrations/open-ai-gpt-integration",
                             "integrations/replit-integration",
@@ -101,8 +102,7 @@
                         "group": "Anthropic MCP",
                         "pages": [
                             "cookbook/recipes/anthropic-mcp-claude-integration",
-                            "cookbook/recipes/anthropic-mcp-5ire-integration",
-                            "cookbook/recipes/anthropic-mcp-cursor-integration"
+                            "cookbook/recipes/anthropic-mcp-5ire-integration"
                         ]
                     },
                     {
