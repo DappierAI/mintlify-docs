@@ -1,0 +1,97 @@
+---
+title: "⚡ Automate Sports Highlights via Email Using Zapier and Dappier"
+---
+
+Dappier’s **Real-Time Sports Data Model** allows you to fetch **live sports highlights** and automate updates via **Zapier and Gmail**. This guide walks you through creating a **Zap** that:
+
+-   Schedules the Zap to run at a specific time daily using Zapier Scheduler.
+-   Fetches real-time sports highlights using Dappier’s Sports Data Model.
+-   Sends the sports update via email automatically.
+
+## **Watch the Tutorial**
+
+To see the full setup process in action, watch the video below:
+
+<iframe
+    src="https://drive.google.com/file/d/13odRKBw3W279j8e0oIiepCyk4SyDXqRl/preview"
+    width="100%"
+    height="400"
+    allowfullscreen
+></iframe>
+
+---
+
+## **Prerequisites**
+
+Before starting, ensure you have:
+
+-   A **[Zapier account](https://zapier.com)**
+-   A **Dappier API Key** (Generate it from [Dappier Platform](https://platform.dappier.com) under **Settings > Profile > API Keys**)
+-   A **Gmail account** (or any Zapier-supported email service)
+
+---
+
+## **Step 1: Create a New Zap**
+
+1. **Log in to Zapier** and click **Create a Zap**.
+2. **Select a Trigger**:
+    - Search for **"Schedule by Zapier"** and set it to run **daily**.
+3. Click **Continue**, then **Test Trigger** to confirm.
+
+---
+
+## **Step 2: Fetch Sports News**
+
+1. Click the **"+"** icon to add another action.
+2. Search for **Dappier** and select it.
+3. Choose **"Get Sports News."**
+4. Configure the fields:
+    - **Query**: `"Today's sports highlights"`
+5. Click **Continue**, then **Test the Step** to retrieve sports news.
+
+---
+
+## **Step 3: Send Sports Highlights via Email**
+
+1. Click the **"+"** icon to add an action.
+2. Search for **"Gmail"** and select it.
+3. Choose **"Send Email"** as the action event.
+4. Configure the fields:
+
+    - **Recipient**: `{{User Email}}`
+    - **Subject**: `"Latest Sports Highlights"`
+    - **Body**:
+
+        ```plaintext
+        Hello,
+
+        Here are today's top sports highlights:
+
+        - ⚽ **Key Highlights**: {{Dappier Highlights Output}}
+
+        Stay updated with the latest sports news!
+
+        Best,
+        [Your Sports Assistant]
+        ```
+
+5. Click **Continue**, then **Test the Step**.
+
+---
+
+## **Final Step: Publish Your Zap**
+
+1. Click **Publish Zap** to enable **automated sports updates**.
+2. Your Zap will now **run daily**, fetching sports highlights and sending email alerts automatically.
+
+---
+
+## **Summary**
+
+✅ **Automate** daily sports alerts with Zapier.
+
+✅ **Retrieve real-time sports updates** using Dappier.
+
+✅ **Send sports news straight to your inbox** without manual effort.
+
+This **Zap** ensures you never miss the latest sports highlights!

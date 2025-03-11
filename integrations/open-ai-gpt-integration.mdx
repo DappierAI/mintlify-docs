@@ -9,71 +9,24 @@ OpenAI’s Custom GPT models allow developers to create AI assistants tailored t
 
 Explore a wide range of data models in our marketplace at [marketplace.dappier.com](https://marketplace.dappier.com/marketplace).
 
-## Dappier APIs
-
-Dappier provides AI-driven APIs for real-time search and AI-powered recommendations. These APIs enable users to access the latest information from trusted sources and receive relevant recommendations based on their queries.
-
-### **Real-Time Search API**
-
-The Real-Time Search API allows users to fetch real-time information from the web, financial news, and stock markets using AI models. The response varies based on the AI model ID used.
-
-#### **API Endpoint**
-
-```plaintext
-POST https://api.dappier.com/app/aimodel/{ai_model_id}
-```
-
-Explore a wide range of AI model ids in our marketplace at [marketplace.dappier.com](https://marketplace.dappier.com/marketplace).
-
-#### **Headers**
-
--   `Authorization`: Bearer token for authentication
--   `Content-Type`: `application/json`
-
-#### **Input Payload**
-
--   `query` (string, required): The search query for retrieving real-time data.
-
-#### Output Response
-
-Response to the original user query.
-
----
-
-### **AI Recommendations API**
-
-The AI Recommendations API provides personalized content suggestions based on the user's query and selected data model. It uses various search algorithms to return relevant articles.
-
-#### **API Endpoint**
-
-```plaintext
-POST https://api.dappier.com/app/datamodel/{datamodel_id}
-```
-
-Explore a wide range of AI model ids in our marketplace at [marketplace.dappier.com](https://marketplace.dappier.com/marketplace).
-
-#### **Headers**
-
--   `Authorization`: Bearer token for authentication
--   `Content-Type`: `application/json`
-
-#### **Input Payload**
-
--   `query` (string, required): The search query for recommendations.
--   `similarity_top_k` (int, optional): The number of top results to retrieve. Defaults to 9.
--   `ref` (string, optional): The reference domain to prioritize content from.
--   `num_articles_ref` (int, optional): The minimum number of articles from the reference domain. Defaults to 0.
--   `search_algorithm` (string, optional): Defines the retrieval method (`"most_recent"`, `"semantic"`, `"trending"`, etc.). Defaults to `"most_recent"`.
-
-#### Output Response
-
-Returns a list of AI-generated recommendations, including titles, summaries, source URLs, authors, publication dates and more.
-
----
-
 ## 🌎 Build OpenAI Custom GPT using Dappier Real Time Data API
 
 This guide will walk you through the step-by-step process of building a custom OpenAI GPT model that integrates with the Dappier Real Time Data API. By following this tutorial, even a beginner can set up a custom GPT to fetch real-time data, summarize key information, and generate insightful reports.
+
+## Watch the Video Guide
+
+If you prefer a visual walkthrough, check out the accompanying video guide below:
+
+<iframe
+    width="560"
+    height="315"
+    src="https://www.youtube.com/embed/G2hJ41pgJTg?si=HOmzkVEMGV59RN2w"
+    title="YouTube video player"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    referrerpolicy="strict-origin-when-cross-origin"
+    allowfullscreen
+></iframe>
 
 ## Prerequisites
 
