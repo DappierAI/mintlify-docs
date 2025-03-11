@@ -10,13 +10,24 @@ This guide walks you through setting up **Dappier Stock & Financial News Analyst
 
 If you prefer a visual walkthrough, check out the accompanying video guide below:
 
+<iframe
+  width="560"
+  height="315"
+  src="https://www.youtube.com/embed/PQW3RB2cobU?si=YFNLQfmMKtrONXfQ"
+  title="YouTube video player"
+  frameborder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  referrerpolicy="strict-origin-when-cross-origin"
+  allowfullscreen
+></iframe>
+
 ## Prerequisites
 
 Before you begin, ensure you have:
 
--   An OpenAI account
--   API access to create and configure custom GPTs
--   A **Dappier API Key** (Get it from [Dappier API Keys](https://platform.dappier.com/profile/api-keys))
+- An OpenAI account
+- API access to create and configure custom GPTs
+- A **Dappier API Key** (Get it from [Dappier API Keys](https://platform.dappier.com/profile/api-keys))
 
 ---
 
@@ -44,17 +55,17 @@ Use the following description:
 
 This GPT provides **structured financial insights** by analyzing:
 
--   **Market trends**
--   **Stock prices**
--   **Financial news**
+- **Market trends**
+- **Stock prices**
+- **Financial news**
 
 When answering financial queries, it:
 
--   **Reformulates prompts** to ensure comprehensive investment insights before calling the Dappier API.
--   **Ensures all queries contain a stock ticker symbol** (required by the Dappier API).
--   **Requests all relevant market trends and financial data** before providing insights.
--   **Prioritizes concise, actionable insights** rather than generic news updates.
--   **Avoids making direct investment recommendations** but helps users interpret data effectively.
+- **Reformulates prompts** to ensure comprehensive investment insights before calling the Dappier API.
+- **Ensures all queries contain a stock ticker symbol** (required by the Dappier API).
+- **Requests all relevant market trends and financial data** before providing insights.
+- **Prioritizes concise, actionable insights** rather than generic news updates.
+- **Avoids making direct investment recommendations** but helps users interpret data effectively.
 
 The GPT will not process API queries unless the **required ticker information** is included.
 
@@ -84,7 +95,7 @@ Send queries in JSON format:
 
 ```json
 {
-    "query": "Analyze stock trends of AAPL and TSLA with the latest market insights."
+  "query": "Analyze stock trends of AAPL and TSLA with the latest market insights."
 }
 ```
 
@@ -103,14 +114,14 @@ curl -X POST "https://api.dappier.com/app/aimodel/am_01j749h8pbf7ns8r1bq9s2evrh"
 
 ### Sample Conversation Starters
 
--   **Create an investment strategy by analyzing stock trends of the Big 7 and financial news (TSLA, AAPL, NVDA, etc.).**
--   **What are the latest market trends impacting major stocks like AAPL and MSFT?**
--   **How should I adjust my portfolio based on current financial news for TSLA and NVDA?**
--   **Analyze today's financial news and suggest key insights for AMZN and META.**
--   **How are the Big 7 stocks (AAPL, MSFT, GOOGL, AMZN, NVDA, TSLA, META) performing this week?**
--   **What sectors are showing strong momentum based on recent stock trends, including SPY and QQQ?**
--   **Can you summarize key takeaways from today's market movement for TSLA and AMZN?**
--   **Which stocks (AAPL, NVDA, TSLA) are gaining the most from recent economic policy changes?**
+- **Create an investment strategy by analyzing stock trends of the Big 7 and financial news (TSLA, AAPL, NVDA, etc.).**
+- **What are the latest market trends impacting major stocks like AAPL and MSFT?**
+- **How should I adjust my portfolio based on current financial news for TSLA and NVDA?**
+- **Analyze today's financial news and suggest key insights for AMZN and META.**
+- **How are the Big 7 stocks (AAPL, MSFT, GOOGL, AMZN, NVDA, TSLA, META) performing this week?**
+- **What sectors are showing strong momentum based on recent stock trends, including SPY and QQQ?**
+- **Can you summarize key takeaways from today's market movement for TSLA and AMZN?**
+- **Which stocks (AAPL, NVDA, TSLA) are gaining the most from recent economic policy changes?**
 
 ---
 
@@ -120,52 +131,52 @@ To ensure proper interaction, import the **OpenAPI schema**:
 
 ```json
 {
-    "openapi": "3.1.0",
-    "info": {
-        "title": "Dappier Real-Time Stock & Financial News Analyst",
-        "description": "Fetch real-time AI stock and financial insights with web search integration using Dappier's API. AI generates quick investment insights based on trending financial news and analysis.",
-        "version": "v1.0.0"
-    },
-    "servers": [
-        {
-            "url": "https://api.dappier.com"
-        }
-    ],
-    "paths": {
-        "/app/aimodel/am_01j749h8pbf7ns8r1bq9s2evrh": {
-            "post": {
-                "description": "Query real-time stock and financial news data from Dappier, including market trends, financial news, and investment insights.",
-                "operationId": "getRealTimeFinancialData",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/QueryRequest"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Successful response with real-time financial insights",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/QueryResponse"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "ApiKeyBearer": []
-                    }
-                ]
-            }
-        }
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Dappier Real-Time Stock & Financial News Analyst",
+    "description": "Fetch real-time AI stock and financial insights with web search integration using Dappier's API. AI generates quick investment insights based on trending financial news and analysis.",
+    "version": "v1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.dappier.com"
     }
+  ],
+  "paths": {
+    "/app/aimodel/am_01j749h8pbf7ns8r1bq9s2evrh": {
+      "post": {
+        "description": "Query real-time stock and financial news data from Dappier, including market trends, financial news, and investment insights.",
+        "operationId": "getRealTimeFinancialData",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QueryRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response with real-time financial insights",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueryResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKeyBearer": []
+          }
+        ]
+      }
+    }
+  }
 }
 ```
 
@@ -174,8 +185,8 @@ To ensure proper interaction, import the **OpenAPI schema**:
 ## Step 6: Test and Iterate
 
 1. Use the OpenAI GPT interface to test queries like:
-    - "Analyze stock trends of AAPL and TSLA with the latest financial news."
-    - "What are the top investment insights from today’s market trends?"
+   - "Analyze stock trends of AAPL and TSLA with the latest financial news."
+   - "What are the top investment insights from today’s market trends?"
 2. Ensure responses are **accurate and formatted correctly**.
 3. Refine GPT behavior by adjusting **instructions** as needed.
 
@@ -185,23 +196,23 @@ To ensure proper interaction, import the **OpenAPI schema**:
 
 Once finalized, you can:
 
--   **Share your GPT** publicly or privately
--   **Embed it in financial applications**
--   **Continuously refine it** based on feedback
+- **Share your GPT** publicly or privately
+- **Embed it in financial applications**
+- **Continuously refine it** based on feedback
 
 **Sharing Options:**
 
--   **Private**: Only accessible to you
--   **Unlisted**: Accessible via a direct link
--   **Public**: Available in the GPT Store
+- **Private**: Only accessible to you
+- **Unlisted**: Accessible via a direct link
+- **Public**: Available in the GPT Store
 
 ---
 
 ## Privacy & Security
 
--   All API interactions must comply with **OpenAI and Dappier’s terms**.
--   Keep your API key **secure** and do not expose it publicly.
--   Review Dappier’s [Privacy Policy](https://dappier.com/privacy-policy/) for more details.
+- All API interactions must comply with **OpenAI and Dappier’s terms**.
+- Keep your API key **secure** and do not expose it publicly.
+- Review Dappier’s [Privacy Policy](https://dappier.com/privacy-policy/) for more details.
 
 ---
 

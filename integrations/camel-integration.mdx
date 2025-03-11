@@ -64,14 +64,14 @@ Note: Multiple AI model IDs are available, which can be found at [Dappier market
 If you prefer a visual walkthrough, check out the accompanying video below:
 
 <iframe
-    width="560"
-    height="315"
-    src="https://www.youtube.com/embed/2Fy79jbq99c?si=VK9wegn5sKajzvoD"
-    title="YouTube video player"
-    frameborder="0"
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-    referrerpolicy="strict-origin-when-cross-origin"
-    allowfullscreen
+  width="560"
+  height="315"
+  src="https://www.youtube.com/embed/2Fy79jbq99c?si=VK9wegn5sKajzvoD"
+  title="YouTube video player"
+  frameborder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  referrerpolicy="strict-origin-when-cross-origin"
+  allowfullscreen
 ></iframe>
 
 ```bash Python
@@ -99,18 +99,18 @@ ahead for Dappier! 🎉✨
 
 ### `query` (str):
 
--   The user-provided query. Examples include:
-    -   `"How is the weather today in Austin, TX?"`
-    -   `"What is the latest news for Meta?"`
-    -   `"What is the stock price for AAPL?"`
+- The user-provided query. Examples include:
+  - `"How is the weather today in Austin, TX?"`
+  - `"What is the latest news for Meta?"`
+  - `"What is the stock price for AAPL?"`
 
 ### `ai_model_id` (str) _Optional_:
 
--   The AI model ID to use for the query.
--   AI model IDs always start with the prefix `"am_"`.
--   Defaults to `"am_01j06ytn18ejftedz6dyhz2b15"`.
--   Multiple AI model IDs are available, which can be found at
-    [Dappier marketplace.](https://platform.dappier.com/marketplace)
+- The AI model ID to use for the query.
+- AI model IDs always start with the prefix `"am_"`.
+- Defaults to `"am_01j06ytn18ejftedz6dyhz2b15"`.
+- Multiple AI model IDs are available, which can be found at
+  [Dappier marketplace.](https://platform.dappier.com/marketplace)
 
 ## AI Recommendations
 
@@ -126,6 +126,17 @@ Note: Multiple Data model IDs are available, which can be found at
 ## Watch the Video
 
 If you prefer a visual walkthrough, check out the accompanying video below:
+
+<iframe
+  width="560"
+  height="315"
+  src="https://www.youtube.com/embed/IUuF0ftAtc4?si=VH2zNGjskpyknBm4"
+  title="YouTube video player"
+  frameborder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  referrerpolicy="strict-origin-when-cross-origin"
+  allowfullscreen
+></iframe>
 
 ```bash Python
 from camel.toolkits import DappierToolkit
@@ -152,35 +163,35 @@ ai_recommendations_response = DappierToolkit().get_ai_recommendations(
 
 ### `query` (str):
 
--   The user query for retrieving recommendations.
+- The user query for retrieving recommendations.
 
 ### `data_model_id` (str) _Optional_:
 
--   The data model ID to use for recommendations.
--   Data model IDs always start with the prefix `"dm_"`.
--   Defaults to `"dm_01j0pb465keqmatq9k83dthx34"`.
+- The data model ID to use for recommendations.
+- Data model IDs always start with the prefix `"dm_"`.
+- Defaults to `"dm_01j0pb465keqmatq9k83dthx34"`.
 
 ### `similarity_top_k` (int) _Optional_:
 
--   The number of top documents to retrieve based on similarity.
--   Defaults to `9`.
+- The number of top documents to retrieve based on similarity.
+- Defaults to `9`.
 
 ### `ref` (str) _Optional_:
 
--   The site domain where AI recommendations should be displayed.
--   Defaults to `None`.
+- The site domain where AI recommendations should be displayed.
+- Defaults to `None`.
 
 ### `num_articles_ref` (int) _Optional_:
 
--   The minimum number of articles to return from the specified reference domain (`ref`).
--   The remaining articles will come from other sites in the RAG model.
--   Defaults to `0`.
+- The minimum number of articles to return from the specified reference domain (`ref`).
+- The remaining articles will come from other sites in the RAG model.
+- Defaults to `0`.
 
 ### `search_algorithm` (str) _Optional_:
 
--   The search algorithm to use for retrieving articles.
--   Options:
-    -   `"most_recent"` (default),
-    -   `"semantic"`,
-    -   `"most_recent_semantic"`,
-    -   `"trending"`.
+- The search algorithm to use for retrieving articles.
+- Options:
+  - `"most_recent"` (default),
+  - `"semantic"`,
+  - `"most_recent_semantic"`,
+  - `"trending"`.
