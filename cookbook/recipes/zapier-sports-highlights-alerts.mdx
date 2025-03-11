@@ -1,22 +1,22 @@
 ---
-title: "Automate Sports Highlights via Email Using Zapier and Dappier"
+title: "⚡ Automate Sports Highlights via Email Using Zapier and Dappier"
 ---
 
 Dappier’s **Real-Time Sports Data Model** allows you to fetch **live sports highlights** and automate updates via **Zapier and Gmail**. This guide walks you through creating a **Zap** that:
 
-- Schedules the Zap to run at a specific time daily using Zapier Scheduler.
-- Fetches real-time sports highlights using Dappier’s Sports Data Model.
-- Sends the sports update via email automatically.
+-   Schedules the Zap to run at a specific time daily using Zapier Scheduler.
+-   Fetches real-time sports highlights using Dappier’s Sports Data Model.
+-   Sends the sports update via email automatically.
 
 ## **Watch the Tutorial**
 
 To see the full setup process in action, watch the video below:
 
 <iframe
-  src="https://drive.google.com/file/d/13odRKBw3W279j8e0oIiepCyk4SyDXqRl/preview"
-  width="100%"
-  height="400"
-  allowfullscreen
+    src="https://drive.google.com/file/d/13odRKBw3W279j8e0oIiepCyk4SyDXqRl/preview"
+    width="100%"
+    height="400"
+    allowfullscreen
 ></iframe>
 
 ---
@@ -25,9 +25,9 @@ To see the full setup process in action, watch the video below:
 
 Before starting, ensure you have:
 
-- A **[Zapier account](https://zapier.com)**
-- A **Dappier API Key** (Generate it from [Dappier Platform](https://platform.dappier.com) under **Settings > Profile > API Keys**)
-- A **Gmail account** (or any Zapier-supported email service)
+-   A **[Zapier account](https://zapier.com)**
+-   A **Dappier API Key** (Generate it from [Dappier Platform](https://platform.dappier.com) under **Settings > Profile > API Keys**)
+-   A **Gmail account** (or any Zapier-supported email service)
 
 ---
 
@@ -35,7 +35,7 @@ Before starting, ensure you have:
 
 1. **Log in to Zapier** and click **Create a Zap**.
 2. **Select a Trigger**:
-   - Search for **"Schedule by Zapier"** and set it to run **daily**.
+    - Search for **"Schedule by Zapier"** and set it to run **daily**.
 3. Click **Continue**, then **Test Trigger** to confirm.
 
 ---
@@ -46,7 +46,7 @@ Before starting, ensure you have:
 2. Search for **Dappier** and select it.
 3. Choose **"Get Sports News."**
 4. Configure the fields:
-   - **Query**: `"Today's sports highlights"`
+    - **Query**: `"Today's sports highlights"`
 5. Click **Continue**, then **Test the Step** to retrieve sports news.
 
 ---
@@ -58,22 +58,22 @@ Before starting, ensure you have:
 3. Choose **"Send Email"** as the action event.
 4. Configure the fields:
 
-   - **Recipient**: `{{User Email}}`
-   - **Subject**: `"Latest Sports Highlights"`
-   - **Body**:
+    - **Recipient**: `{{User Email}}`
+    - **Subject**: `"Latest Sports Highlights"`
+    - **Body**:
 
-     ```plaintext
-     Hello,
+        ```plaintext
+        Hello,
 
-     Here are today's top sports highlights:
+        Here are today's top sports highlights:
 
-     - ⚽ **Key Highlights**: {{Dappier Highlights Output}}
+        - ⚽ **Key Highlights**: {{Dappier Highlights Output}}
 
-     Stay updated with the latest sports news!
+        Stay updated with the latest sports news!
 
-     Best,
-     [Your Sports Assistant]
-     ```
+        Best,
+        [Your Sports Assistant]
+        ```
 
 5. Click **Continue**, then **Test the Step**.
 
