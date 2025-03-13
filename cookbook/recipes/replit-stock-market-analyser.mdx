@@ -1,0 +1,140 @@
+---
+title: "🧱 Build a Stock Market Insights App Using Replit and Dappier Real-Time Data Model"
+---
+
+## **Introduction**
+
+In this step-by-step guide, we will walk you through building a **Stock Market Insights App** using **Replit** and **Dappier's Real-Time Data Model API**. This app will display **real-time stock prices**, **recommend top-performing stocks**, and **analyze current market trends** to suggest potential investment opportunities. By leveraging **OpenAI's LLMs** and **Dappier’s real-time stock data**, users can generate **AI-powered investment insights** within minutes.
+
+---
+
+## Watch the Video Guide
+
+If you prefer a visual walkthrough, check out the accompanying video guide below:
+
+<iframe
+    width="560"
+    height="315"
+    src="https://www.youtube.com/embed/RQlDF6Ot4tc?si=21zxh4TbnRSZ07SA"
+    title="YouTube video player"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    referrerpolicy="strict-origin-when-cross-origin"
+    allowfullscreen
+></iframe>
+
+---
+
+## **Dappier Real-Time Data Model API**
+
+The **Dappier Real-Time Data Model API** enables applications to retrieve **verified and up-to-date** stock market information from trusted sources. It allows seamless integration of **real-time stock prices, news, and financial insights** into AI-powered applications.
+
+### **Usage in Python**
+
+The API can be used to fetch real-time stock data with a simple function call:
+
+```python
+response = app.search_real_time_data(
+   query="What is the stock price of Apple?",
+   ai_model_id="am_01j06ytn18ejftedz6dyhz2b15"
+)
+```
+
+### **Parameters**
+
+-   **query (str)**: The user-provided search query. Example queries include:
+
+    -   `"What is the current price of Tesla stock?"`
+    -   `"Which stocks performed the best today?"`
+    -   `"What are the latest financial news updates?"`
+
+-   **ai_model_id (str)**: The AI model ID to use for the query.
+    -   AI model IDs always start with the prefix `"am_"`.
+    -   Multiple AI model IDs are available at the **Dappier Marketplace**.
+
+In our **Stock Market Insights App**, we will use this API to fetch **real-time stock prices and top investment recommendations** dynamically.
+
+---
+
+## **Prerequisites**
+
+Before you begin, ensure you have:
+
+-   A **Dappier account** ([Sign up here](https://platform.dappier.com))
+-   An **OpenAI account** ([Sign up here](https://platform.openai.com))
+-   A **Replit account** ([Sign up here](https://replit.com))
+
+---
+
+## **Step 1: Fork the Dappier Python Real-Time Data App**
+
+1. Visit the **[Dappier Replit Integration Documentation](https://docs.dappier.com/integrations/replit-integration)**.
+2. Click on the **Dappier Python Real-Time Data** link inside the page to open the template in **Replit**.
+3. **Fork** the app to create your own version.
+4. Rename the app to **Dappier Stock Market Insights**.
+5. Add a detailed description such as:
+    > "A Stock Market Insights app that provides real-time stock prices, recommends top-performing stocks, and analyzes current market data to suggest investment opportunities. Powered by **Dappier** and **OpenAI**."
+
+---
+
+## **Step 2: Set Up API Keys**
+
+### **1. Add the Dappier API Key**
+
+1. Go to [Dappier API Keys](https://platform.dappier.com/profile/api-keys).
+2. Generate an API key.
+3. In **Replit**, open the **Secrets Manager**.
+4. Add a new secret:
+    - **Key:** `DAPPIER_API_KEY`
+    - **Value:** _(Paste your Dappier API Key here)_
+5. Click **Save**.
+
+### **2. Add the OpenAI API Key**
+
+1. Go to [OpenAI API Keys](https://platform.openai.com/api-keys).
+2. Generate an API key.
+3. In **Replit**, open the **Secrets Manager**.
+4. Add a new secret:
+    - **Key:** `OPENAI_API_KEY`
+    - **Value:** _(Paste your OpenAI API Key here)_
+5. Click **Save**.
+
+---
+
+## **Step 3: Run the App**
+
+1. Click **"Run"** in Replit to check if everything is working correctly.
+2. The system will automatically install dependencies and generate necessary code for you.
+3. Accept any suggested changes by Replit.
+
+---
+
+## **Step 4: Generate the Stock Market Insights App Using Replit’s AI Assistant**
+
+Instead of writing the code manually, **Replit’s AI Assistant** can generate the entire app for you by following these simple instructions:
+
+1. Open the **Assistants App** in Replit.
+2. Enter the following instructions:
+    > **"Create a stock market insights app that fetches real-time stock prices, recommends top-performing stocks, and analyzes the day's market trends. The app should pull live stock data using Dappier's Real-Time Data API and generate investment recommendations based on market performance. OpenAI should structure the insights in a user-friendly format, highlighting key takeaways for investors."**
+3. Replit’s AI will automatically generate the code for your app.
+4. Accept the code suggestions and let Replit set up everything for you.
+5. Run the app to verify it works as expected.
+
+By using **Replit’s AI Assistant**, you can build your **Stock Market Insights App** **without writing a single line of code manually**.
+
+---
+
+## **Step 5: Verify and Deploy**
+
+1. Run the app again to verify that stock prices and recommendations are generated correctly.
+2. If everything looks good, **deploy the app**.
+
+---
+
+## **Conclusion**
+
+Congratulations! 🎉 You have successfully built a **Stock Market Insights App** using **Replit’s AI Assistant** and **Dappier’s Real-Time Data Model API**. Your app can now **fetch live stock prices**, **recommend top investment opportunities**, and **analyze market performance** to help users make informed financial decisions.
+
+With **Dappier and Replit**, you can build **any real-life use case** within minutes using **low-code development**. Whether it's **financial analysis tools**, **news aggregators**, or **AI-powered assistants**, the possibilities are endless.
+
+🚀 **Get started today!**

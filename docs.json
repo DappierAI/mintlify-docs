@@ -128,6 +128,14 @@
                         ]
                     },
                     {
+                        "group": "Replit",
+                        "pages": [
+                            "cookbook/recipes/replit-dynamic-travel-planner",
+                            "cookbook/recipes/replit-sports-summarizer",
+                            "cookbook/recipes/replit-stock-market-analyser"
+                        ]
+                    },
+                    {
                         "group": "Zapier",
                         "pages": [
                             "cookbook/recipes/zapier-daily-news-letter",
