@@ -1,0 +1,141 @@
+---
+title: "🧱 Build a Sports News Summarizer Using Replit and Dappier AI Recommendations API"
+---
+
+## **Introduction**
+
+In this step-by-step guide, we will walk you through building a **Sports News Summarizer** using **Replit** and **Dappier’s AI Recommendations API**. This app will fetch the **latest sports news** from trusted sources using **Dappier’s AI-powered content recommendations** and generate concise **news summaries** using **OpenAI’s AI models**. With **real-time data and AI-driven summarization**, users can quickly stay updated on trending sports events.
+
+---
+
+## Watch the Video Guide
+
+If you prefer a visual walkthrough, check out the accompanying video guide below:
+
+<iframe
+    width="560"
+    height="315"
+    src="https://www.youtube.com/embed/-2Nm6XKI8vs?si=KXS9pYLAeDihmJgs"
+    title="YouTube video player"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    referrerpolicy="strict-origin-when-cross-origin"
+    allowfullscreen
+></iframe>
+
+---
+
+## **Dappier AI Recommendations API**
+
+The **Dappier AI Recommendations API** allows applications to retrieve **personalized and real-time content** based on a query. It fetches **news, updates, and analysis** from top publishers, making it an excellent tool for building an AI-powered sports news aggregator.
+
+### **Usage in Python**
+
+The API can be used to fetch the latest sports news with a simple function call:
+
+```python
+response = app.get_ai_recommendations(
+    query="latest sports news",
+    data_model_id="dm_01jagy9nqaeer9hxx8z1sk1jx6",  # Sports News Model
+    similarity_top_k=5,
+    ref="sportsnaut.com",
+    num_articles_ref=2,
+    search_algorithm="most_recent"
+)
+```
+
+### **Parameters**
+
+-   **query (str)**: The user-provided search query (e.g., `"latest sports news"`).
+-   **data_model_id (str)**: The **Sports News Model ID** from the **Dappier Marketplace**.
+-   **similarity_top_k (int)**: The number of articles to return (default: `9`).
+-   **ref (str)**: The domain to prioritize (e.g., `"sportsnaut.com"`).
+-   **num_articles_ref (int)**: The number of guaranteed articles from the chosen domain.
+-   **search_algorithm (str)**: `"semantic"` for contextual matching or `"most_recent"` for sorting by latest articles.
+
+In our **Sports News Summarizer**, we will use this API to retrieve **real-time sports news**.
+
+---
+
+## **Prerequisites**
+
+Before you begin, ensure you have:
+
+-   A **Dappier account** ([Sign up here](https://platform.dappier.com))
+-   An **OpenAI account** ([Sign up here](https://platform.openai.com))
+-   A **Replit account** ([Sign up here](https://replit.com))
+
+---
+
+## **Step 1: Fork the Dappier Python AI Recommendations App**
+
+1. Visit the **[Dappier Replit Integration Documentation](https://docs.dappier.com/integrations/replit-integration)**.
+2. Click on the **Dappier Python AI Recommendations** link inside the page to open the template in **Replit**.
+3. **Fork** the app to create your own version.
+4. Rename the app to **Dappier Sports News Summarizer**.
+5. Add a detailed description such as:
+    > "A Sports News Summarizer that fetches the latest sports updates from **Dappier’s AI-powered news recommendations** and summarizes them using **OpenAI’s AI models**."
+
+---
+
+## **Step 2: Set Up API Keys**
+
+### **1. Add the Dappier API Key**
+
+1. Go to [Dappier API Keys](https://platform.dappier.com/profile/api-keys).
+2. Generate an API key.
+3. In **Replit**, open the **Secrets Manager**.
+4. Add a new secret:
+    - **Key:** `DAPPIER_API_KEY`
+    - **Value:** _(Paste your Dappier API Key here)_
+5. Click **Save**.
+
+### **2. Add the OpenAI API Key**
+
+1. Go to [OpenAI API Keys](https://platform.openai.com/api-keys).
+2. Generate an API key.
+3. In **Replit**, open the **Secrets Manager**.
+4. Add a new secret:
+    - **Key:** `OPENAI_API_KEY`
+    - **Value:** _(Paste your OpenAI API Key here)_
+5. Click **Save**.
+
+---
+
+## **Step 3: Run the App**
+
+1. Click **"Run"** in Replit to check if everything is working correctly.
+2. The system will automatically install dependencies and generate necessary code for you.
+3. Accept any suggested changes by Replit.
+
+---
+
+## **Step 4: Generate the Sports News Summarizer Using Replit’s AI Assistant**
+
+Instead of writing the code manually, **Replit’s AI Assistant** can generate the entire app for you by following these simple instructions:
+
+1. Open the **Assistants App** in Replit.
+2. Enter the following instructions:
+    > **"Create a Sports News Summarizer app that retrieves the latest sports updates from Dappier’s AI-powered news recommendations. Use the Sports News data model from Dappier to fetch real-time news articles. Then, use OpenAI’s API to summarize the key points of each article. The app should present concise summaries, allowing users to quickly grasp the latest sports highlights."**
+3. Replit’s AI will automatically generate the code for your app.
+4. Accept the code suggestions and let Replit set up everything for you.
+5. Run the app to verify it works as expected.
+
+By using **Replit’s AI Assistant**, you can build your **Sports News Summarizer** **without writing a single line of code manually**.
+
+---
+
+## **Step 5: Verify and Deploy**
+
+1. Run the app again to verify that **sports news articles are retrieved and summarized correctly**.
+2. If everything looks good, **deploy the app**.
+
+---
+
+## **Conclusion**
+
+Congratulations! 🎉 You have successfully built a **Sports News Summarizer** using **Replit’s AI Assistant** and **Dappier’s AI Recommendations API**. Your app can now **fetch real-time sports news**, **summarize key highlights**, and **help users stay informed in just minutes**.
+
+With **Dappier and Replit**, you can build **any real-life use case** within minutes using **low-code development**. Whether it's **news aggregators**, **financial dashboards**, or **AI-powered assistants**, the possibilities are endless.
+
+🚀 **Get started today!**
