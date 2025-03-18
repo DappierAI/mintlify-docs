@@ -74,6 +74,7 @@
                             "integrations/camel-integration",
                             "integrations/cursor-mcp-integration",
                             "integrations/langchain-integration",
+                            "integrations/open-ai-agents-sdk-integration",
                             "integrations/open-ai-gpt-integration",
                             "integrations/replit-integration",
                             "integrations/zapier-integration"
@@ -120,7 +121,14 @@
                         ]
                     },
                     {
-                        "group": "OpenAI",
+                        "group": "OpenAI Agents SDK",
+                        "pages": [
+                            "cookbook/recipes/open-ai-agent-travel-assistant",
+                            "cookbook/recipes/open-ai-agent-stock-analyser"
+                        ]
+                    },
+                    {
+                        "group": "OpenAI GPT",
                         "pages": [
                             "cookbook/recipes/open-ai-dappier-travel-concierge",
                             "cookbook/recipes/open-ai-dappier-stock-analyst",
