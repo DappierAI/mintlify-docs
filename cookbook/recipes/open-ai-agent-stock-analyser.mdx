@@ -1,0 +1,368 @@
+---
+title: "🕵🏻 Building an AI-Powered Travel Stock Analyser using OpenAI Agents SDK and Dappier"
+---
+
+## Introduction
+
+This notebook provides a step-by-step guide to building an AI-powered Stock Market Analyzer using OpenAI's Agents SDK and Dappier. The analyzer generates real-time stock market insights based on user input, fetching financial news, market trends, breaking news alerts, and high-performing similar stocks dynamically. It then formulates a data-driven trading strategy, including entry/exit points, risk management, and investment recommendations.
+
+By leveraging Dappier’s real-time search and AI-driven insights, this stock market agent helps users make informed and strategic investment decisions with up-to-date market intelligence. 🚀
+
+## OpenAI Agents SDK
+
+The OpenAI Agents SDK enables you to build **agentic AI applications** with a **lightweight and production-ready** API.
+
+It consists of:
+
+-   **Agents** – LLMs equipped with instructions and tools
+-   **Handoffs** – Delegation of tasks to specialized agents
+-   **Guardrails** – Input validation for enhanced reliability
+
+The SDK also provides **built-in tracing** for debugging and evaluation, making **AI-powered workflows easy to build and scale**.
+
+## Dappier
+
+Dappier is a **real-time AI data platform** that connects **LLMs and AI agents** to **rights-cleared data from trusted sources**.
+
+It specializes in **web search, finance, news, and live events**, ensuring AI applications can **access up-to-date and verified information** without hallucinations.
+
+## Install Dependencies
+
+```bash
+!pip install openai-agents dappier colorama nest-asyncio
+```
+
+## Import Required Libraries
+
+```bash Python
+import os
+import getpass
+import nest_asyncio
+import asyncio
+from agents import Agent, FunctionTool, Runner, function_tool
+from colorama import Fore, Style
+from dappier import Dappier
+from openai.types.responses import ResponseTextDeltaEvent
+```
+
+## Set Up API Keys Securely
+
+To prevent **exposing API keys in shared environments**, use **getpass** to enter them securely.
+
+```bash Python
+os.environ["DAPPIER_API_KEY"] = getpass.getpass("Enter your Dappier API Key: ")
+os.environ["OPENAI_API_KEY"] = getpass.getpass("Enter your OpenAI API Key: ")
+```
+
+Initialize **Dappier Client**
+
+```bash Python
+dappier_client = Dappier(api_key=os.environ["DAPPIER_API_KEY"])
+```
+
+Enable **tracing for OpenAI Agents SDK**
+
+```bash Python
+from agents import set_tracing_export_api_key
+
+set_tracing_export_api_key(os.environ["OPENAI_API_KEY"])
+```
+
+## Define AI Functions for Real-Time Data Fetching
+
+### Fetching Real-Time Search Results
+
+This function fetches real-time search results from Dappier based on the user's query.
+
+```bash Python
+@function_tool
+def dappier_real_time_search(query: str, ai_model_id: str) -> str:
+    """Fetches real-time search results from Dappier based on the user's query.
+
+    Args:
+        query (str): The user's query for real-time data.
+        ai_model_id (str): The AI model ID to use for the query, dynamically set by the agent.
+            Possible values:
+            - "am_01j0rzq4tvfscrgzwac7jv1p4c" (General real-time web search, including news, weather, and events.)
+            - "am_01j749h8pbf7ns8r1bq9s2evrh" (Stock market data with real-time financial news and stock prices.)
+
+    Returns:
+        str: A response message containing the real-time data results.
+    """
+    print(Fore.RED + f"CALLING TOOL - dappier_real_time_search: {ai_model_id}\n" + Style.RESET_ALL)
+    print(Fore.GREEN + f"Query: {query}\n" + Style.RESET_ALL)
+    response = dappier_client.search_real_time_data(query=query, ai_model_id=ai_model_id)
+    return response.message if response else "No real-time data found."
+```
+
+### Fetching AI-Powered Recommendations
+
+This function fetches AI-powered content recommendations from Dappier based on the user's query.
+
+```bash Python
+@function_tool
+def dappier_ai_recommendations(query: str, data_model_id: str) -> str:
+    """Fetches AI-powered content recommendations from Dappier based on the user's query.
+
+    Args:
+        query (str): The user's query for recommendations.
+        data_model_id (str): The Data Model ID to use for the query, dynamically set by the agent.
+            Possible values:
+            - "dm_01j0pb465keqmatq9k83dthx34" (Sports news)
+            - "dm_01j0q82s4bfjmsqkhs3ywm3x6y" (Lifestyle news)
+            - "dm_01j1sz8t3qe6v9g8ad102kvmqn" (Dog care advice from iHeartDogs)
+            - "dm_01j1sza0h7ekhaecys2p3y0vmj" (Cat care advice from iHeartCats)
+            - "dm_01j5xy9w5sf49bm6b1prm80m27" (Eco-friendly content from GreenMonster)
+            - "dm_01jagy9nqaeer9hxx8z1sk1jx6" (General news from WISH-TV)
+            - "dm_01jhtt138wf1b9j8jwswye99y5" (Local news from 9 and 10 News)
+
+    Returns:
+        str: A formatted response containing AI-powered recommendations.
+    """
+    print(Fore.RED + f"CALLING TOOL: dappier_ai_recommendations: {data_model_id}\n" + Style.RESET_ALL)
+    print(Fore.GREEN + f"Query: {query}\n" + Style.RESET_ALL)
+    response = dappier_client.get_ai_recommendations(query=query, data_model_id=data_model_id, similarity_top_k=5)
+    results = response.response.results
+    formatted_text = ""
+    for result in results:
+        formatted_text += (f"Title: {result.title}\n"
+                           f"Author: {result.author}\n"
+                           f"Published on: {result.pubdate}\n"
+                           f"URL: {result.source_url}\n"
+                           f"Image URL: {result.image_url}\n"
+                           f"Summary: {result.summary}\n\n")
+    return formatted_text or "No recommendations found."
+```
+
+## Create AI Agent
+
+This AI agent will **determine whether to fetch real-time search results or AI recommendations** based on the user's query.
+
+```bash Python
+agent = Agent(
+    name="Dappier Assistant",
+    instructions="""
+    You analyze the user's query and determine whether to use real-time search or AI recommendations.
+    If the query involves stocks, finance, or current events, use `dappier_real_time_search`.
+    If the query is about recommendations (e.g., news, lifestyle, sports, pets), use `dappier_ai_recommendations`.
+    You MUST provide `ai_model_id` or `data_model_id` as necessary.
+    Format responses in structured Markdown.
+    """,
+    tools=[dappier_real_time_search, dappier_ai_recommendations],
+)
+```
+
+## Generate Task Prompt
+
+A **function to dynamically generate a task prompt** based on the user's given stock symbol.
+
+```bash Python
+def generate_stock_agent_prompt(stock_name: str) -> str:
+    return f"""Generate a detailed stock market analysis and trading strategy for {stock_name}, using real-time financial data. Follow these steps:
+
+### **1. Fetch Financial News:**
+Use **Dappier's real-time search** to retrieve the latest financial news related to {stock_name}. Identify key insights such as earnings reports, company announcements, regulatory changes, and macroeconomic factors affecting the stock.
+
+### **2. Fetch Market Trends:**
+Analyze **real-time market trends** for {stock_name} using Dappier's data. Extract key performance indicators such as:
+   - Recent price movements (intraday, weekly, monthly)
+   - Trading volume fluctuations
+   - Support and resistance levels
+   - Institutional investor activity
+
+### **3. Fetch Breaking News & AI Recommendations:**
+Use **Dappier AI Recommendations API** to detect any **breaking news** or high-impact reports that could influence stock price movement, such as:
+   - Mergers & acquisitions
+   - SEC filings and insider trading reports
+   - Macroeconomic events affecting the industry
+
+### **4. Find Similar Stocks with Strong Performance:**
+Identify **similar stocks** that have historically performed well under similar conditions. Compare:
+   - Price correlation with {stock_name}
+   - Industry trends and sector-wide movements
+   - Alternative investment opportunities based on risk-reward assessment
+
+### **5. Generate a Trading Strategy:**
+Based on all the gathered insights, generate a detailed **trading strategy** that includes:
+   - **Entry Points:** Optimal buy price based on historical data & support levels
+   - **Exit Points:** Ideal selling price based on resistance levels & profit margins
+   - **Risk Management:** Suggested stop-loss levels & risk-reward ratio
+   - **Investment Timeframe:** Short-term (day/swing trading) vs. long-term (investment)
+   - **News-Driven Adjustments:** How to react to sudden news or volatility
+
+### **6. Output:**
+Present the findings in a structured format:
+   - **Latest financial news for {stock_name}**
+   - **Market trends & technical indicators**
+   - **Breaking news alerts from Dappier AI**
+   - **Comparison with similar high-performing stocks**
+   - **A complete trading strategy tailored to {stock_name}**
+
+Ensure that the recommendations are **data-driven**, clear, and actionable for the user.
+    """
+```
+
+## Get User Input and Run AI Agent
+
+This function **collects user input dynamically**, generates the **task prompt**, and executes the AI agent **asynchronously**.
+
+```bash Python
+async def main():
+    """Asks user for stock details dynamically and executes AI agent"""
+
+    # Ask for stock details dynamically
+    stock_name = input("Enter the stock that you are intersted to invest in: ")
+
+    # Generate task prompt
+    task_prompt = generate_stock_agent_prompt(stock_name)
+
+    print(Fore.BLUE + f"\nExecuting AI Agent with prompt:\n{task_prompt}" + Style.RESET_ALL)
+
+    # Execute AI agent with streaming results
+    result = Runner.run_streamed(agent, task_prompt)
+
+    print("\n\n=== Streaming Start ===\n\n")
+
+    async for event in result.stream_events():
+        if event.type == "raw_response_event" and isinstance(event.data, ResponseTextDeltaEvent):
+            print(event.data.delta, end="", flush=True)
+
+    print("\n\n=== Streaming Complete ===")
+
+nest_asyncio.apply()
+asyncio.run(main())
+```
+
+```json
+Enter the stock that you are intersted to invest in: Apple
+
+Executing AI Agent with prompt:
+Generate a detailed stock market analysis and trading strategy for Apple, using real-time financial data. Follow these steps:
+
+### **1. Fetch Financial News:**
+Use **Dappier's real-time search** to retrieve the latest financial news related to Apple. Identify key insights such as earnings reports, company announcements, regulatory changes, and macroeconomic factors affecting the stock.
+
+### **2. Fetch Market Trends:**
+Analyze **real-time market trends** for Apple using Dappier's data. Extract key performance indicators such as:
+    - Recent price movements (intraday, weekly, monthly)
+    - Trading volume fluctuations
+    - Support and resistance levels
+    - Institutional investor activity
+
+### **3. Fetch Breaking News & AI Recommendations:**
+Use **Dappier AI Recommendations API** to detect any **breaking news** or high-impact reports that could influence stock price movement, such as:
+    - Mergers & acquisitions
+    - SEC filings and insider trading reports
+    - Macroeconomic events affecting the industry
+
+### **4. Find Similar Stocks with Strong Performance:**
+Identify **similar stocks** that have historically performed well under similar conditions. Compare:
+    - Price correlation with Apple
+    - Industry trends and sector-wide movements
+    - Alternative investment opportunities based on risk-reward assessment
+
+### **5. Generate a Trading Strategy:**
+Based on all the gathered insights, generate a detailed **trading strategy** that includes:
+    - **Entry Points:** Optimal buy price based on historical data & support levels
+    - **Exit Points:** Ideal selling price based on resistance levels & profit margins
+    - **Risk Management:** Suggested stop-loss levels & risk-reward ratio
+    - **Investment Timeframe:** Short-term (day/swing trading) vs. long-term (investment)
+    - **News-Driven Adjustments:** How to react to sudden news or volatility
+
+### **6. Output:**
+Present the findings in a structured format:
+    - **Latest financial news for Apple**
+    - **Market trends & technical indicators**
+    - **Breaking news alerts from Dappier AI**
+    - **Comparison with similar high-performing stocks**
+    - **A complete trading strategy tailored to Apple**
+
+Ensure that the recommendations are **data-driven**, clear, and actionable for the user.
+
+
+=== Streaming Start ===
+
+
+CALLING TOOL - dappier_real_time_search: am_01j749h8pbf7ns8r1bq9s2evrh
+
+Query: Apple Inc. latest financial news
+
+CALLING TOOL - dappier_real_time_search: am_01j749h8pbf7ns8r1bq9s2evrh
+
+Query: Apple Inc. market trends
+
+CALLING TOOL: dappier_ai_recommendations: dm_01j0pb465keqmatq9k83dthx34
+
+Query: Apple Inc. breaking news and high-impact reports
+
+CALLING TOOL - dappier_real_time_search: am_01j749h8pbf7ns8r1bq9s2evrh
+
+Query: stocks similar to Apple with strong performance
+
+### **Stock Market Analysis and Trading Strategy for Apple Inc. (AAPL)**
+
+---
+
+#### **1. Latest Financial News:**
+
+1. **Why the Market Dipped But Apple (AAPL) Gained Today**
+    - Apple (AAPL) closed at $173, showing resilience despite broader market dips.
+    - [Read more](https://www.zacks.com/stock/news/2170442/why-the-market-dipped-but-apple-aapl-gained-today)
+
+2. **Apple Faces Ominous Setup Heading into Earnings**
+    - Analysts warn of potential headwinds ahead of Apple's earnings report.
+    - [Read more](https://www.marketwatch.com/story/apple-faces-ominous-setup-heading-into-earnings-analyst-warns-5cef6ff1)
+
+These articles provide insight into how Apple's stability is perceived amid potential market challenges.
+
+---
+
+#### **2. Market Trends & Technical Indicators:**
+
+- **Recent Price Movements:** Apple has seen volatility, with contrasting opinions on product performance.
+- **Trading Volume Fluctuations:** Increased interest despite uncertainties in new product launches.
+- **Support and Resistance Levels:** Analysts highlight strong support at lower levels in preparation for earnings reports.
+- **Institutional Investor Activity:** Significant institutional investments remain, reflecting confidence.
+
+Articles emphasize both product-related concerns and long-term growth potential.
+
+---
+
+#### **3. Breaking News Alerts from Dappier AI:**
+
+Currently, no specific breaking news reports directly affecting Apple's stock have been detected. General sector movements and broader economic factors may play a role without significant direct high-impact announcements.
+
+---
+
+#### **4. Similar Stocks with Strong Performance:**
+
+Stocks typically compared with Apple include high-performing tech giants like Microsoft (MSFT) and Google (GOOGL). Analysis of current trends shows these companies have faced similar macroeconomic pressures, yet maintain robust institutional support.
+
+---
+
+#### **5. Trading Strategy:**
+
+- **Entry Points:** Consider buying around identified support levels to capitalize on potential upticks post-earnings.
+- **Exit Points:** Target resistance levels for a potential profit margin, assessing ongoing product performance and market responses.
+- **Risk Management:** Utilize stop-loss orders synchronized with support levels, maintaining a favorable risk-reward ratio.
+- **Investment Timeframe:** Align with a mix of short-term strategies around earnings and long-term holding for sustained growth.
+- **News-Driven Adjustments:** Stay vigilant of any regulatory changes or quarterly reports. Adjust positioning promptly in response to new developments.
+
+---
+
+This strategy is tailored to current market conditions and centered around potential earnings impacts and broader sector performance. Adjustments may be needed based on further information and real-time data changes.
+
+=== Streaming Complete ===
+```
+
+## Conclusion
+
+This notebook provides a structured guide to building an AI-powered **Stock Market Analyzer** using **OpenAI Agents SDK** and **Dappier**.
+
+It covers:
+
+-   **Real-time data retrieval** for financial news, market trends, and breaking news alerts
+-   **AI-powered recommendations** to identify high-performing similar stocks
+-   **An agent-driven workflow** to generate actionable trading strategies
+
+This AI analyzer can be extended further by integrating **real-time portfolio tracking, options trading insights,** and **automated risk assessment tools** for a more comprehensive investment assistant. 🚀

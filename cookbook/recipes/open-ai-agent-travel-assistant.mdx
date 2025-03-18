@@ -1,0 +1,361 @@
+---
+title: "🕵🏻 Building an AI-Powered Travel Itinerary Assistant using OpenAI Agents SDK and Dappier"
+---
+
+---
+
+## Introduction
+
+This notebook provides a **step-by-step guide** to building an **AI-powered travel assistant** using **OpenAI's Agents SDK** and **Dappier**. The assistant generates a **real-time travel itinerary** based on user input, fetching **weather updates, live events, and hotel deals** dynamically.
+
+---
+
+## OpenAI Agents SDK
+
+The OpenAI Agents SDK enables you to build **agentic AI applications** with a **lightweight and production-ready** API.
+
+It consists of:
+
+-   **Agents** – LLMs equipped with instructions and tools
+-   **Handoffs** – Delegation of tasks to specialized agents
+-   **Guardrails** – Input validation for enhanced reliability
+
+The SDK also provides **built-in tracing** for debugging and evaluation, making **AI-powered workflows easy to build and scale**.
+
+---
+
+## Dappier
+
+Dappier is a **real-time AI data platform** that connects **LLMs and AI agents** to **rights-cleared data from trusted sources**.
+
+It specializes in **web search, finance, news, and live events**, ensuring AI applications can **access up-to-date and verified information** without hallucinations.
+
+---
+
+## Install Dependencies
+
+```bash
+!pip install openai-agents-sdk dappier colorama nest-asyncio
+```
+
+---
+
+## Import Required Libraries
+
+```bash Python
+import os
+import getpass
+import nest_asyncio
+import asyncio
+from agents import Agent, FunctionTool, Runner, function_tool
+from colorama import Fore, Style
+from dappier import Dappier
+from openai.types.responses import ResponseTextDeltaEvent
+```
+
+---
+
+## Set Up API Keys Securely
+
+To prevent **exposing API keys in shared environments**, use **getpass** to enter them securely.
+
+```bash Python
+os.environ["DAPPIER_API_KEY"] = getpass.getpass("Enter your Dappier API Key: ")
+os.environ["OPENAI_API_KEY"] = getpass.getpass("Enter your OpenAI API Key: ")
+```
+
+Initialize Dappier Client:
+
+```bash Python
+dappier_client = Dappier(api_key=os.environ["DAPPIER_API_KEY"])
+```
+
+Enable **tracing for OpenAI Agents SDK**:
+
+```bash Python
+from agents import set_tracing_export_api_key
+
+set_tracing_export_api_key(os.environ["OPENAI_API_KEY"])
+```
+
+---
+
+## Define AI Functions for Real-Time Data Fetching
+
+### Fetching Real-Time Search Results
+
+This function fetches real-time search results from Dappier based on the user's query.
+
+```bash Python
+# Define Real-Time Search Function
+@function_tool
+def dappier_real_time_search(query: str, ai_model_id: str) -> str:
+    """Fetches real-time search results from Dappier based on the user's query.
+
+    Args:
+        query (str): The user's query for real-time data.
+        ai_model_id (str): The AI model ID to use for the query, dynamically set by the agent.
+            Possible values:
+            - "am_01j0rzq4tvfscrgzwac7jv1p4c" (General real-time web search, including news, weather, and events.)
+            - "am_01j749h8pbf7ns8r1bq9s2evrh" (Stock market data with real-time financial news and stock prices.)
+
+    Returns:
+        str: A response message containing the real-time data results.
+    """
+    print(Fore.RED + f"CALLING TOOL - dappier_real_time_search: {ai_model_id}\n" + Style.RESET_ALL)
+    print(Fore.GREEN + f"Query: {query}\n" + Style.RESET_ALL)
+    response = dappier_client.search_real_time_data(query=query, ai_model_id=ai_model_id)
+    return response.message if response else "No real-time data found."
+```
+
+### Fetching AI-Powered Recommendations
+
+This function fetches AI-powered content recommendations from Dappier based on the user's query
+
+```bash Python
+# Define AI Recommendations Function
+@function_tool
+def dappier_ai_recommendations(query: str, data_model_id: str) -> str:
+    """Fetches AI-powered content recommendations from Dappier based on the user's query.
+
+    Args:
+        query (str): The user's query for recommendations.
+        data_model_id (str): The Data Model ID to use for the query, dynamically set by the agent.
+            Possible values:
+            - "dm_01j0pb465keqmatq9k83dthx34" (Sports news)
+            - "dm_01j0q82s4bfjmsqkhs3ywm3x6y" (Lifestyle news)
+            - "dm_01j1sz8t3qe6v9g8ad102kvmqn" (Dog care advice from iHeartDogs)
+            - "dm_01j1sza0h7ekhaecys2p3y0vmj" (Cat care advice from iHeartCats)
+            - "dm_01j5xy9w5sf49bm6b1prm80m27" (Eco-friendly content from GreenMonster)
+            - "dm_01jagy9nqaeer9hxx8z1sk1jx6" (General news from WISH-TV)
+            - "dm_01jhtt138wf1b9j8jwswye99y5" (Local news from 9 and 10 News)
+
+    Returns:
+        str: A formatted response containing AI-powered recommendations.
+    """
+    print(Fore.RED + f"CALLING TOOL: dappier_ai_recommendations: {data_model_id}\n" + Style.RESET_ALL)
+    print(Fore.GREEN + f"Query: {query}\n" + Style.RESET_ALL)
+    response = dappier_client.get_ai_recommendations(query=query, data_model_id=data_model_id, similarity_top_k=5)
+    results = response.response.results
+    formatted_text = ""
+    for result in results:
+        formatted_text += (f"Title: {result.title}\n"
+                           f"Author: {result.author}\n"
+                           f"Published on: {result.pubdate}\n"
+                           f"URL: {result.source_url}\n"
+                           f"Image URL: {result.image_url}\n"
+                           f"Summary: {result.summary}\n\n")
+    return formatted_text or "No recommendations found."
+```
+
+---
+
+## Create AI Agent
+
+This AI agent will **determine whether to fetch real-time search results or AI recommendations** based on the user's query.
+
+```bash Python
+agent = Agent(
+    name="Dappier Assistant",
+    instructions="""
+    You analyze the user's query and determine whether to use real-time search or AI recommendations.
+    If the query involves stocks, finance, or current events, use `dappier_real_time_search`.
+    If the query is about recommendations (e.g., news, lifestyle, sports, pets), use `dappier_ai_recommendations`.
+    You MUST provide `ai_model_id` or `data_model_id` as necessary.
+    Format responses in structured Markdown.
+    """,
+    tools=[dappier_real_time_search, dappier_ai_recommendations],
+)
+```
+
+---
+
+## Generate Task Prompt
+
+A **function to dynamically generate a task prompt** based on the user's travel details.
+
+```bash Python
+def generate_task_prompt(travel_city: str, travel_date: str, num_days: str) -> str:
+    return f"""Generate a {num_days}-day travel itinerary for {travel_city}, tailored to the real-time weather forecast for the selected date: {travel_date}. Follow these steps:
+
+        Determine Current Date and Travel Period:
+        Use Dappier's real-time search to identify the current date and calculate the trip duration based on user input.
+
+        Fetch LifeStyle News:
+        Retrive LifeStyle news using Dappier AI Recommendations API for the given date and provide insight to tht user.
+
+        Fetch Weather Data:
+        Retrieve the weather forecast for {travel_city} during the selected dates to understand the conditions for each day.
+
+        Fetch Live Events Data:
+        Use Dappier's real-time search to find live events happening in {travel_city} during the trip dates.
+
+        Fetch Hotel Deals Data:
+        Use Dappier's real-time search to find the best hotel deals with booking links in {travel_city} during the trip dates.
+
+        Design the Itinerary:
+        Use the weather insights, live events, hotel deals to plan activities and destinations that suit the expected conditions. For each suggested location:
+
+        Output:
+        Present latest life style news at first then. Present a detailed {num_days}-day itinerary, including timing, activities, booking links, weather information for each day and travel considerations. Ensure the plan is optimized for convenience and enjoyment.
+    """
+```
+
+---
+
+## Get User Input and Run AI Agent
+
+This function **collects user input dynamically**, generates the **task prompt**, and executes the AI agent **asynchronously**.
+
+```bash Python
+async def main():
+    """Asks user for travel details dynamically and executes AI agent"""
+
+    # Ask for travel details dynamically
+    travel_city = input("Enter the city you want to travel to: ")
+    travel_date = input("Enter the start date of your travel (YYYY-MM-DD): ")
+    num_days = input("Enter the number of days for your trip: ")
+
+    # Generate task prompt
+    task_prompt = generate_task_prompt(travel_city, travel_date, num_days)
+
+    print(Fore.BLUE + f"\nExecuting AI Agent with prompt:\n{task_prompt}" + Style.RESET_ALL)
+
+    # Execute AI agent with streaming results
+    result = Runner.run_streamed(agent, task_prompt)
+
+    print("\n\n=== Streaming Start ===\n\n")
+
+    async for event in result.stream_events():
+        if event.type == "raw_response_event" and isinstance(event.data, ResponseTextDeltaEvent):
+            print(event.data.delta, end="", flush=True)
+
+    print("\n\n=== Streaming Complete ===")
+
+# Execute main function
+asyncio.run(main())
+```
+
+```json
+Enter the city you want to travel to: Paris
+Enter the start date of your travel: 01, April 2025
+Enter the number of days for your trip: 5
+
+ORIGINAL PROMPT: Generate a 5-day travel itinerary for Paris, tailored to the real-time weather forecast for the selected date: 01, April 2025. Follow these steps:
+
+Determine Current Date and Travel Period:
+Use Dappier's real-time search to identify the current date and calculate the trip duration based on user input.
+
+Fetch LifeStyle News:
+Retrive LifeStyle news using Dappier AI Recommendations API for the given date and provide insight to tht user.
+
+Fetch Weather Data:
+Retrieve the weather forecast for Paris during the selected dates to understand the conditions for each day.
+
+Fetch Live Events Data:
+Use Dappier's real-time search to find live events happening in Paris during the trip dates.
+
+Fetch Hotel Deals Data:
+Use Dappier's real-time search to find the best hotel deals with booking links in Paris during the trip dates.
+
+Design the Itinerary:
+Use the weather insights, live events, hotel deals to plan activities and destinations that suit the expected conditions. For each suggested location:
+
+Output:
+Present latest life style news at first then. Present a detailed 5-day itinerary, including timing, activities, booking links, weather information for each day and travel considerations. Ensure the plan is optimized for convenience and enjoyment.
+
+
+
+=== Streaming Start ===
+
+
+CALLING TOOL - dappier_real_time_search: am_01j0rzq4tvfscrgzwac7jv1p4c
+
+Query: current date
+
+CALLING TOOL: dappier_ai_recommendations: dm_01j0q82s4bfjmsqkhs3ywm3x6y
+
+Query: Paris lifestyle news
+
+CALLING TOOL - dappier_real_time_search: am_01j0rzq4tvfscrgzwac7jv1p4c
+
+Query: Paris weather April 1-5, 2025
+
+CALLING TOOL - dappier_real_time_search: am_01j0rzq4tvfscrgzwac7jv1p4c
+
+Query: Paris live events April 1-5, 2025
+
+CALLING TOOL - dappier_real_time_search: am_01j0rzq4tvfscrgzwac7jv1p4c
+
+Query: Paris hotel deals April 1-5, 2025
+
+### Latest Lifestyle News Highlights
+
+#### Justin Bieber's Heartfelt Message
+- **Title:** Christian Singer Justin Bieber, 31, Issues Heartbreaking Message To Fans Amidst Concerns For His Wellbeing
+- **Summary:** Justin Bieber addresses mental health struggles in a candid message to fans, sharing feelings of inadequacy despite his fame.
+- **Link:** [Read more](https://www.themix.net/celebrity/celebrity-news/christian-singer-justin-bieber-31-issues-heartbreaking-message-to-fans-amidst-concerns-for-his-wellbeing/)
+
+#### Controversies in Disney's Live-Action Snow White
+- **Title:** Live-Action Snow White Continues to Have Issues as Disney Scales Back Premiere
+- **Summary:** Disney's adaptation faces hurdles and mixed reactions due to casting choices and character portrayal.
+- **Link:** [Read more](https://www.themix.net/movies/movie-news/live-action-snow-white-continues-to-have-issues-as-disney-scales-back-premiere/)
+
+#### Family-Favorite Baked Ziti Recipe
+- **Title:** Family-Favorite Baked Ziti: Simple, Satisfying, and Oh-So-Good
+- **Summary:** Discover a delicious and easy-to-make baked ziti recipe that's perfect for family gatherings.
+- **Link:** [Read more](https://www.familyproof.com/lifestyle/food-drink/baked-ziti/)
+
+### 5-Day Paris Travel Itinerary (April 1-5, 2025)
+
+#### Weather Overview
+- **April 1-5:** Mild temperatures (12-14°C / 54-57°F), partly cloudy. Ideal for outdoor activities and exploration.
+
+#### Day 1: Explore Paris and Join the Marathon
+- **Morning:** Breakfast at Café de Flore. Explore Saint-Germain-des-Prés.
+- **Afternoon:** Participate or watch the Paris Marathon. Visit Eiffel Tower post-event.
+- **Evening:** Dinner at Le Jules Verne with Eiffel Tower views.
+
+#### Day 2: Art and Design Immersion
+- **Morning:** Visit Pad Paris - Art + Design Fair.
+- **Afternoon:** Explore the Art Paris Art Fair at Grand Palais.
+- **Evening:** Candlelight concert at Sainte-Chapelle. Book [here](https://linkparis.com).
+
+#### Day 3: Cultural Experiences
+- **Morning:** Tour the Louvre Museum. Don’t miss the Mona Lisa and other major works.
+- **Afternoon:** Lunch at Angelina’s. Discover Musée d'Orsay's art.
+- **Evening:** Dinner at a local bistro in Montmartre.
+
+#### Day 4: Scenic Views and Relaxation
+- **Morning:** Visit Palais Garnier and take a guided tour.
+- **Afternoon:** Enjoy a Seine River Cruise with lunch.
+- **Evening:** Explore Le Marais district. Dinner at Chez Janou.
+
+#### Day 5: Quirky Fun and Departure
+- **Morning:** Participate in International Pillow Fight Day.
+- **Afternoon:** Last-minute shopping at Galeries Lafayette.
+- **Evening:** Departure preparation. Stay at Mercari Hotel ([Booking Link](https://www.mercari.com/us/item/m11634459421/)).
+
+### Hotel Deals
+- **Stay Option:** 5-Day, 4-Night Package at $1,750 from [LinkParis](https://linkparis.com/5-day-trip-to-paris/).
+- **Alternative Stay:** Hotel rooms starting at $120 through [Mercari](https://www.mercari.com/us/item/m11634459421/).
+
+Experience a mix of culture, relaxation, and excitement in Paris. Enjoy your trip! 🇫🇷✨
+
+=== Streaming Complete ===
+```
+
+---
+
+## Conclusion
+
+This notebook provides a structured guide to building an AI-powered **travel itinerary assistant** using **OpenAI Agents SDK** and **Dappier**.
+
+It covers:
+
+-   **Secure API key storage** using `getpass`
+-   **Real-time data retrieval** for weather, events, and hotels
+-   **AI-powered recommendations** for lifestyle insights
+-   **An agent-driven workflow** to generate structured travel plans
+
+This AI assistant can be extended further by integrating **flight search APIs, restaurant recommendations**, and **personalized travel preferences**.
