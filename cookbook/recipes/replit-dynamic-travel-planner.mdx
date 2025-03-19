@@ -8,19 +8,25 @@ In this step-by-step guide, we will walk you through building a **Dynamic Travel
 
 ---
 
+## **Dappier Python Real Time Data**
+
+This template demonstrates how to Build a Dynamic Travel Planner Using Replit and Dappier Real-Time Data Model. You can check out the app on Replit here:
+
+[Check out the app on Replit](https://replit.com/@dappier/Dappier-Dynamic-Travel-Planner)
+
 ## Watch the Video Guide
 
 If you prefer a visual walkthrough, check out the accompanying video guide below:
 
 <iframe
-    width="560"
-    height="315"
-    src="https://www.youtube.com/embed/vxtzI9lu0h4?si=EfRXoZjZa3E0aIkN"
-    title="YouTube video player"
-    frameborder="0"
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-    referrerpolicy="strict-origin-when-cross-origin"
-    allowfullscreen
+  width="560"
+  height="315"
+  src="https://www.youtube.com/embed/vxtzI9lu0h4?si=EfRXoZjZa3E0aIkN"
+  title="YouTube video player"
+  frameborder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  referrerpolicy="strict-origin-when-cross-origin"
+  allowfullscreen
 ></iframe>
 
 ---
@@ -42,15 +48,15 @@ response = app.search_real_time_data(
 
 ### **Parameters**
 
--   **query (str)**: The user-provided search query. Example queries include:
+- **query (str)**: The user-provided search query. Example queries include:
 
-    -   `"How is the weather today in Austin, TX?"`
-    -   `"What is the latest news for Meta?"`
-    -   `"What is the stock price for AAPL?"`
+  - `"How is the weather today in Austin, TX?"`
+  - `"What is the latest news for Meta?"`
+  - `"What is the stock price for AAPL?"`
 
--   **ai_model_id (str)**: The AI model ID to use for the query.
-    -   AI model IDs always start with the prefix `"am_"`.
-    -   Multiple AI model IDs are available at the **Dappier Marketplace**.
+- **ai_model_id (str)**: The AI model ID to use for the query.
+  - AI model IDs always start with the prefix `"am_"`.
+  - Multiple AI model IDs are available at the **Dappier Marketplace**.
 
 In our **Dynamic Travel Planner**, we will use this API to fetch **weather updates and hotel deals** dynamically.
 
@@ -60,9 +66,9 @@ In our **Dynamic Travel Planner**, we will use this API to fetch **weather updat
 
 Before you begin, ensure you have:
 
--   A **Dappier account** ([Sign up here](https://platform.dappier.com))
--   An **OpenAI account** ([Sign up here](https://platform.openai.com))
--   A **Replit account** ([Sign up here](https://replit.com))
+- A **Dappier account** ([Sign up here](https://platform.dappier.com))
+- An **OpenAI account** ([Sign up here](https://platform.openai.com))
+- A **Replit account** ([Sign up here](https://replit.com))
 
 ---
 
@@ -73,7 +79,7 @@ Before you begin, ensure you have:
 3. **Fork** the app to create your own version.
 4. Rename the app to **Dappier Dynamic Travel Planner**.
 5. Add a detailed description such as:
-    > "A Dynamic Travel Planner that generates personalized itineraries based on user-inputted destinations and trip durations. It provides real-time weather updates, hotel deals, and attraction recommendations, powered by **Dappier** and **OpenAI**."
+   > "A Dynamic Travel Planner that generates personalized itineraries based on user-inputted destinations and trip durations. It provides real-time weather updates, hotel deals, and attraction recommendations, powered by **Dappier** and **OpenAI**."
 
 ---
 
@@ -85,8 +91,8 @@ Before you begin, ensure you have:
 2. Generate an API key.
 3. In **Replit**, open the **Secrets Manager**.
 4. Add a new secret:
-    - **Key:** `DAPPIER_API_KEY`
-    - **Value:** _(Paste your Dappier API Key here)_
+   - **Key:** `DAPPIER_API_KEY`
+   - **Value:** _(Paste your Dappier API Key here)_
 5. Click **Save**.
 
 ### **2. Add the OpenAI API Key**
@@ -95,8 +101,8 @@ Before you begin, ensure you have:
 2. Generate an API key.
 3. In **Replit**, open the **Secrets Manager**.
 4. Add a new secret:
-    - **Key:** `OPENAI_API_KEY`
-    - **Value:** _(Paste your OpenAI API Key here)_
+   - **Key:** `OPENAI_API_KEY`
+   - **Value:** _(Paste your OpenAI API Key here)_
 5. Click **Save**.
 
 ---
@@ -115,7 +121,7 @@ Instead of writing the code manually, **Replit’s AI Assistant** can generate t
 
 1. Open the **Assistants App** in Replit.
 2. Enter the following instructions:
-    > **"Create a travel planner app that asks the user for their destination city and the number of days for the trip. Fetch real-time weather updates and hotel deals for the given destination using Dappier's Real-Time Data API. Use OpenAI to generate a structured, well-balanced itinerary that includes local attractions, sightseeing options, and relaxation spots. The app should be interactive and provide users with dynamic travel recommendations."**
+   > **"Create a travel planner app that asks the user for their destination city and the number of days for the trip. Fetch real-time weather updates and hotel deals for the given destination using Dappier's Real-Time Data API. Use OpenAI to generate a structured, well-balanced itinerary that includes local attractions, sightseeing options, and relaxation spots. The app should be interactive and provide users with dynamic travel recommendations."**
 3. Replit’s AI will automatically generate the code for your app.
 4. Accept the code suggestions and let Replit set up everything for you.
 5. Run the app to verify it works as expected.
