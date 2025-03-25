@@ -44,7 +44,7 @@ You'll need to set up your API keys for Dappier, OpenAI and LangSmith
 
 You can go to [here](https://platform.dappier.com/profile/api-keys) to get API Key from Dappier with **free** credits. The API Key could be found under Settings -> Profile.
 
-```bash Python
+```python Python
 import os
 from getpass import getpass
 
@@ -55,7 +55,7 @@ os.environ["DAPPIER_API_KEY"] = dappier_api_key
 
 Your can go to [here](https://platform.openai.com/settings/organization/api-keys) to get API Key from Open AI.
 
-```bash Python
+```python Python
 # Prompt for the Open AI API key securely
 openai_api_key = getpass('Enter your API key: ')
 os.environ["OPENAI_API_KEY"] = openai_api_key
@@ -63,7 +63,7 @@ os.environ["OPENAI_API_KEY"] = openai_api_key
 
 Your can go to [here](https://smith.langchain.com/o/dfdd86ea-11a8-5cda-aa11-d998a680bfce/settings) to get API Key from LangSmith.
 
-```bash Python
+```python Python
 # Prompt for the LangSmith API key securely
 langsmith_api_key = getpass('Enter your API key: ')
 os.environ["LANGSMITH_API_KEY"] = langsmith_api_key
@@ -80,7 +80,7 @@ In this section, we will search for some breaking news using Wisth-TV AI Data mo
 
 For list of all parameters supported for Dappier retriever visit [Dappier docs](https://docs.dappier.com/integrations/langchain-integration#parameters-3).
 
-```bash Python
+```python Python
 from langchain_dappier import DappierRetriever
 
 retriever = DappierRetriever(data_model_id="dm_01jagy9nqaeer9hxx8z1sk1jx6")
@@ -102,7 +102,7 @@ Document(metadata={'title': 'GANGGANG expands creative equity initiatives in Ind
 
 This section sets up an automated workflow where LangChain and DappierRetriever collaborate to generate concise and accurate sports news summaries. We will guide the system in retrieving real-time sports news data and leveraging OpenAI models to create dynamic, up-to-date summaries.\_
 
-```bash Python
+```python Python
 from langchain_dappier import DappierRetriever
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
@@ -111,7 +111,7 @@ from langchain_core.runnables import RunnablePassthrough, RunnableLambda
 
 Initialize DappierRetriever for sports news. For list of all parameters supported for Dappier retriever visit [Dappier docs](https://docs.dappier.com/integrations/langchain-integration#parameters-3). Explore a wide range of data models in our marketplace at [marketplace.dappier.com](https://marketplace.dappier.com).
 
-```bash Python
+```python Python
 sports_retriever = DappierRetriever(
     data_model_id="dm_01j0pb465keqmatq9k83dthx34",  # Sports news data model
     k=10,  # Retrieve top 5 articles
@@ -121,13 +121,13 @@ sports_retriever = DappierRetriever(
 
 Initialize the OpenAI model
 
-```bash Python
+```python Python
 llm = ChatOpenAI(model="gpt-4o", temperature=1)
 ```
 
 Define the prompt template to create the summary
 
-```bash Python
+```python Python
 summary_prompt = ChatPromptTemplate.from_template("""
 You are a sports news summarization expert. Generate a concise summary with key points from these articles:
 
@@ -147,7 +147,7 @@ Generate summary:
 
 Create the processing chain
 
-```bash Python
+```python Python
 summarization_chain = (
     {
         "context": RunnableLambda(lambda docs: "\n\n".join([f"Article {i+1}: {d.page_content}" for i, d in enumerate(docs)]))
@@ -159,7 +159,7 @@ summarization_chain = (
 
 Create the full pipeline to generate the summary using chaining.
 
-```bash Python
+```python Python
 retrieval_summary_chain = (
     RunnablePassthrough()
     | sports_retriever
@@ -169,7 +169,7 @@ retrieval_summary_chain = (
 
 Generate Summary
 
-```bash Python
+```python Python
 query = "latest NBA playoffs updates"
 result = retrieval_summary_chain.invoke(query)
 

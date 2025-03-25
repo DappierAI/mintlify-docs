@@ -1,11 +1,10 @@
 ---
-title: 'AI Recommendations API'
+title: "AI Recommendations API"
 ---
 
 Convert any data into a recommendation engine with Dappier's AI-powered Article Recommendations API. This API uses a RAG (Retrieval-Augmented Generation) model to return article recommendations based on the input query or URL.
 
 You'll need an API key to access this API. Visit [Dappier Platform](https://platform.dappier.com) to sign up and create an API key under Settings > Profile > API Keys.
-
 
 #### Using AI Recommendations API
 
@@ -16,7 +15,7 @@ Api reference for this endpoint can be found [here](https://docs.dappier.com/api
 
 <CodeGroup>
 
-    ```bash Python
+    ```python Python
     import requests
     import json
 
@@ -27,10 +26,11 @@ Api reference for this endpoint can be found [here](https://docs.dappier.com/api
     "ref": "",
     "num_articles_ref": 0,
     "search_algorithm": "most_recent"
+
 })
-    headers = {
-    'Content-Type': 'application/json',
-    'Authorization': 'Bearer <YOUR_DAPPIER_API_KEY>'
+headers = {
+'Content-Type': 'application/json',
+'Authorization': 'Bearer <YOUR_DAPPIER_API_KEY>'
 }
 
     response = requests.post(url, headers=headers, data=payload)
@@ -63,6 +63,7 @@ Api reference for this endpoint can be found [here](https://docs.dappier.com/api
     if err != nil {
     fmt.Println("Error creating request:", err)
     return
+
 }
 
     req.Header.Set("Authorization", "Bearer "+apiKey)
@@ -73,11 +74,13 @@ Api reference for this endpoint can be found [here](https://docs.dappier.com/api
     if err != nil {
     fmt.Println("Error making request:", err)
     return
+
 }
-    defer resp.Body.Close()
+defer resp.Body.Close()
 
     body, _ := ioutil.ReadAll(resp.Body)
     fmt.Println(string(body))
+
 }
 
     ```
@@ -97,7 +100,7 @@ Api reference for this endpoint can be found [here](https://docs.dappier.com/api
 
 </CodeGroup>
 
-``` json response
+```json response
 {
 "results": [
     {

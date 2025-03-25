@@ -55,7 +55,7 @@ It specializes in **web search, finance, news, and live events**, ensuring AI ap
 
 ## Import Required Libraries
 
-```bash Python
+```python Python
 import os
 import getpass
 import nest_asyncio
@@ -72,20 +72,20 @@ from openai.types.responses import ResponseTextDeltaEvent
 
 To prevent **exposing API keys in shared environments**, use **getpass** to enter them securely.
 
-```bash Python
+```python Python
 os.environ["DAPPIER_API_KEY"] = getpass.getpass("Enter your Dappier API Key: ")
 os.environ["OPENAI_API_KEY"] = getpass.getpass("Enter your OpenAI API Key: ")
 ```
 
 Initialize Dappier Client:
 
-```bash Python
+```python Python
 dappier_client = Dappier(api_key=os.environ["DAPPIER_API_KEY"])
 ```
 
 Enable **tracing for OpenAI Agents SDK**:
 
-```bash Python
+```python Python
 from agents import set_tracing_export_api_key
 
 set_tracing_export_api_key(os.environ["OPENAI_API_KEY"])
@@ -99,7 +99,7 @@ set_tracing_export_api_key(os.environ["OPENAI_API_KEY"])
 
 This function fetches real-time search results from Dappier based on the user's query.
 
-```bash Python
+```python Python
 # Define Real-Time Search Function
 @function_tool
 def dappier_real_time_search(query: str, ai_model_id: str) -> str:
@@ -125,7 +125,7 @@ def dappier_real_time_search(query: str, ai_model_id: str) -> str:
 
 This function fetches AI-powered content recommendations from Dappier based on the user's query
 
-```bash Python
+```python Python
 # Define AI Recommendations Function
 @function_tool
 def dappier_ai_recommendations(query: str, data_model_id: str) -> str:
@@ -167,7 +167,7 @@ def dappier_ai_recommendations(query: str, data_model_id: str) -> str:
 
 This AI agent will **determine whether to fetch real-time search results or AI recommendations** based on the user's query.
 
-```bash Python
+```python Python
 agent = Agent(
     name="Dappier Assistant",
     instructions="""
@@ -187,7 +187,7 @@ agent = Agent(
 
 A **function to dynamically generate a task prompt** based on the user's travel details.
 
-```bash Python
+```python Python
 def generate_task_prompt(travel_city: str, travel_date: str, num_days: str) -> str:
     return f"""Generate a {num_days}-day travel itinerary for {travel_city}, tailored to the real-time weather forecast for the selected date: {travel_date}. Follow these steps:
 
@@ -220,7 +220,7 @@ def generate_task_prompt(travel_city: str, travel_date: str, num_days: str) -> s
 
 This function **collects user input dynamically**, generates the **task prompt**, and executes the AI agent **asynchronously**.
 
-```bash Python
+```python Python
 async def main():
     """Asks user for travel details dynamically and executes AI agent"""
 

@@ -23,7 +23,7 @@ pip install dappier
 
 Set up your API key and initialize the SDK:
 
-```bash Python
+```python Python
 import os
 from dappier import Dappier
 
@@ -42,7 +42,7 @@ Replace `<YOUR_API_KEY>` with your actual API key, which you can get from your [
 
 Perform a real-time search for live data:
 
-```bash Python
+```python Python
 response = app.search_real_time_data(
     query="What is the stock price of Apple?",
     ai_model_id="am_01j06ytn18ejftedz6dyhz2b15"
@@ -66,7 +66,7 @@ response = app.search_real_time_data(
 
 Retrieve AI-powered content recommendations based on a query:
 
-```bash Python
+```python Python
 response = app.get_ai_recommendations(
     query="latest trending news",
     data_model_id="dm_01jagy9nqaeer9hxx8z1sk1jx6",
@@ -118,7 +118,7 @@ Dappier SDK supports asynchronous operations for better performance.
 
 ### Async Real Time Search:
 
-```bash Python
+```python Python
 import asyncio
 from dappier import DappierAsync
 
@@ -154,7 +154,7 @@ print(result)
 
 ### Async AI Recommendations:
 
-```bash Python
+```python Python
 import asyncio
 from dappier import DappierAsync
 

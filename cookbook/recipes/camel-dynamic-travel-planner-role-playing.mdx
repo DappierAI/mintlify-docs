@@ -8,10 +8,10 @@ This notebook demonstrates how to set up and leverage CAMEL's multi-agent combin
 
 In this notebook, you'll explore:
 
-- **CAMEL**: A powerful multi-agent framework that enables multi-agent role-playing scenarios, allowing for sophisticated AI-driven tasks.
-- **Dappier**: A platform connecting LLMs and Agentic AI agents to real-time, rights-cleared data from trusted sources, specializing in domains like web search, finance, and news. It delivers enriched, prompt-ready data, empowering AI with verified and up-to-date information for diverse applications.
-- **OpenAI**: A leading provider of advanced AI models capable of natural language understanding, contextual reasoning, and content generation. It enables intelligent, human-like interactions and supports a wide range of applications across various domains.
-- **AgentOps**: Track and analysis the running of CAMEL Agents.
+-   **CAMEL**: A powerful multi-agent framework that enables multi-agent role-playing scenarios, allowing for sophisticated AI-driven tasks.
+-   **Dappier**: A platform connecting LLMs and Agentic AI agents to real-time, rights-cleared data from trusted sources, specializing in domains like web search, finance, and news. It delivers enriched, prompt-ready data, empowering AI with verified and up-to-date information for diverse applications.
+-   **OpenAI**: A leading provider of advanced AI models capable of natural language understanding, contextual reasoning, and content generation. It enables intelligent, human-like interactions and supports a wide range of applications across various domains.
+-   **AgentOps**: Track and analysis the running of CAMEL Agents.
 
 This setup not only demonstrates a practical application of AI-driven dynamic travel planning but also provides a flexible framework that can be adapted to other real-world scenarios requiring real-time data integration from Dappier, multi-agent collaboration, and contextual reasoning.
 
@@ -20,14 +20,14 @@ This setup not only demonstrates a practical application of AI-driven dynamic tr
 If you prefer a visual walkthrough, check out the accompanying video guide below:
 
 <iframe
-  width="560"
-  height="315"
-  src="https://www.youtube.com/embed/RwB8O7L3mhU?si=2Iyc3Zab0RFNcpnx"
-  title="YouTube video player"
-  frameborder="0"
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-  referrerpolicy="strict-origin-when-cross-origin"
-  allowfullscreen
+    width="560"
+    height="315"
+    src="https://www.youtube.com/embed/RwB8O7L3mhU?si=2Iyc3Zab0RFNcpnx"
+    title="YouTube video player"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    referrerpolicy="strict-origin-when-cross-origin"
+    allowfullscreen
 ></iframe>
 
 ## 📦 Installation
@@ -45,7 +45,7 @@ This ensures that the tools can interact with external services securely.
 
 You can go to [here](https://platform.dappier.com/profile/api-keys) to get API Key from Dappier with **free** credits. The API Key could be found under Settings -> Profile.
 
-```bash Python
+```python Python
 import os
 from getpass import getpass
 
@@ -56,7 +56,7 @@ os.environ["DAPPIER_API_KEY"] = dappier_api_key
 
 Your can go to [here](https://platform.openai.com/settings/organization/api-keys) to get API Key from Open AI.
 
-```bash Python
+```python Python
 # Prompt for the API key securely
 openai_api_key = getpass('Enter your API key: ')
 os.environ["OPENAI_API_KEY"] = openai_api_key
@@ -64,7 +64,7 @@ os.environ["OPENAI_API_KEY"] = openai_api_key
 
 You can go to [here](https://app.agentops.ai/signin) to get **free** API Key from AgentOps
 
-```bash Python
+```python Python
 # Prompt for the AgentOps API key securely
 agentops_api_key = getpass('Enter your API key: ')
 os.environ["AGENTOPS_API_KEY"] = agentops_api_key
@@ -72,7 +72,7 @@ os.environ["AGENTOPS_API_KEY"] = agentops_api_key
 
 Set up the OpenAI GPT4o-mini using the CAMEL ModelFactory. You can also configure other models as needed.
 
-```bash Python
+```python Python
 from camel.models import ModelFactory
 from camel.types import ModelPlatformType, ModelType
 from camel.configs import ChatGPTConfig
@@ -87,7 +87,7 @@ openai_gpt4o_mini = ModelFactory.create(
 
 ## 📹 Monitoring AI Agents with AgentOps
 
-```bash Python
+```python Python
 import agentops
 agentops.init(default_tags=["CAMEL cookbook"])
 ```
@@ -101,7 +101,7 @@ agentops.init(default_tags=["CAMEL cookbook"])
 
 Dappier is a powerful tool that connects LLMs to real-time, rights-cleared data from trusted sources, specializing in domains like web search, finance, and news. It delivers enriched, prompt-ready data, empowering AI with verified and up-to-date information for diverse applications. In this section, we will search for the latest news related to CAMEL AI as an example.
 
-```bash Python
+```python Python
 from camel.toolkits import DappierToolkit
 
 # Search for real time data from a given user query.
@@ -130,7 +130,7 @@ For more updates, check out their Discord: [CAMEL AI Discord](http://discord.cam
 
 _This section sets up a role-playing session where AI agents interact to accomplish a task using Dappier tool. We will guide the assistant agent in creating a dynamic travel plan by leveraging real-time weather data._
 
-```bash Python
+```python Python
 from typing import List
 
 from colorama import Fore
@@ -143,7 +143,7 @@ from camel.utils import print_text_animated
 
 Defining the Task Prompt
 
-```bash Python
+```python Python
 task_prompt = """Generate a 2-day travel itinerary for New York tailored to the
 real-time weather forecast for the upcoming weekend. Start by utilizing
 Dappier’s real-time search to determine the current date and day, calculate the
@@ -156,7 +156,7 @@ No additional actions are required.
 We will configure the assistant agent with tools for real-time weather data
 retrieval.
 
-```bash Python
+```python Python
 dappier_tool = FunctionTool(DappierToolkit().search_real_time_data)
 
 tool_list = [
@@ -171,7 +171,7 @@ assistant_model_config = ChatGPTConfig(
 
 Setting Up the Role-Playing Session
 
-```bash Python
+```python Python
 # Initialize the role-playing session
 role_play_session = RolePlaying(
     assistant_role_name="CAMEL Assistant",
@@ -192,7 +192,7 @@ role_play_session = RolePlaying(
 
 Print the system message and task prompt
 
-```bash Python
+```python Python
 # Print system and task messages
 print(
     Fore.GREEN
@@ -236,7 +236,7 @@ Set the termination rule and start the interaction between agents
 
 **NOTE**: This session will take approximately 5 minutes and will consume around 60k tokens by using GPT4o-mini.
 
-```bash Python
+```python Python
 n = 0
 input_msg = role_play_session.init_chat()
 while n < 20: # Limit the chat to 20 turns
@@ -738,7 +738,7 @@ User:
 <CAMEL_TASK_DONE>
 ```
 
-```bash Python
+```python Python
 # End the AgentOps session
 agentops.end_session("Success")
 ```
@@ -758,9 +758,9 @@ This notebook has guided you through setting up and running a CAMEL RAG workflow
 
 Key tools utilized in this notebook include:
 
-- **CAMEL**: A powerful multi-agent framework that enables Retrieval-Augmented Generation and multi-agent role-playing scenarios, allowing for sophisticated AI-driven tasks.
-- **OpenAI**: A leading provider of advanced AI models capable of natural language understanding, contextual reasoning, and content generation. It enables intelligent, human-like interactions and supports a wide range of applications across various domains.
-- **Dappier**: A platform connecting LLMs to real-time, rights-cleared data from trusted sources, specializing in domains like web search, finance, and news. It delivers enriched, prompt-ready data, empowering AI with verified and up-to-date information for diverse applications.
-- **AgentOps**: Track and analysis the running of CAMEL Agents.
+-   **CAMEL**: A powerful multi-agent framework that enables Retrieval-Augmented Generation and multi-agent role-playing scenarios, allowing for sophisticated AI-driven tasks.
+-   **OpenAI**: A leading provider of advanced AI models capable of natural language understanding, contextual reasoning, and content generation. It enables intelligent, human-like interactions and supports a wide range of applications across various domains.
+-   **Dappier**: A platform connecting LLMs to real-time, rights-cleared data from trusted sources, specializing in domains like web search, finance, and news. It delivers enriched, prompt-ready data, empowering AI with verified and up-to-date information for diverse applications.
+-   **AgentOps**: Track and analysis the running of CAMEL Agents.
 
 This comprehensive setup allows you to adapt and expand the example for various scenarios requiring advanced web information retrieval, AI collaboration, and multi-source data aggregation.
