@@ -1,0 +1,287 @@
+---
+title: "🔌 Real-Time Sports News Summarizer with OpenAI Function Calling + AI Recommendations via Dappier"
+---
+
+You can also check this cookbook in Colab [here](https://colab.research.google.com/drive/1GAhPgnU8vIjQYVheqohvVAXMMAxjTcWO?usp=sharing).
+
+This notebook demonstrates how to set up and leverage OpenAI Function Calling combined with Dappier's AI Recommendations API for summarizing real-time sports news. By integrating AI-curated content and automated function execution, this notebook walks you through a practical approach to generating concise, up-to-date summaries of trending sports stories.
+
+In this notebook, you'll explore:
+
+-   **OpenAI Function Calling**: A powerful feature that enables large language models to automatically detect and invoke external tools to accomplish tasks in a structured and contextual manner.
+-   **Dappier AI Recommendations**: A capability that provides real-time, AI-powered content recommendations from trusted sources, delivering rich contextual articles based on the latest news and natural language queries.
+-   **Sports News Summarization**: A real-world use case where the assistant retrieves the latest sports news and generates a human-readable summary for quick consumption.
+
+This setup not only demonstrates a flexible architecture for building intelligent news summarization assistants but also serves as a foundation for developing other real-world applications requiring live content curation, structured tool use, and contextual response generation.
+
+---
+
+## 📺 Video Walkthrough
+
+// TODO: Change the video walkthrough once uploaded on Youtube.
+
+Prefer watching? Here’s a video version of this notebook:
+
+<iframe
+    width="560"
+    height="315"
+    src="https://www.youtube.com/embed/RwB8O7L3mhU?si=2Iyc3Zab0RFNcpnx"
+    title="YouTube video player"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    referrerpolicy="strict-origin-when-cross-origin"
+    allowfullscreen
+></iframe>
+
+---
+
+## 📦 Installation
+
+Install the required packages:
+
+```bash
+!pip install openai dappier
+```
+
+---
+
+## 🔑 Setting Up API Keys
+
+You'll need to set up your API keys for OpenAI and Dappier.  
+This ensures that the tools can interact with external services securely.
+
+You can go to [here](https://platform.dappier.com/profile/api-keys) to get API Key from Dappier with **free** credits.
+
+```python Python
+import os
+from getpass import getpass
+
+# Prompt for the Dappier API key securely
+dappier_api_key = getpass('Enter your API key: ')
+os.environ["DAPPIER_API_KEY"] = dappier_api_key
+```
+
+You can go to [here](https://platform.openai.com/settings/organization/api-keys) to get API Key from OpenAI.
+
+```python Python
+# Prompt for the OpenAI API key securely
+openai_api_key = getpass('Enter your API key: ')
+os.environ["OPENAI_API_KEY"] = openai_api_key
+```
+
+---
+
+## ⚙️ Initialize Clients
+
+Set up the `OpenAI` and `Dappier` Python SDK clients.
+
+```python Python
+from openai import OpenAI
+from dappier import Dappier
+
+# Initialize clients
+openai_client = OpenAI()
+dappier_client = Dappier()
+```
+
+---
+
+## 🛰️ Define the Dappier AI Recommendations Tool Function
+
+This function will be called by the LLM to fetch AI-powered sports news recommendations using customizable parameters. It formats all returned articles into a readable string.
+
+```python Python
+def get_latest_sports_news(
+    query: str,
+    similarity_top_k: int = 9,
+    ref: str = "",
+    num_articles_ref: int = 1,
+    search_algorithm: str = "most_recent"
+) -> str:
+    response = dappier_client.get_ai_recommendations(
+        query=query,
+        data_model_id="dm_01j0pb465keqmatq9k83dthx34",
+        similarity_top_k=similarity_top_k,
+        ref=ref,
+        num_articles_ref=num_articles_ref,
+        search_algorithm=search_algorithm
+    )
+
+    if not response or not response.response:
+        return "No relevant articles found."
+
+    articles = []
+    for article in response.response.results:
+        formatted_article = (
+            f"Title: {article.title}\n"
+            f"Author: {article.author}\n"
+            f"Published: {article.pubdate}\n"
+            f"Source: {article.site} ({article.site_domain})\n"
+            f"Preview: {article.preview_content}\n"
+            f"URL: {article.url}\n"
+        )
+        articles.append(formatted_article)
+
+    return "\n---\n".join(articles)
+```
+
+---
+
+## 📋 Define the User Prompt
+
+This prompt instructs the assistant to fetch the latest sports news and generate a readable summary of the most relevant stories.
+
+```python Python
+user_prompt = """
+Summarize the most recent sports news using live content recommendations. Follow these steps:
+
+1. Fetch AI-Curated News:
+Retrieve the latest articles related to sports using the AI Recommendations API.
+
+2. Summarize Content:
+Review the titles and preview content of each article. Create a concise summary covering the key highlights across all articles.
+
+3. Cite Sources:
+For each summary point, include the article title and source link.
+"""
+```
+
+---
+
+## 🧠 Define the Tool Schema for OpenAI
+
+We’ll register `get_latest_sports_news` as a callable tool for OpenAI’s function calling, allowing the assistant to fetch and summarize live sports articles.
+
+```python Python
+tools = [{
+    "type": "function",
+    "function": {
+        "name": "get_latest_sports_news",
+        "description": "Fetches AI-recommended sports news articles and returns their details.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "Search query for the type of sports news to retrieve (e.g., 'latest sports news')"
+                },
+                "similarity_top_k": {
+                    "type": "integer",
+                    "description": "Number of top similar articles to retrieve"
+                },
+                "ref": {
+                    "type": "string",
+                    "description": "Preferred domain for article sources (e.g., 'boundingintosports.com')"
+                },
+                "num_articles_ref": {
+                    "type": "integer",
+                    "description": "Number of articles to fetch specifically from the preferred domain"
+                },
+                "search_algorithm": {
+                    "type": "string",
+                    "enum": ["semantic", "most_recent"],
+                    "description": "Search algorithm to use: 'semantic' for contextual match or 'most_recent' for latest news"
+                }
+            },
+            "required": ["query"]
+        }
+    }
+}]
+```
+
+---
+
+## 🤖 Run the Assistant Workflow
+
+This function runs the full interaction: the model decides which tools to use, retrieves the data, and then generates a final response.
+
+```python Python
+import json
+
+def run_conversation(user_prompt: str):
+    messages = [{"role": "user", "content": user_prompt}]
+
+    # Step 1: Let OpenAI decide on needed functions
+    response = openai_client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=messages,
+        tools=tools,
+        tool_choice="auto",
+        temperature=0
+    )
+
+    response_message = response.choices[0].message
+
+    # Step 2: Call the Dappier tool if requested
+    if tool_calls := response_message.tool_calls:
+        messages.append(response_message)
+
+        for tool_call in tool_calls:
+            function_args = json.loads(tool_call.function.arguments)
+            tool_output = get_latest_sports_news(**function_args)
+
+            messages.append({
+                "tool_call_id": tool_call.id,
+                "role": "tool",
+                "name": tool_call.function.name,
+                "content": tool_output,
+            })
+
+    # Step 3: Final call to OpenAI with all gathered data
+    final_response = openai_client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=messages,
+        temperature=0,
+        stream=True
+    )
+
+    return final_response
+```
+
+---
+
+## 🚀 Generate the News Summary
+
+Run the full conversation and stream the final response as a summarized sports news digest.
+
+```python Python
+if __name__ == "__main__":
+    print("Fetching and summarizing sports news...\n")
+
+    response = run_conversation(user_prompt)
+
+    print("\n📰 Sports News Summary:\n")
+    for chunk in response:
+        print(chunk.choices[0].delta.content or "", end='', flush=True)
+```
+
+```json
+Fetching and summarizing sports news...
+
+
+📰 Sports News Summary:
+
+Here is a summary of the most recent sports news based on the latest articles:
+
+1. **MLB Rotation Rankings 2025**: As the 2025 Major League Baseball season kicks off, a detailed analysis of the top 10 MLB rotations is provided, highlighting the teams with the strongest pitching lineups entering Opening Day. [Read more on Sportsnaut](https://api.dappier.com/app/track/NB2HI4DTHIXS643QN5ZHI43OMF2XILTDN5WS63LMMIWXE33UMF2GS33OFVZGC3TLNFXGO4ZNGIYDENJP?type=article_click&site_domain=sportsnaut.com&datamodel_id=dm_01j0pb465keqmatq9k83dthx34&request_id=a3b4a4ba8059-D6tr9vo3GU-2235990&origin=&ref=).
+
+2. **WWE RAW Highlights**: The March 24th, 2025 edition of WWE RAW featured John Cena announcing his plans to retire as the 'Last Real Champion', marking a significant moment in wrestling history. [Read more on Ringside Intel](https://api.dappier.com/app/track/NB2HI4DTHIXS64TJNZTXG2LEMVUW45DFNQXGG33NF53XEZLTORWGS3THF53XOZJPO53WKLLSMVZXK3DUOMXXO53FFVZGC5ZNOJSXG5LMORZS2YLNOAWWQ2LHNBWGSZ3IORZS2ZTPOIWW2YLSMNUC2MRUORUC2MRQGI2S6===?type=article_click&site_domain=ringsideintel.com&datamodel_id=dm_01j0pb465keqmatq9k83dthx34&request_id=a3b4a4ba8059-D6tr9vo3GU-2235990&origin=&ref=).
+
+3. **NASCAR Drama**: Denny Hamlin shared an anecdote on his podcast about Richard Childress's intense reaction post-race, involving a confrontation with a Joe Gibbs Racing rental car, adding a layer of drama to the NASCAR scene. [Read more on Sportsnaut](https://api.dappier.com/app/track/NB2HI4DTHIXS643QN5ZHI43OMF2XILTDN5WS62DBNVWGS3RNOJUWG2DBOJSC2Y3INFWGI4TFONZS2ZDPN5ZC243MMFWW2ZLEFVVG6ZJNM5UWEYTTFVZGCY3JNZTS24TFNZ2GC3BNMNQXELLBMZ2GK4RNOJQWGZJP?type=article_click&site_domain=sportsnaut.com&datamodel_id=dm_01j0pb465keqmatq9k83dthx34&request_id=a3b4a4ba8059-D6tr9vo3GU-2235990&origin=&ref=).
+
+4. **USC Trojans Basketball Update**: The USC Trojans women's basketball team, led by star player Juju Watkins, faces uncertainty regarding her return for the tournament, which could impact their performance significantly. [Read more on LAFB Network](https://api.dappier.com/app/track/NB2HI4DTHIXS653XO4XGYYLGMJXGK5DXN5ZGWLTDN5WS63TDMFQWML3VONRS25DSN5VGC3TTF52XGYZNORZG62TBNZZS23TFO5ZS62TVNJ2S253BORVWS3TTFVUW42TVOJ4S25LQMRQXIZJP?type=article_click&site_domain=www.lafbnetwork.com&datamodel_id=dm_01j0pb465keqmatq9k83dthx34&request_id=a3b4a4ba8059-D6tr9vo3GU-2235990&origin=&ref=).
+```
+
+---
+
+## 🌟 Highlights
+
+This notebook has guided you through setting up and running a real-time sports news summarizer using OpenAI Function Calling and Dappier's AI Recommendations API. You can adapt and expand this example for various content curation scenarios requiring live information and contextual summaries.
+
+Key tools utilized in this notebook include:
+
+-   **OpenAI Function Calling**: Allows the model to automatically determine when to invoke external tools, enabling dynamic decision-making during a conversation.
+-   **Dappier AI Recommendations**: Delivers curated, real-time article recommendations based on natural language queries and similarity scoring, making it ideal for summarizing trending content from trusted domains.
+-   **Streamed Response Generation**: Leverages OpenAI’s streaming capability to output responses incrementally, improving performance and responsiveness when generating long-form summaries.
+
+This flexible architecture can be adapted to build intelligent assistants for domains such as news aggregation, research summaries, and real-time trend tracking.

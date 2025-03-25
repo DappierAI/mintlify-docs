@@ -1,0 +1,296 @@
+---
+title: "🔌 Dynamic Travel Planner with OpenAI Function Calling + Real-Time Insights via Dappier"
+---
+
+You can also check this cookbook in Colab [here](https://colab.research.google.com/drive/1N9UBTgc3rhBi0y7GqhBxt6DM7izfpEaf?usp=sharing)
+
+This notebook demonstrates how to set up and leverage OpenAI Function Calling combined with Dappier for dynamic travel planning. By integrating real-time data and automated function execution, this notebook walks you through a practical approach to creating adaptive travel plans.
+
+In this notebook, you'll explore:
+
+-   **OpenAI Function Calling**: A powerful feature that enables large language models to automatically detect and invoke external tools to accomplish tasks in a structured and contextual manner.
+-   **Dappier**: A platform connecting LLMs to real-time, rights-cleared data from trusted sources, specializing in domains like web search, weather, and commerce. It delivers enriched, prompt-ready data, empowering AI with verified and up-to-date information for diverse applications.
+-   **Dynamic Travel Planning**: A real-world use case where the assistant reasons over live data to generate a customized 2-day itinerary for New York City based on the latest news, weather, and hotel deals.
+
+This setup not only demonstrates a flexible architecture for building intelligent assistants but also serves as a foundation for developing other real-world applications requiring real-time information retrieval, structured tool use, and contextual decision-making.
+
+## 📺 Video Walkthrough
+
+// TODO: Change the video walkthrough once uploaded on Youtube.
+
+Prefer watching? Here’s a video version of this notebook:
+
+<iframe
+    width="560"
+    height="315"
+    src="https://www.youtube.com/embed/RwB8O7L3mhU?si=2Iyc3Zab0RFNcpnx"
+    title="YouTube video player"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    referrerpolicy="strict-origin-when-cross-origin"
+    allowfullscreen
+></iframe>
+
+---
+
+## 📦 Installation
+
+Install the required packages:
+
+```bash
+!pip install openai dappier
+```
+
+---
+
+## 🔑 Setting Up API Keys
+
+You'll need to set up your API keys for OpenAI, Dappier.
+This ensures that the tools can interact with external services securely.
+
+You can go to [here](https://platform.dappier.com/profile/api-keys) to get API Key from Dappier with **free** credits.
+
+```python Python
+import os
+from getpass import getpass
+
+# Prompt for the Dappier API key securely
+dappier_api_key = getpass('Enter your API key: ')
+os.environ["DAPPIER_API_KEY"] = dappier_api_key
+```
+
+Your can go to [here](https://platform.openai.com/settings/organization/api-keys) to get API Key from Open AI.
+
+```python Python
+# Prompt for the API key securely
+openai_api_key = getpass('Enter your API key: ')
+os.environ["OPENAI_API_KEY"] = openai_api_key
+```
+
+---
+
+## ⚙️ Initialize Clients
+
+Set up the `OpenAI` and `Dappier` Python SDK clients.
+
+```python Python
+from openai import OpenAI
+from dappier import Dappier
+
+# Initialize clients
+openai_client = OpenAI()
+dappier_client = Dappier()
+```
+
+---
+
+## 🛰️ Define the Dappier Tool Function
+
+This function will be called by the LLM to fetch real-time info.
+
+```python Python
+def dappier_real_time_search(query: str) -> str:
+    response = dappier_client.search_real_time_data(
+        query=query,
+        ai_model_id="am_01j06ytn18ejftedz6dyhz2b15"
+    )
+    return response.message if response else "No data found."
+```
+
+---
+
+## 📋 Define the User Prompt
+
+This prompt instructs the assistant to gather news, weather, and hotel data, and then create an itinerary.
+
+```python Python
+user_prompt = """
+Generate a 2-day travel itinerary for New York City, tailored to real-time weather and current news. Follow these steps:
+
+1. Fetch Current News:
+Retrieve the latest news in New York City to include relevant events or updates.
+
+2. Fetch Weather Data:
+Retrieve the weather forecast for the upcoming weekend dates.
+
+3. Fetch Hotel Deals:
+Retrieve the cheapest hotel deals in NYC.
+
+4. Design the Itinerary:
+Use both news and weather insights to create a dynamic itinerary. Include news in the beginning of the itinerary and include weather for each day in the itinerary.
+"""
+```
+
+---
+
+## 🧠 Define the Tool Schema for OpenAI
+
+We’ll register `dappier_real_time_search` as a callable tool for OpenAI’s function calling.
+
+```python Python
+tools = [{
+    "type": "function",
+    "function": {
+        "name": "dappier_real_time_search",
+        "description": "Accesses real-time information including news, weather, and more.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "Search query (e.g., 'Latest news in NYC')"
+                }
+            },
+            "required": ["query"]
+        }
+    }
+}]
+```
+
+---
+
+## 🤖 Run the Assistant Workflow
+
+This function runs the full interaction: the model decides which tools to use, retrieves the data, and then generates a final response.
+
+```python Python
+import json
+
+def run_conversation(user_prompt: str):
+    messages = [{"role": "user", "content": user_prompt}]
+
+    # Step 1: Let OpenAI decide on needed functions
+    response = openai_client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=messages,
+        tools=tools,
+        tool_choice="auto",
+        temperature=0
+    )
+
+    response_message = response.choices[0].message
+
+    # Step 2: Call Dappier for each function the model requested
+    if tool_calls := response_message.tool_calls:
+        messages.append(response_message)
+
+        for tool_call in tool_calls:
+            function_args = json.loads(tool_call.function.arguments)
+            tool_output = dappier_real_time_search(query=function_args["query"])
+
+            messages.append({
+                "tool_call_id": tool_call.id,
+                "role": "tool",
+                "name": tool_call.function.name,
+                "content": tool_output,
+            })
+
+    # Step 3: Final call to OpenAI with all gathered data
+    final_response = openai_client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=messages,
+        temperature=0,
+        stream=True
+    )
+
+    return final_response
+```
+
+---
+
+## 🚀 Generate the Travel Itinerary
+
+Run the full conversation and stream the final response as the itinerary.
+
+```python Python
+if __name__ == "__main__":
+    print("Processing travel planner...\n")
+
+    response = run_conversation(user_prompt)
+
+    print("\n🗓️ Final Itinerary:\n")
+    for chunk in response:
+        print(chunk.choices[0].delta.content or "", end='', flush=True)
+```
+
+```json
+Processing travel planner...
+
+
+🗓️ Final Itinerary:
+
+### 2-Day Travel Itinerary for New York City
+
+#### Current News Highlights
+- **Scam Alert**: Be cautious of a scam involving couriers collecting gold bars.
+- **Political Developments**: Trump has been asked to shut down safe injection sites in the city.
+- **Legal News**: A Columbia University student is suing to stop their deportation after a dorm room search.
+- **Community Updates**: A Bronx mosque is housing migrants, and police have made arrests in connection to a murder in Chinatown.
+- **Safety Incident**: A taxi driver was shot by a passenger, highlighting safety concerns.
+- **Local Controversy**: There’s ongoing debate over the Brooklyn Marine Terminal redevelopment, with Nassau Democrats blocking a $400M plan.
+
+#### Weather Forecast
+- **Saturday**: Mostly sunny with a high of **53°F**. Northwest winds at **10 to 20 mph**.
+- **Sunday**: Breezy with a mix of sun and clouds, high near **56°F**.
+
+#### Hotel Deals
+- **Hi New York City Hostel**: Starting at **$60/night**.
+- **Pod Hotels**: Budget-friendly with modern, compact rooms.
+- **Broadway Plaza Hotel** and **NobleDEN Hotel**: Well-reviewed options at decent rates.
+- Last-minute deals available from **$33/night**.
+
+---
+
+### Day 1: Saturday
+
+**Morning:**
+- **Breakfast**: Start your day at a local café, such as **Balthazar** in SoHo for a classic NYC breakfast.
+- **Activity**: Visit **Central Park** for a morning stroll. The weather is perfect for enjoying the outdoors.
+
+**Afternoon:**
+- **Lunch**: Grab a bite at **Shake Shack** in Madison Square Park.
+- **Activity**: Explore the **Metropolitan Museum of Art**. Admission is pay-what-you-wish, making it budget-friendly.
+
+**Evening:**
+- **Dinner**: Enjoy a meal at **Katz's Delicatessen** for an authentic NYC experience.
+- **Activity**: Check out a local event or show. Look for performances or exhibitions that align with current news, such as discussions on community issues.
+
+---
+
+### Day 2: Sunday
+
+**Morning:**
+- **Breakfast**: Try **Ess-a-Bagel** for a classic New York bagel.
+- **Activity**: Visit the **9/11 Memorial & Museum**. Reflect on the city's resilience and current events.
+
+**Afternoon:**
+- **Lunch**: Head to **Chelsea Market** for a variety of food options.
+- **Activity**: Walk the **High Line**, an elevated park with beautiful views and art installations.
+
+**Evening:**
+- **Dinner**: Dine at **The Spotted Pig** in the West Village, known for its gastropub fare.
+- **Activity**: Wind down with a visit to a local bar or café, perhaps discussing the latest news and events with locals.
+
+---
+
+### Tips
+- Stay updated on local news for any events or changes that may affect your plans.
+- Dress in layers to accommodate the breezy weather.
+- Consider public transportation to navigate the city efficiently.
+
+Enjoy your trip to New York City! 🌆✨
+```
+
+---
+
+## 🌟 Highlights
+
+This notebook has guided you through setting up and running a real-time travel planner workflow using OpenAI Function Calling and Dappier. You can adapt and expand this example for various other scenarios requiring live data integration, contextual understanding, and intelligent response generation.
+
+Key tools utilized in this notebook include:
+
+-   **OpenAI Function Calling**: Allows the model to automatically determine when to invoke external tools, enabling dynamic decision-making during a conversation.
+-   **Dappier**: A platform connecting LLMs to real-time, rights-cleared data from trusted sources, specializing in domains like web search, weather, and news. It delivers enriched, prompt-ready data, empowering AI with verified and up-to-date information for diverse applications.
+-   **Streamed Response Generation**: Leverages OpenAI’s streaming capability to output responses incrementally, improving performance and responsiveness when generating long-form content.
+
+This comprehensive setup allows you to adapt and expand the example for various scenarios requiring real-time information retrieval, AI-powered orchestration, and live content generation.
