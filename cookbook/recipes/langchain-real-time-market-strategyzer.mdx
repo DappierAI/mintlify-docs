@@ -8,10 +8,10 @@ This notebook demonstrates how to set up and leverage LangChain's powerful chain
 
 In this notebook, you'll explore:
 
-- **LangChain**: A versatile framework for chaining together language models and other components to create sophisticated AI-driven workflows. It enables seamless integration of LLMs with external tools and data sources, making it ideal for tasks like summarization, question-answering, and more.
-- **Dappier**: A platform connecting LLMs and Agentic AI agents to real-time, rights-cleared data from trusted sources, specializing in domains like web search, finance, and news. It delivers enriched, prompt-ready data, empowering AI with verified and up-to-date information for diverse applications.
-- **OpenAI**: A leading provider of advanced AI models capable of natural language understanding, contextual reasoning, and content generation. It enables intelligent, human-like interactions and supports a wide range of applications across various domains.
-- **LangSmith**: A platform for debugging, testing, and monitoring LangChain applications. It provides detailed tracing and analytics to help you understand and optimize the performance of your AI workflows.
+-   **LangChain**: A versatile framework for chaining together language models and other components to create sophisticated AI-driven workflows. It enables seamless integration of LLMs with external tools and data sources, making it ideal for tasks like summarization, question-answering, and more.
+-   **Dappier**: A platform connecting LLMs and Agentic AI agents to real-time, rights-cleared data from trusted sources, specializing in domains like web search, finance, and news. It delivers enriched, prompt-ready data, empowering AI with verified and up-to-date information for diverse applications.
+-   **OpenAI**: A leading provider of advanced AI models capable of natural language understanding, contextual reasoning, and content generation. It enables intelligent, human-like interactions and supports a wide range of applications across various domains.
+-   **LangSmith**: A platform for debugging, testing, and monitoring LangChain applications. It provides detailed tracing and analytics to help you understand and optimize the performance of your AI workflows.
 
 This setup not only demonstrates a practical application of AI-driven real-time market insights and trading strategies but also provides a flexible framework that can be adapted to other real-world scenarios requiring real-time financial data integration from Dappier and advanced language model capabilities.
 
@@ -22,21 +22,21 @@ This setup not only demonstrates a practical application of AI-driven real-time 
 If you prefer a visual walkthrough, check out the accompanying video guide below:
 
 <iframe
-  width="560"
-  height="315"
-  src="https://www.youtube.com/embed/k-3T8ipbv6s?si=yA5nrwRe5lSKeM44"
-  title="YouTube video player"
-  frameborder="0"
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-  referrerpolicy="strict-origin-when-cross-origin"
-  allowfullscreen
+    width="560"
+    height="315"
+    src="https://www.youtube.com/embed/k-3T8ipbv6s?si=yA5nrwRe5lSKeM44"
+    title="YouTube video player"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    referrerpolicy="strict-origin-when-cross-origin"
+    allowfullscreen
 ></iframe>
 
 ## 📦 Installation
 
 First, install the Langchain Dappier integration package with all its dependencies:
 
-```bash Python
+```python Python
 !pip install langchain langchain-dappier langchain-openai
 ```
 
@@ -46,7 +46,7 @@ You'll need to set up your API keys for Dappier, OpenAI and LangSmith
 
 You can go to [here](https://platform.dappier.com/profile/api-keys) to get API Key from Dappier with **free** credits. The API Key could be found under Settings -> Profile.
 
-```bash Python
+```python Python
 import os
 from getpass import getpass
 
@@ -57,7 +57,7 @@ os.environ["DAPPIER_API_KEY"] = dappier_api_key
 
 Your can go to [here](https://platform.openai.com/settings/organization/api-keys) to get API Key from Open AI.
 
-```bash Python
+```python Python
 # Prompt for the Open AI API key securely
 openai_api_key = getpass('Enter your API key: ')
 os.environ["OPENAI_API_KEY"] = openai_api_key
@@ -65,7 +65,7 @@ os.environ["OPENAI_API_KEY"] = openai_api_key
 
 Your can go to [here](https://smith.langchain.com/o/dfdd86ea-11a8-5cda-aa11-d998a680bfce/settings) to get API Key from LangSmith.
 
-```bash Python
+```python Python
 # Prompt for the LangSmith API key securely
 langsmith_api_key = getpass('Enter your API key: ')
 os.environ["LANGSMITH_API_KEY"] = langsmith_api_key
@@ -78,7 +78,7 @@ The DappierRealTimeSearchTool is a powerful tool designed to empower AI applicat
 
 In this section, we will search for the latest news related to Langchain as an example. Explore a wide range of data models in our marketplace at [marketplace.dappier.com](https://marketplace.dappier.com). For list of all parameters supported for Dappier retriever visit [Dappier docs](https://docs.dappier.com/integrations/langchain-integration#parameters-3).
 
-```bash Python
+```python Python
 from langchain_dappier import DappierRealTimeSearchTool
 
 tool = DappierRealTimeSearchTool()
@@ -110,7 +110,7 @@ Exciting developments ahead for LangChain!
 
 _This section sets up an automated workflow where LangChain and the DappierRealTimeSearchTool collaborate to generate real-time market insights and trading strategies. We will guide the system in retrieving real-time financial news and stock trends, leveraging OpenAI models to analyze data and craft dynamic, actionable trading recommendations._
 
-```bash Python
+```python Python
 from langchain.chat_models import init_chat_model
 from langchain_dappier import DappierRealTimeSearchTool
 from langchain_core.messages import HumanMessage, ToolMessage
@@ -120,7 +120,7 @@ import json
 
 Define the task prompt
 
-```bash Python
+```python Python
 TASK_PROMPT = """
 Generate a Stock Trading Strategy for the US Market, Tailored to Real-Time
 Financial News and Stock Trends. Follow These Steps:
@@ -166,7 +166,7 @@ A detailed trading strategy with actionable steps.
 
 Here we set up our language model and the Dappier real-time search tool. For list of all parameters supported for Dappier retriever visit [Dappier docs](https://docs.dappier.com/integrations/langchain-integration#parameters-3). Explore a wide range of data models in our marketplace at [marketplace.dappier.com](https://marketplace.dappier.com).
 
-```bash Python
+```python Python
 # Set up model and tools
 llm = init_chat_model("gpt-4o", model_provider="openai", streaming=True)
 dappier_tool = DappierRealTimeSearchTool()
@@ -175,7 +175,7 @@ llm_with_tools = llm.bind_tools([dappier_tool])
 
 Setup a function to handle the streaming output from the language model.
 
-```bash Python
+```python Python
 async def stream_llm_response(stream):
     """Print the LLM's response as it comes in"""
     async for event in stream:
@@ -192,7 +192,7 @@ async def stream_llm_response(stream):
 
 Create a function to process any tool calls made by the language model.
 
-```bash Python
+```python Python
 async def process_tool_calls(tool_calls, messages):
     """Handle any tool calls the LLM makes"""
     print("\n\nProcessing tool calls...")
@@ -223,7 +223,7 @@ async def process_tool_calls(tool_calls, messages):
 
 Setup a function to finally generate a trading strategy using real-time data
 
-```bash Python
+```python Python
 async def generate_trading_strategy():
     """Generate a trading strategy using real-time data"""
     # Initialize message history and config
@@ -253,7 +253,7 @@ async def generate_trading_strategy():
 
 Execute the trading strategy generator
 
-```bash Python
+```python Python
 await generate_trading_strategy()
 ```
 
@@ -372,9 +372,9 @@ This notebook has guided you through setting up and running a Langchain RAG work
 
 Key tools utilized in this notebook include:
 
-- **LangChain**: A versatile framework for chaining together language models and other components to create sophisticated AI-driven workflows. It enables seamless integration of LLMs with external tools and data sources, making it ideal for tasks like summarization, question-answering, and more.
-- **Dappier**: A platform connecting LLMs and Agentic AI agents to real-time, rights-cleared data from trusted sources, specializing in domains like web search, finance, and news. It delivers enriched, prompt-ready data, empowering AI with verified and up-to-date information for diverse applications.
-- **OpenAI**: A leading provider of advanced AI models capable of natural language understanding, contextual reasoning, and content generation. It enables intelligent, human-like interactions and supports a wide range of applications across various domains.
-- **LangSmith**: A platform for debugging, testing, and monitoring LangChain applications. It provides detailed tracing and analytics to help you understand and optimize the performance of your AI workflows.
+-   **LangChain**: A versatile framework for chaining together language models and other components to create sophisticated AI-driven workflows. It enables seamless integration of LLMs with external tools and data sources, making it ideal for tasks like summarization, question-answering, and more.
+-   **Dappier**: A platform connecting LLMs and Agentic AI agents to real-time, rights-cleared data from trusted sources, specializing in domains like web search, finance, and news. It delivers enriched, prompt-ready data, empowering AI with verified and up-to-date information for diverse applications.
+-   **OpenAI**: A leading provider of advanced AI models capable of natural language understanding, contextual reasoning, and content generation. It enables intelligent, human-like interactions and supports a wide range of applications across various domains.
+-   **LangSmith**: A platform for debugging, testing, and monitoring LangChain applications. It provides detailed tracing and analytics to help you understand and optimize the performance of your AI workflows.
 
 This comprehensive setup allows you to adapt and expand the example for various scenarios requiring advanced web information retrieval, AI collaboration, and multi-source data aggregation.
