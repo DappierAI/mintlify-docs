@@ -74,6 +74,7 @@
                             "integrations/camel-integration",
                             "integrations/cursor-mcp-integration",
                             "integrations/langchain-integration",
+                            "integrations/llama-index-integration",
                             "integrations/open-ai-agents-sdk-integration",
                             "integrations/open-ai-function-calling-integration",
                             "integrations/open-ai-gpt-integration",
