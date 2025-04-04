@@ -1,0 +1,353 @@
+---
+title: "🦙 Real-Time Stock Analyzer | Powered by Dappier and LlamaIndex"
+---
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/12fLRnktOPXOsA2U5Tgwvnh0EMad6Ppfh?usp=sharing)
+
+This notebook demonstrates how to build a real-time, LLM-powered stock analysis assistant by combining LlamaIndex with Dappier. It walks through building an "Explain This Ticker" app that gives real-time explanations for stock movements, technicals, and valuation.
+
+In this notebook, you’ll explore:
+
+-   **Dappier**: A platform that connects LLMs and agentic AI agents to real-time, rights-cleared data from trusted sources. It delivers verified, prompt-ready information across domains like web search, finance, news, and more.
+
+-   **LlamaIndex**: A data framework that allows seamless integration of external tools with LLMs. It enables structured workflows for tool use, reasoning, and response generation.
+
+-   **OpenAI**: An advanced AI model provider used here to power the assistant’s reasoning, planning, and response generation.
+
+This setup offers a practical example of building context-aware applications with real-time data access. It can be easily extended to other domains requiring live insights and AI-driven decision-making.
+
+## Watch the Video Guide
+
+If you prefer a visual walkthrough, check out the accompanying video guide below:
+
+<iframe
+    width="560"
+    height="315"
+    src="https://www.youtube.com/embed/4aU8BK8pfmU?si=bEgCtPqcQmFLZIsu"
+    title="YouTube video player"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    referrerpolicy="strict-origin-when-cross-origin"
+    allowfullscreen
+></iframe>
+
+## Installation
+
+To get started with the stock analyzer, install the required packages:
+
+```bash
+pip install llama-index llama-index-tools-dappier openai
+```
+
+## Setup API Keys
+
+To authenticate and use Dappier and OpenAI, you’ll need valid API keys.
+
+You can generate one for free from your [Dappier API dashboard](https://platform.dappier.com/profile/api-keys).
+
+```python Python
+import os
+from getpass import getpass
+
+# Prompt for the Dappier API key securely
+dappier_api_key = getpass("Enter your Dappier API key: ")
+os.environ["DAPPIER_API_KEY"] = dappier_api_key
+```
+
+You can obtain your OpenAI API key from the [OpenAI API dashboard](https://platform.openai.com/account/api-keys).
+
+```python Python
+# Prompt for the OpenAI API key securely
+openai_api_key = getpass("Enter your OpenAI API key: ")
+os.environ["OPENAI_API_KEY"] = openai_api_key
+```
+
+## Dappier Real Time Search Tool
+
+The `DappierRealTimeSearchToolSpec` enables LLMs to access real-time data across the web, including the latest news, weather updates, and financial information. This tool is ideal for applications requiring up-to-date, context-rich data.
+
+### Initialize the Tool
+
+To utilize the real-time search tool, initialize it as follows:
+
+```python Python
+from llama_index.tools.dappier import DappierRealTimeSearchToolSpec
+
+search_tool_spec = DappierRealTimeSearchToolSpec()
+```
+
+### Real-Time Stock Market Data
+
+Access up-to-date financial insights or company-specific news with the `search_stock_market_data` method:
+
+```python Python
+response = search_tool_spec.search_stock_market_data("explain why AAPL is moving today")
+print(response)
+```
+
+```json
+Today, Apple Inc. (AAPL) is experiencing movement in its stock price due to several factors:
+
+1. **AI Advancements and Competition**: A recent article from Benzinga highlights that Google's launch of its Pixel 8 series, which includes significant AI advancements, could impact Apple's iPhone innovations. Citi analyst Atif Malik has pointed out that these developments may serve as a catalyst for Apple to enhance its own product offerings. This competitive pressure can influence investor sentiment regarding AAPL.
+
+2. **Market Sentiment and Economic Outlook**: There is a broader market concern as JPMorgan's chief market strategist, Marko Kolanovic, has issued a warning about a potential 20% downturn in the S&P 500, driven by rising interest rates. Such macroeconomic factors can create volatility in tech stocks, including AAPL, as investors reassess their positions amidst fears of a recession.
+
+3. **Strong Jobs Report**: A strong jobs report released today indicates robust non-farm payroll growth, which can impact market dynamics. While this is generally positive news, the mixed signals regarding wage growth and unemployment rates may lead to cautious trading behavior among investors.
+
+These factors combined contribute to the movement in AAPL's stock today, reflecting both competitive pressures and broader economic concerns.
+```
+
+## Build a Real-Time Stock Analysis Agent
+
+Now that your API keys are set and packages are installed, you're ready to build the stock analysis agent.
+
+Start by importing the required modules:
+
+```python Python
+import asyncio
+from llama_index.llms.openai import OpenAI
+from llama_index.tools.dappier import DappierRealTimeSearchToolSpec
+from llama_index.core.agent.workflow import AgentWorkflow
+from llama_index.core.agent.workflow import AgentStream, ToolCallResult
+```
+
+Initialize the OpenAI model that will power the agent:
+
+```python Python
+llm = OpenAI(model="gpt-4o")
+```
+
+Next, set up the Dappier real-time search tool. This tool allows the agent to query live stock-related news and market insights:
+
+```python Python
+search_tool_spec = DappierRealTimeSearchToolSpec()
+tools = search_tool_spec.to_tool_list()
+```
+
+Now define the agent workflow. In this case, the agent acts as a real-time stock explainer agent
+
+```python Python
+workflow = AgentWorkflow.from_tools_or_functions(
+    tools,
+    llm=llm,
+    system_prompt="""
+    You are a real-time stock analysis assistant that provides comprehensive, insightful, and timely market analysis. For any given ticker, your job is to:
+
+    1. **Date and Time**:
+       - Frist get today's date and time using Dappier real-time search tool and use that date in your future queries
+
+    2. **Explain Intraday Movement**:
+       - Use real-time news, social sentiment, analyst commentary, and earnings updates to explain why the stock is moving today.
+       - Prioritize significant catalysts (e.g., earnings beats/misses, M&A, regulatory events, analyst upgrades/downgrades, macro news).
+       - Include timestamps and sources if available.
+
+    3. **Summarize Key Technicals**:
+       - Highlight major technical indicators: 50-day / 200-day moving averages, RSI, MACD, support/resistance levels, and trend direction.
+       - Indicate whether the stock is in overbought/oversold territory and breaking out/breaking down from key levels.
+
+    4. **Provide Valuation Insights**:
+       - Compare P/E, P/S, P/B, and forward multiples to sector and industry averages.
+       - Mention whether the stock is undervalued or overvalued based on historical and relative valuation metrics.
+
+    5. **Contextualize in Broader Market Trends**:
+       - Relate the stock’s movement to sector performance, macroeconomic indicators (e.g., interest rates, inflation), and broader market sentiment (e.g., S&P 500 or Nasdaq trends).
+
+    Always return your findings as a detailed explanation in natural language. Be smart and never omit meaningful drivers of price action.
+    """,
+)
+```
+
+To stream the results from the agent and display both tool interactions and the generated explanation, run the following:
+
+```python Python
+async def run_stock_analysis():
+    handler = workflow.run(user_msg=user_prompt)
+
+    seen_agent_output = False
+
+    async for event in handler.stream_events():
+        if isinstance(event, AgentStream):
+            if not seen_agent_output:
+                print("[🧠 Agent]:", end="", flush=True)
+                seen_agent_output = True
+            print(event.delta, end="", flush=True)
+        elif isinstance(event, ToolCallResult):
+            seen_agent_output = False
+            print(f"\n\n🔧 Tool Used: {event.tool_name}")
+            print(f"➡️  Input Args: {event.tool_kwargs}")
+            print(f"✅ Output: {event.tool_output}\n")
+```
+
+Finally, launch the agent:
+
+```python Python
+ticker = input("Enter the stock ticker you want to analyze: ").strip().upper()
+
+user_prompt = f"""
+Explain this stock ticker: {ticker}
+
+1. Date and Time:
+Frist get today's date and time using Dappier real-time search tool and use 
+that date in your future queries
+
+2. Real-Time Movement:
+Why is it moving today? (News, earnings, sentiment, etc.)
+
+3. Technical Analysis:
+Summarize key technicals (moving averages, RSI, etc.)
+
+4. Valuation:
+Give a smart valuation summary (P/E vs sector, etc.)
+"""
+
+await run_stock_analysis(user_prompt)
+```
+
+```json
+Enter the stock ticker you want to analyze: apple
+[🧠 Agent]:
+
+🔧 Tool Used: search_real_time_data
+➡️  Input Args: {'query': 'current date and time'}
+✅ Output: The current date and time is April 3, 2025, at 4:00 PM UTC. If you need it in a different time zone, just let me know! 😊
+
+[🧠 Agent]:
+
+🔧 Tool Used: search_stock_market_data
+➡️  Input Args: {'query': 'Apple stock valuation April 3, 2025'}
+✅ Output: As of April 3, 2025, the valuation of Apple stock (AAPL) is as follows:
+
+- Latest Prices:
+  - $206.155
+  - $206.14
+  - $206.175
+  - $206.22
+  - $206.18
+  - $206.22
+  - $206.28
+  - $206.265
+  - $206.3
+  - $206.29
+  - $206.29
+  - $206.26
+  - $206.23
+  - $206.22
+  - $206.25
+  - $206.24
+
+Please note that the stock prices are delayed, and the status is marked as "DELAYED." If you need more specific details or additional information, feel free to ask!
+
+
+
+🔧 Tool Used: search_stock_market_data
+➡️  Input Args: {'query': 'Apple stock technical analysis April 3, 2025'}
+✅ Output: As of April 3, 2025, here is the technical analysis for Apple stock (AAPL):
+
+- **Latest Price**: $206.08
+- **Recent Trades**:
+  - **Price**: $206.155, Size: 4 shares
+  - **Price**: $206.14, Size: 100 shares
+  - **Price**: $206.175, Size: 2 shares
+  - **Price**: $206.22, Size: 12 shares
+  - **Price**: $206.18, Size: 2 shares
+  - **Price**: $206.22, Size: 17 shares
+  - **Price**: $206.28, Size: 9 shares
+  - **Price**: $206.265, Size: 37 shares
+  - **Price**: $206.3, Size: 100 shares
+  - **Price**: $206.29, Size: 9 shares
+  - **Price**: $206.26, Size: 24 shares
+  - **Price**: $206.23, Size: 100 shares
+  - **Price**: $206.22, Size: 100 shares
+  - **Price**: $206.25, Size: 51 shares
+  - **Price**: $206.24, Size: 1 share
+
+- **Market Status**: The data is labeled as "DELAYED."
+
+This summary provides a snapshot of the trading activity and price movements for Apple stock on this date. If you need more detailed analysis or specific indicators, please let me know!
+
+
+
+🔧 Tool Used: search_stock_market_data
+➡️  Input Args: {'query': 'Apple stock news April 3, 2025'}
+✅ Output: Here are the latest news articles regarding Apple stock as of April 3, 2025:
+
+1. **Title:** [Warren Buffett's Stance on Import Tariffs Raises Flags. But Don't Ignore His Words on Investing During Times of Market Turmoil.](https://www.fool.com/investing/2025/04/03/warren-buffetts-stance-on-import-tariffs-raises-fl/?source=iedfolrf0000001)  
+   **Publisher:** The Motley Fool  
+   **Published:** April 3, 2025  
+   **Summary:** The article discusses Warren Buffett's views on import tariffs and his advice on investing during market downturns. While it mentions Berkshire Hathaway's sales of Apple stock, it does not provide a clear sentiment on Apple itself.  
+   **Sentiment on AAPL:** Neutral
+
+2. **Title:** [Prediction: 4 Artificial Intelligence (AI) Stocks That Could Be Worth More Than Apple by 2030](https://www.fool.com/investing/2025/04/03/prediction-4-artificial-intelligence-ai-stocks-tha/?source=iedfolrf0000001)  
+   **Publisher:** The Motley Fool  
+   **Published:** April 3, 2025  
+   **Summary:** This article predicts that Microsoft, Nvidia, Amazon, and Alphabet could surpass Apple's market cap by 2030 due to their stronger growth trajectories and Apple's stagnation in innovation.  
+   **Sentiment on AAPL:** Negative
+
+3. **Title:** [Markets Reel As Trump's Tariffs Hit — Magnificent 7 Set To Shed Almost $700 Billion](https://www.benzinga.com/government/regulations/25/04/44618089/trumps-tariffs-surprise-triggers-carnage-magnificent-7-set-to-wipe-out-nearly-700-billion-)  
+   **Publisher:** Benzinga  
+   **Published:** April 2, 2025  
+   **Summary:** President Trump's new tariffs have caused a significant selloff in the market, with Apple projected to lose $221.7 billion in market value, the largest decline among major tech stocks.  
+   **Sentiment on AAPL:** Negative
+
+4. **Title:** [Liberation Day Tariffs: Potential Impact on the US Stock Market](https://www.investing.com/analysis/liberation-day-tariffs-potential-impact-on-the-us-stock-market-200659005)  
+   **Publisher:** Investing.com  
+   **Published:** April 2, 2025  
+   **Summary:** The article discusses the potential impact of new tariffs on the stock market, noting that Apple relies heavily on non-US markets, which makes it vulnerable to trade wars.  
+   **Sentiment on AAPL:** Neutral
+
+5. **Title:** [Trump's 'Liberation Day' Tariff Reveal Set For 4PM: What's At Stake](https://www.benzinga.com/25/04/44613907/tariff-shock-incoming-as-trump-prepares-sweeping-trade-duties-what-traders-need-to-know)  
+   **Publisher:** Benzinga  
+   **Published:** April 2, 2025  
+   **Summary:** The article anticipates the announcement of new tariffs that could negatively impact global supply chains and financial markets, affecting companies like Apple.  
+   **Sentiment on AAPL:** Negative
+
+These articles reflect a mix of neutral and negative sentiments regarding Apple, primarily influenced by recent market conditions and tariff discussions.
+
+[🧠 Agent]:### Date and Time
+Today is April 3, 2025, at 4:00 PM UTC.
+
+### Real-Time Movement
+Apple's stock is experiencing movement today due to several factors:
+
+1. **Tariff Concerns**: Recent news highlights the impact of President Trump's new tariffs, which have caused a significant selloff in the market. Apple is projected to lose $221.7 billion in market value, the largest decline among major tech stocks. This is primarily due to Apple's reliance on non-US markets, making it vulnerable to trade wars. (Source: Benzinga, April 2, 2025)
+
+2. **Market Sentiment**: Articles suggest that other tech giants like Microsoft, Nvidia, Amazon, and Alphabet could surpass Apple's market cap by 2030 due to stronger growth trajectories, indicating a negative sentiment towards Apple's future growth. (Source: The Motley Fool, April 3, 2025)
+
+3. **Warren Buffett's Commentary**: While Warren Buffett's views on import tariffs are discussed, there is no clear sentiment on Apple itself. However, the mention of Berkshire Hathaway's sales of Apple stock adds to the market's cautious outlook. (Source: The Motley Fool, April 3, 2025)
+
+Overall, the sentiment around Apple today is predominantly negative due to macroeconomic factors and competitive pressures.
+
+### Technical Analysis
+As of April 3, 2025, the technical analysis for Apple stock (AAPL) includes:
+
+- **Latest Price**: $206.08
+- **Recent Trades**: Prices range from $206.14 to $206.30, with varying trade sizes.
+- **Market Status**: The data is labeled as "DELAYED."
+
+Unfortunately, specific technical indicators like moving averages, RSI, and MACD were not provided in the data. However, the stock appears to be experiencing volatility, likely influenced by the broader market conditions.
+
+### Valuation Insights
+The valuation of Apple stock as of today includes:
+
+- **Latest Prices**: Ranging from $206.14 to $206.30.
+- **Market Status**: The data is marked as "DELAYED."
+
+Without specific P/E, P/S, or P/B ratios provided, it's challenging to compare Apple's valuation directly to sector averages. However, the current market sentiment and price movements suggest that investors may perceive Apple as facing challenges in maintaining its growth trajectory compared to its peers.
+
+### Contextualization in Broader Market Trends
+Apple's movement today is closely tied to broader market trends, particularly the impact of new tariffs and competitive pressures from other tech giants. The overall market sentiment is cautious, with significant selloffs in major tech stocks due to geopolitical and macroeconomic factors. This aligns with the broader market's reaction to recent policy changes and competitive dynamics within the tech sector.
+```
+
+## Conclusion
+
+This notebook has guided you how to build a real-time, LLM-powered stock analysis assistant by combining LlamaIndex with Dappier. It walks through creating a smart explanation engine for stock tickers using current news, technicals, and valuation insights.
+
+In this notebook, explored:
+
+-   **Dappier**: A platform that connects LLMs and agentic AI agents to real-time, rights-cleared data from trusted sources. It delivers verified, prompt-ready information across domains like web search, finance, news, and more.
+
+-   **LlamaIndex**: A data framework that allows seamless integration of external tools with LLMs. It enables structured workflows for tool use, reasoning, and response generation.
+
+-   **OpenAI**: An advanced AI model provider used here to power the assistant’s reasoning, planning, and response generation.
+
+This setup offers a practical example of building context-aware applications with real-time data access. It can be easily extended to other domains requiring live insights and AI-driven decision-making.

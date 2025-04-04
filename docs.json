@@ -123,6 +123,14 @@
                         ]
                     },
                     {
+                        "group": "LlamaIndex",
+                        "pages": [
+                            "cookbook/recipes/llama-index-dyamic-travel-planner",
+                            "cookbook/recipes/llama-index-stock-analyzer",
+                            "cookbook/recipes/llama-index-smart-news-letter"
+                        ]
+                    },
+                    {
                         "group": "OpenAI Agents SDK",
                         "pages": [
                             "cookbook/recipes/open-ai-agent-travel-assistant",

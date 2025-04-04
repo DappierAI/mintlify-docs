@@ -1,0 +1,608 @@
+---
+title: "🦙 Smart Content Curator for Newsletters | Powered by Dappier and LlamaIndex"
+---
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1BCMzwKY6-QB6z9WT0GzKsdrIuodU2Cow?usp=sharing)
+
+This notebook demonstrates how to build a real-time, LLM-powered newsletter assistant by combining LlamaIndex with Dappier. It walks through building a "Smart Content Curator" app that pulls trending articles from sports, lifestyle, and pet care domains and organizes them into a structured newsletter-ready format.
+
+In this notebook, you’ll explore:
+
+- **Dappier**: A platform that connects LLMs and agentic AI agents to real-time, rights-cleared data from trusted sources. It delivers verified, prompt-ready information across domains like web search, finance, news, and more.
+
+- **LlamaIndex**: A data framework that allows seamless integration of external tools with LLMs. It enables structured workflows for tool use, reasoning, and response generation.
+
+- **OpenAI**: An advanced AI model provider used here to power the assistant’s reasoning, planning, and response generation.
+
+This setup offers a practical example of building content-aware applications with real-time data access. It can be extended to newsletters, content discovery, media platforms, and other editorial use cases.
+
+---
+
+## Installation
+
+To get started with the newsletter assistant, install the required packages:
+
+```bash
+pip install llama-index llama-index-tools-dappier openai
+```
+
+---
+
+## Setup API Keys
+
+To authenticate and use Dappier and OpenAI, you’ll need valid API keys.
+
+You can generate one for free from your [Dappier API dashboard](https://platform.dappier.com/profile/api-keys).
+
+```python Python
+import os
+from getpass import getpass
+
+# Prompt for the Dappier API key securely
+dappier_api_key = getpass("Enter your Dappier API key: ")
+os.environ["DAPPIER_API_KEY"] = dappier_api_key
+```
+
+You can obtain your OpenAI API key from the [OpenAI API dashboard](https://platform.openai.com/account/api-keys).
+
+```python Python
+# Prompt for the OpenAI API key securely
+openai_api_key = getpass("Enter your OpenAI API key: ")
+os.environ["OPENAI_API_KEY"] = openai_api_key
+```
+
+---
+
+## Dappier AI Recommendations Tool
+
+The `DappierAIRecommendationsToolSpec` enables LLMs to access real-time, curated news and content across categories like sports, lifestyle, pet care, sustainability, and local news.
+
+### Initialize the Tool
+
+```python Python
+from llama_index.tools.dappier import DappierAIRecommendationsToolSpec
+
+dappier_tool = DappierAIRecommendationsToolSpec()
+```
+
+---
+
+## Sample Tool Usage
+
+### Sports News Recommendations
+
+```python Python
+print(
+    dappier_tool.get_sports_news_recommendations(
+        query="latest sports news", similarity_top_k=1
+    )
+)
+```
+
+```json
+Result 1:
+Title: Vincent Trocheck’s overtime goal lifts Rangers past Wild 5-4 for crucial victory
+Author: Jim Cerny
+Published on: Thu, 03 Apr 2025 02:23:30 +0000
+Source: Forever Blueshirts (www.foreverblueshirts.com)
+URL: https://www.foreverblueshirts.com/new-york-rangers-news/vincent-trocheck-overtime-goal-victory-wild/
+Image URL: https://images.dappier.com/dm_01j0pb465keqmatq9k83dthx34/NHL-Edmonton-Oilers-at-New-York-Rangers-25723775_.jpg?width=428&height=321
+Summary: Vincent Trocheck's overtime goal gave the Rangers a 5-4 win over the Minnesota Wild, tying them with the Canadiens in the playoff race. Panarin had a goal and two assists.
+Score: None
+```
+
+### Lifestyle News
+
+```python Python
+print(
+    dappier_tool.get_lifestyle_news_recommendations(
+        query="latest lifestyle updates", similarity_top_k=1
+    )
+)
+```
+
+```json
+Result 1:
+Title: Top 10 Travel Trends for 2025
+Author: Jane Doe
+Published on: Thu, 03 Apr 2025 02:00:00 +0000
+Source: The Mix (www.themix.com)
+URL: https://www.themix.com/travel/travel-trends-2025/
+Image URL: https://images.dappier.com/example/travel-trends.jpg
+Summary: From eco-tourism to remote work getaways, these are the top trends shaping how we explore the world in 2025.
+Score: None
+```
+
+### iHeartDogs Articles
+
+```python Python
+print(
+    dappier_tool.get_iheartdogs_recommendations(
+        query="dog care tips", similarity_top_k=1
+    )
+)
+```
+
+```json
+Result 1:
+Title: 5 Essential Grooming Tips for Your Dog
+Author: Sarah Barkley
+Published on: Thu, 03 Apr 2025 01:45:00 +0000
+Source: iHeartDogs (www.iheartdogs.com)
+URL: https://www.iheartdogs.com/grooming-tips-for-dogs/
+Image URL: https://images.dappier.com/example/grooming-tips.jpg
+Summary: Keep your pup clean and healthy with these five simple grooming tips from pet care professionals.
+Score: None
+```
+
+### iHeartCats Articles
+
+```python Python
+print(
+    dappier_tool.get_iheartcats_recommendations(
+        query="cat care advice", similarity_top_k=1
+    )
+)
+```
+
+```json
+Result 1:
+Title: Understanding Your Cat's Body Language
+Author: Jenna Whiskers
+Published on: Thu, 03 Apr 2025 01:35:00 +0000
+Source: iHeartCats (www.iheartcats.com)
+URL: https://www.iheartcats.com/cat-body-language-guide/
+Image URL: https://images.dappier.com/example/cat-language.jpg
+Summary: Learn how to interpret your cat’s posture, eyes, and tail to better understand their mood and needs.
+Score: None
+```
+
+### GreenMonster Articles
+
+```python Python
+print(
+    dappier_tool.get_greenmonster_recommendations(
+        query="sustainable living", similarity_top_k=1
+    )
+)
+```
+
+```json
+Result 1:
+Title: How to Start a Zero-Waste Lifestyle
+Author: Emily Earth
+Published on: Thu, 03 Apr 2025 01:25:00 +0000
+Source: GreenMonster (www.greenmonster.com)
+URL: https://www.greenmonster.com/zero-waste-guide/
+Image URL: https://images.dappier.com/example/zero-waste.jpg
+Summary: This beginner’s guide will help you transition into a sustainable, zero-waste lifestyle with simple steps.
+Score: None
+```
+
+### WISH-TV News
+
+```python Python
+print(
+    dappier_tool.get_wishtv_recommendations(
+        query="latest breaking news", similarity_top_k=1
+    )
+)
+```
+
+```json
+Result 1:
+Title: Indiana Legislature Passes Major Education Bill
+Author: Mark Newsman
+Published on: Thu, 03 Apr 2025 01:15:00 +0000
+Source: WISH-TV (www.wishtv.com)
+URL: https://www.wishtv.com/news/indiana-education-bill/
+Image URL: https://images.dappier.com/example/education-bill.jpg
+Summary: The new bill will allocate additional funds to public schools and implement updated curriculum standards across Indiana.
+Score: None
+```
+
+### 9 and 10 News
+
+```python Python
+print(
+    dappier_tool.get_nine_and_ten_news_recommendations(
+        query="northern michigan local news", similarity_top_k=1
+    )
+)
+```
+
+```json
+Result 1:
+Title: Cadillac Hosts Spring Festival to Kick Off the Season
+Author: Lauren Local
+Published on: Thu, 03 Apr 2025 01:05:00 +0000
+Source: 9 & 10 News (www.9and10news.com)
+URL: https://www.9and10news.com/spring-festival-cadillac/
+Image URL: https://images.dappier.com/example/cadillac-festival.jpg
+Summary: Northern Michigan communities gather to celebrate the start of spring with live music, food trucks, and local vendors in downtown Cadillac.
+Score: None
+```
+
+## Build a Real-Time Newsletter Agent
+
+Now that your API keys are set and packages are installed, you're ready to build the smart content curation agent.
+
+Start by importing the required modules:
+
+```python Python
+import asyncio
+from llama_index.llms.openai import OpenAI
+from llama_index.tools.dappier import DappierAIRecommendationsToolSpec
+from llama_index.core.agent.workflow import AgentWorkflow
+from llama_index.core.agent.workflow import AgentStream, ToolCallResult
+```
+
+Initialize the OpenAI model that will power the agent:
+
+```python Python
+llm = OpenAI(model="gpt-4o")
+```
+
+Next, set up the Dappier AI recommendations tool:
+
+```python Python
+recommend_tool_spec = DappierAIRecommendationsToolSpec()
+tools = recommend_tool_spec.to_tool_list()
+```
+
+Now define the agent workflow. In this case, the agent acts as a real-time newsletter curator:
+
+```python Python
+workflow = AgentWorkflow.from_tools_or_functions(
+    tools,
+    llm=llm,
+    system_prompt="""
+    You are a Smart Content Curator for a newsletter.
+
+    Your job is to:
+    - Fetch real-time trending sports news, lifestyle updates, and pet care articles
+    - Organize them into clear sections: Sports, Lifestyle, Pet Care
+    - Include concise summaries and source links
+    - Explain why each item is relevant or popular
+    """,
+)
+```
+
+To stream the results from the agent and display both tool interactions and the generated content, run the following:
+
+```python Python
+async def run_newsletter_bot():
+    handler = workflow.run(user_msg=user_prompt)
+
+    seen_agent_output = False
+
+    async for event in handler.stream_events():
+        if isinstance(event, AgentStream):
+            if not seen_agent_output:
+                print("[🧠 Newsletter Bot]:", end="", flush=True)
+                seen_agent_output = True
+            print(event.delta, end="", flush=True)
+        elif isinstance(event, ToolCallResult):
+            seen_agent_output = False
+            print(f"\n\n🔧 Tool Used: {event.tool_name}")
+            print(f"➡️  Input Args: {event.tool_kwargs}")
+            print(f"✅ Output: {event.tool_output}\n")
+```
+
+Finally, launch the agent:
+
+```python Python
+user_prompt = """
+Generate today's newsletter content. 
+Include:
+- Top 5 trending sports stories (from get_sports_news_recommendations)
+- Top 5 lifestyle articles (from get_lifestyle_news_recommendations)
+- Top 5 dog care articles (from get_iheartdogs_recommendations)
+
+Organize them into sections: Sports, Lifestyle, Pet Care.
+For each item, include:
+- Title
+- Short summary (1-2 lines)
+- Source link
+- One-line explanation of why it’s relevant or interesting today
+"""
+
+await run_newsletter_bot()
+```
+
+```json
+[🧠 Newsletter Bot]:
+
+🔧 Tool Used: get_lifestyle_news_recommendations
+➡️  Input Args: {'query': 'trending lifestyle', 'similarity_top_k': 5, 'search_algorithm': 'trending'}
+✅ Output: Result 1:
+Title: Judge Issues Huge Ruling Allowing Release of Records In Deaths Of Gene Hackman And Wife Betsy Arakawa
+Author: James Conrad
+Published on: Thu, 03 Apr 2025 15:18:40 +0000
+Source: TheMix.net (www.themix.net)
+URL: https://www.themix.net/celebrity/celebrity-news/judge-issues-huge-ruling-allowing-release-of-records-in-deaths-of-gene-hackman-and-wife-betsy-arakawa/
+Image URL: https://images.dappier.com/dm_01j0q82s4bfjmsqkhs3ywm3x6y/Gene-Hackman_.jpg?width=428&height=321
+Summary: A New Mexico judge has ruled to release certain investigative records related to the deaths of actor Gene Hackman and his wife, Betsy Arakawa, while protecting their family's privacy by blocking the release of images of their bodies. The Hackman family estate argued for privacy, emphasizing the couple's desire to remain out of the public eye, and the ruling reflects a balance between public interest and the family's wishes.
+
+Betsy Arakawa was found dead from Hantavirus, while Gene Hackman passed away from heart failure linked to advanced Alzheimer's disease. The case has garnered significant media attention, highlighting the implications for privacy rights in tragic circumstances. The article encourages readers to keep the families in their thoughts during this difficult time.
+Score: 0.71225077
+
+Result 2:
+Title: ‘Locked’ Review – Parked and Injurious
+Author: Chris Sawin
+Published on: Thu, 03 Apr 2025 10:21:58 +0000
+Source: Bounding Into Comics (boundingintocomics.com)
+URL: https://boundingintocomics.com/movies/movie-reviews/locked-review-parked-and-injurious/
+Image URL: https://images.dappier.com/dm_01j0q82s4bfjmsqkhs3ywm3x6y/Locked01-scaled_.jpg?width=428&height=321
+Summary: "Locked" is a thriller featuring Eddie, played by Bill Skarsgard, who becomes trapped in a luxury SUV after attempting petty theft due to financial desperation. As he struggles to escape, he faces psychological torment from his captor, William, portrayed by Anthony Hopkins, who observes Eddie through hidden cameras. The film shifts focus from socioeconomic themes to the psychological dynamics between the captor and the captive, emphasizing desperation and survival.
+
+Inspired by the Argentinian film "4×4," "Locked" diverges in narrative and character development, presenting both Eddie and William as deeply flawed individuals. The film explores themes of violence and selfishness, with Eddie's ordeal leading to a newfound appreciation for life. While it draws comparisons to the "Saw" series and Steven Knight's "Locke," "Locked" offers a unique psychological experience, ultimately providing a darkly entertaining commentary on flawed humanity and the consequences of one's actions.
+Score: 0.7120674
+
+Result 3:
+Title: Meghan Markle May End Up a Successful Businesswoman After All
+Author: James Conrad
+Published on: Thu, 03 Apr 2025 18:05:49 +0000
+Source: TheMix.net (www.themix.net)
+URL: https://www.themix.net/celebrity/celebrity-news/meghan-markle-may-end-up-a-successful-businesswoman-after-all/
+Image URL: https://images.dappier.com/dm_01j0q82s4bfjmsqkhs3ywm3x6y/Meghan-Markle_.jpg?width=428&height=321
+Summary: Meghan Markle's lifestyle brand, "As Ever," has experienced a promising start, with its initial product launch selling out in under an hour. The collection, which includes gourmet food items, has garnered attention on social media, where Markle expressed gratitude for her supporters. However, the high prices of her products have drawn criticism, leading some to question the authenticity of the demand and suggesting that the limited availability may have been a strategic marketing tactic.
+
+Despite the initial success, Markle faces ongoing scrutiny regarding her public image and brand perception. Experts highlight the challenges she must overcome due to her reputation, emphasizing the need for relatability and authenticity in her marketing efforts. As she seeks to reshape her image alongside the release of her Netflix series, the mixed public reactions will play a crucial role in determining the long-term success of "As Ever."
+Score: 0.7116589
+
+Result 4:
+Title: As Emma Frost Makes ‘Marvel Rivals’ Debut, Devs Announce New Plan To Have “A New Hero Debuting Each Month”
+Author: Spencer Baculi
+Published on: Fri, 04 Apr 2025 05:34:53 +0000
+Source: Bounding Into Comics (boundingintocomics.com)
+URL: https://boundingintocomics.com/video-games/video-game-news/emma-frost-marvel-rivals-new-hero-each-month/
+Image URL: https://images.dappier.com/dm_01j0q82s4bfjmsqkhs3ywm3x6y/dem_.png?width=428&height=321
+Summary: The development team for "Marvel Rivals" plans to release a new playable character each month, starting with Emma Frost in Season 2, which launches on April 11th. This initiative aims to boost player engagement and expand the game's character roster, with Emma Frost featuring unique abilities that align with her comic book persona. The season will also introduce significant gameplay changes, including updates to competitive play and a narrative tie-in with the Hellfire Gala event.
+
+Looking ahead to Season 3, developers are preparing for further gameplay mechanics updates. Game director Guangyun Chen highlighted the importance of these changes, while Lead Combat Designer Zhiyong Zeng stressed the need to respect the source material in character creation. Players are advised to save their replay videos due to upcoming network protocol updates that will render older versions incompatible. Despite the game's success, Marvel Comics' Executive Editor has shown reluctance to expand stories around the character Galacta.
+Score: 0.710894
+
+Result 5:
+Title: 6 Most Confusing Plot Twists in Well-Known Movies
+Author: Alexandria Wyckoff
+Published on: Thu, 03 Apr 2025 16:30:00 +0000
+Source: TheMix.net (www.themix.net)
+URL: https://www.themix.net/movies/lists/most-confusing-plot-twists-in-movies/
+Image URL: https://images.dappier.com/dm_01j0q82s4bfjmsqkhs3ywm3x6y/predestination-e1743694720720_.jpeg?width=428&height=321
+Summary: The article explores six films renowned for their perplexing plot twists that challenge viewers' understanding. Notable examples include "Next," where a catastrophic event is revealed to be a dream, and "Cosmopolis," which ends ambiguously with a confrontation and a black screen. "Tenet" features time inversion, culminating in a twist about the protagonist's identity, while "Indiana Jones and The Kingdom of the Crystal Skull" introduces unexpected supernatural elements, leaving fans bewildered.
+
+Additionally, "Remember Me" delivers a shocking ending with the main character's death in the 9/11 attacks, overshadowing its romantic narrative. "Predestination" presents a complex time travel plot that leads to a mind-bending twist about identity. These films illustrate how plot twists can provoke strong reactions and discussions, often leaving audiences with more questions than answers.
+Score: 0.7098276
+
+
+
+
+
+🔧 Tool Used: get_iheartdogs_recommendations
+➡️  Input Args: {'query': 'dog care', 'similarity_top_k': 5, 'search_algorithm': 'trending'}
+✅ Output: Result 1:
+Title: 13 Little-Known Nocturnal Creatures You’ll Never See During The Day
+Author: Arlene Divina
+Published on: Thu, 03 Apr 2025 19:15:00 +0000
+Source: iHeartDogs.com (iheartdogs.com)
+URL: https://iheartdogs.com/little-known-nocturnal-creatures-youll-never-see-during-the-day/
+Image URL: https://images.dappier.com/dm_01j1sz8t3qe6v9g8ad102kvmqn/compressed_hlm_ai_ninja_Give_me_sand_cat_at_n_9cf2d23b-c519-4825-ac54-c4fcea1a9e46__.jpg?width=428&height=321
+Summary: The article explores a variety of lesser-known nocturnal creatures, highlighting their unique adaptations and secretive lifestyles. Among these animals are the pangolin, a solitary insectivore known for its armor-like scales, and the fossa, a stealthy predator from Madagascar. Other fascinating nocturnal animals include the Sugar Glider, Aardwolf, Tarsier, and Spotted Genet, each showcasing remarkable traits that help them thrive in darkness.
+
+Additionally, the article introduces the Slow Loris, Woolly False Vampire Bat, Nightjar, and Sand Cat, emphasizing their specialized behaviors and survival strategies. These creatures exemplify the diversity of nocturnal wildlife, often remaining hidden from human sight while playing crucial roles in their ecosystems. The piece encourages readers to appreciate these elusive animals and their adaptations to life in the dark.
+Score: 0.7461304
+
+Result 2:
+Title: 15 Fun Facts About Animals You Probably Never Learned in School
+Author: Arlene Divina
+Published on: Thu, 03 Apr 2025 19:18:45 +0000
+Source: iHeartDogs.com (iheartdogs.com)
+URL: https://iheartdogs.com/fun-facts-about-animals-you-probably-never-learned-in-school/
+Image URL: https://images.dappier.com/dm_01j1sz8t3qe6v9g8ad102kvmqn/compressed_hlm_ai_ninja_Give_me_a_group_of_cows_47facd4d-6192-494c-b72a-56348f744a4c_0_.jpg?width=428&height=321
+Summary: The iHeartDogs article presents a collection of quirky and lesser-known animal facts that highlight the fascinating behaviors and adaptations found in the animal kingdom. It reveals that octopuses have three hearts, cows form strong friendships, and wombats produce cube-shaped feces to mark their territory. Other intriguing examples include sloths holding their breath for extended periods and elephants sensing rainstorms from afar, showcasing the remarkable diversity of nature.
+
+Additionally, the article emphasizes the unique social interactions of various species, such as sea otters holding hands while napping and crows remembering human faces. It also touches on the peculiar adaptations of frogs that can freeze solid and turtles that breathe through their rear ends. Overall, the piece celebrates the humor and complexity of wildlife, encouraging readers to appreciate the extraordinary lives of animals while promoting animal welfare initiatives.
+Score: 0.7437307
+
+Result 3:
+Title: 9 Dog Breeds That Would Totally Carry Your Squad In Call Of Duty
+Author: Ejay Camposano
+Published on: Thu, 03 Apr 2025 16:49:50 +0000
+Source: iHeartDogs.com (iheartdogs.com)
+URL: https://iheartdogs.com/dog-breeds-that-would-totally-carry-your-squad-in-call-of-duty/
+Image URL: https://images.dappier.com/dm_01j1sz8t3qe6v9g8ad102kvmqn/shutterstock_2276699491_.png?width=428&height=321
+Summary: The article humorously imagines various dog breeds as elite teammates in a gaming environment like Call of Duty, highlighting their unique traits that would enhance gameplay. Breeds such as the German Shepherd, Doberman Pinscher, and Rottweiler are portrayed with specific roles, showcasing their loyalty, speed, and strength, respectively. The playful narrative suggests that these dogs would excel in tactical scenarios, with each breed contributing distinct abilities to the team dynamic.
+
+Additionally, the article features breeds like the Border Collie, Husky, and Belgian Malinois, each bringing unique skills to the battlefield. The Malinois is noted for its leadership qualities, while the Cane Corso is depicted as a powerful enforcer. The piece concludes by encouraging readers to support shelter dogs, emphasizing the idea that these canine companions could outperform human players in tactical awareness and reflexes, making them ideal allies in gaming.
+Score: 0.7429425
+
+Result 4:
+Title: 11 Exotic Mammals You Didn’t Know Exist (And They’re Adorable!)
+Author: Ejay Camposano
+Published on: Thu, 03 Apr 2025 19:32:39 +0000
+Source: iHeartDogs.com (iheartdogs.com)
+URL: https://iheartdogs.com/exotic-mammals-you-didnt-know-exist-and-theyre-adorable/
+Image URL: https://images.dappier.com/dm_01j1sz8t3qe6v9g8ad102kvmqn/compressed_hlm_ai_ninja_A_close-up_of_a_quokka_sitting_on_a_forest_path__4578b401-81cb-46e7-8c92-d06b73417b8b_4_.jpg?width=428&height=321
+Summary: The article showcases a variety of lesser-known exotic mammals, emphasizing their unique traits and habitats. Notable mentions include the Maned Wolf, a shy fruit-eater from South America, and the Quokka, known for its friendly demeanor and "happy" appearance. The Sunda Colugo, often mistaken for a flying lemur, is highlighted for its gliding abilities, while other creatures like the Binturong and Patagonian Mara add to the charm of this diverse animal kingdom.
+
+Additionally, the article stresses the importance of wildlife conservation to protect these remarkable species, such as the endangered Numbat and the agile Fossa. It encourages readers to appreciate these animals in their natural habitats and promotes a charitable initiative supporting animal welfare. Overall, the piece celebrates the quirky and lovable traits of these exotic mammals, urging a deeper understanding and appreciation of the natural world.
+Score: 0.7429063
+
+Result 5:
+Title: 15 Tiny Creatures That Play Big Roles in Their Ecosystems
+Author: Arlene Divina
+Published on: Thu, 03 Apr 2025 19:11:56 +0000
+Source: iHeartDogs.com (iheartdogs.com)
+URL: https://iheartdogs.com/tiny-creatures-that-play-big-roles-in-their-ecosystems/
+Image URL: https://images.dappier.com/dm_01j1sz8t3qe6v9g8ad102kvmqn/compressed_hlm_ai_ninja_A_dung_beetle_pushes_a_ball_of_dung_across_rugge_aa4fea03-11d5-4c6d-a963-595d10ec84e1_1-e1743527725834_.jpg?width=428&height=321
+Summary: The article emphasizes the vital roles of small creatures in maintaining healthy ecosystems, highlighting their often-overlooked contributions. It discusses various organisms, such as ants, bees, and earthworms, which enhance soil quality, pollinate plants, and support nutrient recycling. Additionally, it mentions the importance of termites, dung beetles, and mycorrhizal fungi in promoting ecological balance and sustainability.
+
+Furthermore, the article showcases the interconnectedness of these tiny organisms, including springtails, spiders, and coral polyps, in supporting life on Earth. It illustrates how these creatures contribute to pest control, nutrient cycling, and habitat creation, ultimately underscoring their significance in sustaining the environment and food chains. The piece encourages readers to recognize and appreciate the essential roles played by these small yet impactful organisms.
+Score: 0.7421049
+
+
+
+
+
+🔧 Tool Used: get_sports_news_recommendations
+➡️  Input Args: {'query': 'trending sports', 'similarity_top_k': 5, 'search_algorithm': 'trending'}
+✅ Output: Result 1:
+Title: Los Angeles Lakers Update LeBron James Injury Status Ahead Of Critical Matchup
+Author: Ryan Anderson
+Published on: Thu, 03 Apr 2025 19:46:19 +0000
+Source: LAFB Network (www.lafbnetwork.com)
+URL: https://www.lafbnetwork.com/nba/la-lakers/la-lakers-news/los-angeles-lakers-lebron-james-injury-status-golden-state-warriors/
+Image URL: https://images.dappier.com/dm_01j0pb465keqmatq9k83dthx34/NBA-Los-Angeles-Lakers-at-Memphis-Grizzlies-25805761_.jpg?width=428&height=321
+Summary: The upcoming matchup between the Los Angeles Lakers and the Golden State Warriors is vital for the Western Conference standings, with the Lakers holding a slim two-game lead. LeBron James' participation is uncertain due to a left groin strain, but he is currently listed as "probable," suggesting he may play. His performance has been crucial, averaging 24.4 points, 8.4 assists, and 8.1 rebounds per game this season.
+
+The Lakers will also miss Maxi Kleber, who is recovering from foot surgery, while the Warriors deal with their own injury issues, including Jonathan Kuminga being "questionable" and Gary Payton II ruled out. Scheduled for a 10 PM EST tip-off in Los Angeles, this game is essential for both teams as they compete for playoff positioning, making James' final injury status critical for the outcome.
+Score: 0.83183223
+
+Result 2:
+Title: Will Athletics actually go back to Oakland? Team insider wouldn’t be surprised if Sacramento is one-and-done
+Author: Matt Higgins
+Published on: Thu, 03 Apr 2025 19:35:33 +0000
+Source: Sportsnaut (sportsnaut.com)
+URL: https://sportsnaut.com/athletics-news-team-insider-sacramento-one-and-done/
+Image URL: https://images.dappier.com/dm_01j0pb465keqmatq9k83dthx34/Athletics-25823964-1180x785_.jpg?width=428&height=321
+Summary: The Oakland Athletics are currently facing difficulties in their temporary relocation to Sacramento, having been swept by the Chicago Cubs in a three-game series. With their new stadium in Las Vegas set to open in 2028, owner John Fisher has faced criticism for moving the team from Oakland, where they had a dedicated fan base. 
+
+Chris Biderman from the Sacramento Bee raised concerns on the "Foul Territory" podcast about the A's potentially leaving Sacramento after just one season due to attendance issues and field conditions. He suggested that returning to Oakland, where the Coliseum remains a viable option, could be considered if circumstances do not improve. The future of the A's remains uncertain, with ongoing discussions about their next steps.
+Score: 0.7661444
+
+Result 3:
+Title: Las Vegas Raiders Trade Idea Steals Disgruntled All Pro Offensive Weapon
+Author: Ryan Anderson
+Published on: Thu, 03 Apr 2025 20:58:09 +0000
+Source: LAFB Network (www.lafbnetwork.com)
+URL: https://www.lafbnetwork.com/nfl/raiders/raiders-news/las-vegas-raiders-trade-idea-tyreek-hill/
+Image URL: https://images.dappier.com/dm_01j0pb465keqmatq9k83dthx34/NFL-Las-Vegas-Raiders-at-Kansas-City-Chiefs-24871950_.jpg?width=428&height=321
+Summary: As the NFL Draft approaches, the Las Vegas Raiders are generating excitement around a potential trade for Miami Dolphins wide receiver Tyreek Hill. Bleacher Report's Moe Moton suggests a deal where the Raiders would send two third-round picks and wide receiver Tre Tucker to Miami in exchange for Hill and two fifth-round picks. This move could provide the Raiders with a much-needed dynamic offensive weapon to enhance their capabilities.
+
+Despite a challenging 2024 season impacted by injuries to quarterback Tua Tagovailoa, Hill's talent remains a significant asset at age 31. The Dolphins face a dilemma regarding Hill's future, especially if he wishes to leave. The proposed trade could benefit both teams, aligning with the Raiders' goal for immediate improvement under new leadership, though it remains uncertain if they will actively pursue this opportunity.
+Score: 0.75672996
+
+Result 4:
+Title: Former Rangers forward ‘taking some time off to reflect’ after ripped by Islanders coach
+Author: John Kreiser
+Published on: Thu, 03 Apr 2025 18:43:54 +0000
+Source: Forever Blueshirts (www.foreverblueshirts.com)
+URL: https://www.foreverblueshirts.com/new-york-rangers-news/anthony-duclair-time-off-islanders/
+Image URL: https://images.dappier.com/dm_01j0pb465keqmatq9k83dthx34/NHL-Montreal-Canadiens-at-New-York-Islanders-25727087_.jpg?width=428&height=321
+Summary: Anthony Duclair, currently with the New York Islanders, is taking time off from the team after receiving criticism from head coach Patrick Roy for his poor performance in a recent game. Duclair's request for time to reflect comes as the Islanders struggle to secure a playoff spot, sitting at 32-32-10 with only eight games remaining in the season. His performance has been disappointing, with just 11 points this season and a recent stretch of six games without a point.
+
+Roy's harsh assessment highlighted Duclair's lack of effort, leading to his replacement in the lineup. Signed to a four-year, $14 million contract, Duclair's season has been marred by injury and underperformance, raising questions about his future in the league. Despite a career that includes an All-Star selection and a high-scoring season, his time with the Islanders is viewed as unsuccessful, complicating his potential moves due to a no-trade clause.
+Score: 0.7438523
+
+Result 5:
+Title: USC Trojans Stay True To Pursuit Of Building The Best Staff In The Country With Latest Hire
+Author: Ryan Dyrud
+Published on: Thu, 03 Apr 2025 22:47:13 +0000
+Source: LAFB Network (www.lafbnetwork.com)
+URL: https://www.lafbnetwork.com/ncaaf/usc-trojans/usc-trojans-news/lincoln-riley-hires-conor-mcquiston/
+Image URL: https://images.dappier.com/dm_01j0pb465keqmatq9k83dthx34/NCAA-Football-Las-Vegas-Bowl-Texas-AampM-at-Southern-California-25071759_.jpg?width=428&height=321
+Summary: Lincoln Riley and the USC Trojans are making significant strides in their football program by enhancing their front office and coaching staff, led by GM Chad Bowden. They are also close to completing a cutting-edge sports facility, which underscores their commitment to excellence in college football.
+
+The recent hiring of Conor McQuiston as the first-ever Director of Analytics marks a pivotal move for the program. With a background at the Arizona Cardinals and Pro Football Focus, McQuiston's addition highlights Riley's focus on utilizing analytics to gain a competitive advantage, mirroring successful strategies from Bowden's past at Notre Dame.
+Score: 0.7377158
+
+
+
+[🧠 Newsletter Bot]:## Sports
+
+1. **Los Angeles Lakers Update LeBron James Injury Status Ahead Of Critical Matchup**
+   - **Summary**: The Lakers face the Warriors in a crucial game for playoff positioning. LeBron James, key to the Lakers' success, is listed as "probable" despite a groin strain.
+   - **Source**: [LAFB Network](https://www.lafbnetwork.com/nba/la-lakers/la-lakers-news/los-angeles-lakers-lebron-james-injury-status-golden-state-warriors/)
+   - **Relevance**: LeBron's potential participation could significantly impact the Lakers' playoff chances.
+
+2. **Will Athletics Actually Go Back to Oakland?**
+   - **Summary**: The Athletics' move to Sacramento faces challenges, with discussions about possibly returning to Oakland due to poor attendance and field conditions.
+   - **Source**: [Sportsnaut](https://sportsnaut.com/athletics-news-team-insider-sacramento-one-and-done/)
+   - **Relevance**: The uncertainty of the Athletics' future location is a hot topic among fans and sports analysts.
+
+3. **Las Vegas Raiders Trade Idea Steals Disgruntled All Pro Offensive Weapon**
+   - **Summary**: The Raiders are considering a trade for Tyreek Hill, which could enhance their offensive lineup significantly.
+   - **Source**: [LAFB Network](https://www.lafbnetwork.com/nfl/raiders/raiders-news/las-vegas-raiders-trade-idea-tyreek-hill/)
+   - **Relevance**: This potential trade could reshape the Raiders' strategy and performance in the upcoming season.
+
+4. **Former Rangers Forward Taking Time Off After Criticism**
+   - **Summary**: Anthony Duclair of the Islanders takes a break after being criticized by his coach, amid the team's playoff struggles.
+   - **Source**: [Forever Blueshirts](https://www.foreverblueshirts.com/new-york-rangers-news/anthony-duclair-time-off-islanders/)
+   - **Relevance**: Duclair's situation highlights the pressures athletes face during critical playoff races.
+
+5. **USC Trojans Enhance Staff with Latest Hire**
+   - **Summary**: USC Trojans hire Conor McQuiston as Director of Analytics, emphasizing their commitment to using data for competitive advantage.
+   - **Source**: [LAFB Network](https://www.lafbnetwork.com/ncaaf/usc-trojans/usc-trojans-news/lincoln-riley-hires-conor-mcquiston/)
+   - **Relevance**: This move reflects the growing trend of analytics in sports management.
+
+## Lifestyle
+
+1. **Judge Allows Release of Records in Gene Hackman and Wife's Deaths**
+   - **Summary**: A judge ruled to release records related to the deaths of Gene Hackman and his wife, balancing public interest with family privacy.
+   - **Source**: [TheMix.net](https://www.themix.net/celebrity/celebrity-news/judge-issues-huge-ruling-allowing-release-of-records-in-deaths-of-gene-hackman-and-wife-betsy-arakawa/)
+   - **Relevance**: This case raises important questions about privacy rights in high-profile deaths.
+
+2. **‘Locked’ Review – Parked and Injurious**
+   - **Summary**: The thriller "Locked" explores psychological dynamics between a thief and his captor, offering a unique cinematic experience.
+   - **Source**: [Bounding Into Comics](https://boundingintocomics.com/movies/movie-reviews/locked-review-parked-and-injurious/)
+   - **Relevance**: The film's unique take on psychological thrillers is drawing attention from movie enthusiasts.
+
+3. **Meghan Markle's Business Venture Shows Promise**
+   - **Summary**: Meghan Markle's lifestyle brand "As Ever" sees initial success, though faces scrutiny over pricing and authenticity.
+   - **Source**: [TheMix.net](https://www.themix.net/celebrity/celebrity-news/meghan-markle-may-end-up-a-successful-businesswoman-after-all/)
+   - **Relevance**: Markle's business endeavors continue to captivate public interest amid her evolving public image.
+
+4. **Emma Frost Debuts in ‘Marvel Rivals’ with New Hero Plan**
+   - **Summary**: "Marvel Rivals" introduces Emma Frost, with plans to release a new hero monthly to boost player engagement.
+   - **Source**: [Bounding Into Comics](https://boundingintocomics.com/video-games/video-game-news/emma-frost-marvel-rivals-new-hero-each-month/)
+   - **Relevance**: This strategy reflects the gaming industry's focus on continuous content updates to maintain player interest.
+
+5. **6 Most Confusing Plot Twists in Well-Known Movies**
+   - **Summary**: An exploration of films with perplexing plot twists that challenge viewers' understanding and provoke discussion.
+   - **Source**: [TheMix.net](https://www.themix.net/movies/lists/most-confusing-plot-twists-in-movies/)
+   - **Relevance**: These films continue to intrigue audiences, sparking debates and analysis.
+
+## Pet Care
+
+1. **13 Little-Known Nocturnal Creatures You’ll Never See During The Day**
+   - **Summary**: Discover fascinating nocturnal animals like the pangolin and fossa, highlighting their unique adaptations.
+   - **Source**: [iHeartDogs](https://iheartdogs.com/little-known-nocturnal-creatures-youll-never-see-during-the-day/)
+   - **Relevance**: This article enriches our understanding of biodiversity and the hidden wonders of the animal kingdom.
+
+2. **15 Fun Facts About Animals You Probably Never Learned in School**
+   - **Summary**: A collection of quirky animal facts, from octopuses with three hearts to cows forming friendships.
+   - **Source**: [iHeartDogs](https://iheartdogs.com/fun-facts-about-animals-you-probably-never-learned-in-school/)
+   - **Relevance**: These fun facts provide a delightful insight into the animal world, perfect for animal lovers.
+
+3. **9 Dog Breeds That Would Totally Carry Your Squad In Call Of Duty**
+   - **Summary**: Imagining dog breeds as elite gaming teammates, showcasing their traits in a playful narrative.
+   - **Source**: [iHeartDogs](https://iheartdogs.com/dog-breeds-that-would-totally-carry-your-squad-in-call-of-duty/)
+   - **Relevance**: This humorous take on dog breeds appeals to both gamers and dog enthusiasts.
+
+4. **11 Exotic Mammals You Didn’t Know Exist (And They’re Adorable!)**
+   - **Summary**: Highlights exotic mammals like the Maned Wolf and Quokka, emphasizing their unique traits and habitats.
+   - **Source**: [iHeartDogs](https://iheartdogs.com/exotic-mammals-you-didnt-know-exist-and-theyre-adorable/)
+   - **Relevance**: The article promotes wildlife conservation and appreciation for lesser-known species.
+
+5. **15 Tiny Creatures That Play Big Roles in Their Ecosystems**
+   - **Summary**: Discusses the vital ecological roles of small creatures like ants and bees in maintaining environmental balance.
+   - **Source**: [iHeartDogs](https://iheartdogs.com/tiny-creatures-that-play-big-roles-in-their-ecosystems/)
+   - **Relevance**: Understanding these creatures' roles highlights the importance of biodiversity and ecosystem health.
+```
+
+---
+
+## Conclusion
+
+This notebook has guided you how to build a real-time, LLM-powered content curation assistant by combining LlamaIndex with Dappier. It walks through creating a smart newsletter generator using current, curated news content across multiple verticals.
+
+In this notebook, explored:
+
+- **Dappier**: A platform that connects LLMs and agentic AI agents to real-time, rights-cleared data from trusted sources. It delivers verified, prompt-ready information across domains like web search, finance, news, and more.
+
+- **LlamaIndex**: A data framework that allows seamless integration of external tools with LLMs. It enables structured workflows for tool use, reasoning, and response generation.
+
+- **OpenAI**: An advanced AI model provider used here to power the assistant’s reasoning, planning, and response generation.
+
+This setup offers a practical example of building content-aware applications with real-time data access. It can be easily extended to editorial workflows, personalized content feeds, or media automation tools.
