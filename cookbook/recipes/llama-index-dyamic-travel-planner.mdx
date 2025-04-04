@@ -1,0 +1,342 @@
+---
+title: "🦙 Dynamic Travel Planner | Powered by Dappier and LlamaIndex"
+---
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1pYi-KMWPx_wbPfo5iZmYASWwsc8o8eiY?usp=sharing)
+
+This notebook demonstrates how to build a real-time, LLM-powered travel assistant by combining LlamaIndex with Dappier. It walks through creating a dynamic 2-day itinerary for New York City based on current news, weather conditions, and hotel availability.
+
+In this notebook, you’ll explore:
+
+-   **Dappier**: A platform that connects LLMs and agentic AI agents to real-time, rights-cleared data from trusted sources. It delivers verified, prompt-ready information across domains like web search, finance, news, and more.
+
+-   **LlamaIndex**: A data framework that allows seamless integration of external tools with LLMs. It enables structured workflows for tool use, reasoning, and response generation.
+
+-   **OpenAI**: An advanced AI model provider used here to power the assistant’s reasoning, planning, and response generation.
+
+This setup offers a practical example of building context-aware applications with real-time data access. It can be easily extended to other domains requiring live insights and AI-driven decision-making.
+
+## Watch the Video Guide
+
+If you prefer a visual walkthrough, check out the accompanying video guide below:
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/x2AF66YTP1g?si=QQGv7Ifd-LpUUu4Q" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+## Installation
+
+To get started with the dynamic travel planner, install the required packages:
+
+```bash
+pip install llama-index llama-index-tools-dappier openai
+```
+
+## Setup API Keys
+
+To authenticate and use Dappier and OpenAI, you’ll need valid API keys.
+
+You can generate one for free from your [Dappier API dashboard](https://platform.dappier.com/profile/api-keys).
+
+```python Python
+import os
+from getpass import getpass
+
+# Prompt for the Dappier API key securely
+dappier_api_key = getpass("Enter your Dappier API key: ")
+os.environ["DAPPIER_API_KEY"] = dappier_api_key
+```
+
+You can obtain your OpenAI API key from the [OpenAI API dashboard](https://platform.openai.com/account/api-keys).
+
+```python Python
+# Prompt for the OpenAI API key securely
+openai_api_key = getpass("Enter your OpenAI API key: ")
+os.environ["OPENAI_API_KEY"] = openai_api_key
+```
+
+## Dappier Real Time Search Tool
+
+The `DappierRealTimeSearchToolSpec` enables LLMs to access real-time data across the web, including the latest news, weather updates, and financial information. This tool is ideal for applications requiring up-to-date, context-rich data.
+
+### Initialize the Tool
+
+To utilize the real-time search tool, initialize it as follows:
+
+```python Python
+from llama_index.tools.dappier import DappierRealTimeSearchToolSpec
+
+search_tool_spec = DappierRealTimeSearchToolSpec()
+```
+
+### Real-Time Web Search
+
+Retrieve current web content such as news or weather updates using the `search_real_time_data` method:
+
+```python Python
+response = search_tool_spec.search_real_time_data("What's the current weather in Central Park?")
+print(response)
+```
+
+```json
+The current weather in Central Park is about 52°F (11°C). It’s a bit chilly, so you might want to grab a light jacket if you’re heading out! 🌳🍂
+```
+
+### Stock Market Data
+
+Access up-to-date financial insights or company-specific news with the `search_stock_market_data` method:
+
+```python Python
+response = search_tool_spec.search_stock_market_data("latest earnings report from Tesla")
+print(response)
+```
+
+```json
+The latest earnings report from Tesla includes several articles published on October 31, 2023. Here are some highlights:
+
+1. **Article Title:** [Tesla and Netflix. Talk About Hot Topics!](https://www.fool.com/investing/2023/10/31/tesla-and-netflix-talk-about-hot-topics/)
+   - **Publisher:** The Motley Fool
+   - **Published:** October 31, 2023
+   - **Description:** Discusses various topics including challenges facing the National Association of Realtors.
+   - **Image:** ![Image](https://g.foolcdn.com/editorial/images/752667/mfm_20231019.jpg)
+
+2. **Article Title:** [Checking In on General Motors and Coca-Cola](https://www.fool.com/investing/2023/10/31/checking-in-on-general-motors-and-coca-cola/)
+   - **Publisher:** The Motley Fool
+   - **Published:** October 31, 2023
+   - **Description:** Provides insights on various companies, including Tesla, along with tips for retirement planning.
+   - **Image:** ![Image](https://g.foolcdn.com/editorial/images/752672/mfm_20231024.jpg)
+
+3. **Article Title:** [Stocks Lack Direction As Traders Remain Cautious Ahead Of Fed Meeting, Nvidia Falls On Export Controls: What's Driving Markets Tuesday?](https://www.benzinga.com/news/earnings/23/10/35510696/u-s-stocks-poised-to-extend-gains-as-fed-meeting-gets-underway-why-this-analyst-expects-young-bull-)
+   - **Publisher:** Benzinga
+   - **Published:** October 31, 2023
+   - **Description:** Discusses market conditions and includes Tesla among other stocks.
+   - **Image:** ![Image](https://cdn.benzinga.com/files/images/story/2023/Wall_Street_15.jpeg?width=1200&height=800&fit=crop)
+
+4. **Article Title:** [Why a 7% 10-year Treasury yield is still possible](https://www.marketwatch.com/story/why-a-7-10-year-treasury-yield-is-still-possible-d5c2b961)
+   - **Publisher:** MarketWatch
+   - **Published:** October 31, 2023
+   - **Description:** Analyzes potential future trends in treasury yields, mentioning Tesla among other companies.
+   - **Image:** ![Image](https://images.mktw.net/im-878753/social)
+
+5. **Article Title:** [Munster Weighs In On Reports Of Unionization Move At Tesla: 'Employees Will Likely Vote Down The UAW And Instead Settle For...'](https://www.benzinga.com/analyst-ratings/analyst-color/23/10/35519602/munster-weighs-in-on-reports-of-unionization-move-at-tesla-employees-will-likely-vo)
+   - **Publisher:** Benzinga
+   - **Published:** October 31, 2023
+   - **Description:** Discusses the potential impact of unionization efforts at Tesla.
+   - **Image:** ![Image](https://cdn.benzinga.com/files/images/story/2023/Tesla_46.jpeg?width=1200&height=800&fit=crop)
+
+These articles provide insights into Tesla's current market position and challenges as of the latest reporting date.
+```
+
+## Build a Dynamic Travel Planner Agent
+
+Now that your API keys are set and packages are installed, you're ready to build the dynamic travel planner.
+
+Start by importing the required modules:
+
+```python Python
+import asyncio
+from llama_index.llms.openai import OpenAI
+from llama_index.tools.dappier import DappierRealTimeSearchToolSpec
+from llama_index.core.agent.workflow import AgentWorkflow
+from llama_index.core.agent.workflow import AgentStream, ToolCallResult
+```
+
+Initialize the OpenAI model that will power the agent:
+
+```python Python
+llm = OpenAI(model="gpt-4o")
+```
+
+Next, set up the Dappier real-time search tool. This tool allows the agent to query live data like news, weather, and financial updates:
+
+```python Python
+search_tool_spec = DappierRealTimeSearchToolSpec()
+tools = search_tool_spec.to_tool_list()
+```
+
+Now define the agent workflow. This is where the agent’s purpose and reasoning behavior are configured. In this case, the agent acts as a smart travel assistant for New York City:
+
+```python Python
+workflow = AgentWorkflow.from_tools_or_functions(
+    tools,
+    llm=llm,
+    system_prompt="""
+    You are a smart travel assistant that:
+    - Retrieves real-time news, weather, and hotel data for NYC
+    - Uses that data to plan a 2-day NYC itinerary
+    - Always includes the news up front and weather conditions in the itinerary
+    """,
+)
+```
+
+Define the user prompt that will be passed to the agent. This describes exactly what we want it to do:
+
+```python Python
+user_prompt = """
+Generate a 2-day travel itinerary for New York City, tailored to real-time weather and current news. Follow these steps:
+
+1. Fetch Current News:
+Retrieve the latest news in New York City to include relevant events or updates.
+
+2. Fetch Weather Data:
+Retrieve the weather forecast for the upcoming weekend dates.
+
+3. Fetch Hotel Deals:
+Retrieve the cheapest hotel deals in NYC.
+
+4. Design the Itinerary:
+Use both news and weather insights to create a dynamic itinerary. Include news in the beginning of the itinerary and include weather for each day in the itinerary.
+"""
+```
+
+To stream the results from the agent and display both tool interactions and the generated itinerary, run the following:
+
+```python Python
+async def run_dynamic_travel_planner():
+    handler = workflow.run(user_msg=user_prompt)
+
+    seen_agent_output = False
+
+    async for event in handler.stream_events():
+        if isinstance(event, AgentStream):
+            if not seen_agent_output:
+                print("[🧠 Agent]:", end="", flush=True)
+                seen_agent_output = True
+            print(event.delta, end="", flush=True)
+        elif isinstance(event, ToolCallResult):
+            seen_agent_output = False
+            print(f"\n\n🔧 Tool Used: {event.tool_name}")
+            print(f"➡️  Input Args: {event.tool_kwargs}")
+            print(f"✅ Output: {event.tool_output}\n")
+```
+
+Finally, launch the planner:
+
+```python Python
+await run_dynamic_travel_planner()
+```
+
+```json
+[🧠 Agent]:
+
+🔧 Tool Used: search_real_time_data
+➡️  Input Args: {'query': 'New York City weather forecast for the upcoming weekend'}
+✅ Output: This weekend in New York City, expect highs around 63°F (17°C). There’s a bit of a chance of rain, about 70%, so you might want to keep an umbrella handy just in case! Winds will be coming from the northwest at 5 to 10 mph. Perfect weather for a cozy day indoors or a light stroll if the rain holds off! ☔️🌤️
+
+
+
+🔧 Tool Used: search_real_time_data
+➡️  Input Args: {'query': 'cheapest hotel deals in New York City'}
+✅ Output: Here are some of the cheapest hotel deals in New York City right now:
+
+1. **HI New York City Hostel**
+   - **Price**: Starting around $50 per night
+   - **Description**: A budget-friendly hostel located on the Upper West Side, great for travelers looking to meet new people.
+
+2. **Pod 51 Hotel**
+   - **Price**: Starting around $100 per night
+   - **Description**: A modern hotel with compact rooms, located in Midtown East. It's a great option for those who want to be close to the action.
+
+3. **The Jane Hotel**
+   - **Price**: Starting around $120 per night
+   - **Description**: A quirky hotel in the West Village that offers small, cabin-like rooms. It has a vintage vibe and is close to the Hudson River.
+
+4. **Moxy NYC Times Square**
+   - **Price**: Starting around $150 per night
+   - **Description**: A trendy hotel with a lively atmosphere, located near Times Square. It features stylish rooms and a rooftop bar.
+
+5. **The Bowery House**
+   - **Price**: Starting around $70 per night
+   - **Description**: A budget option in Nolita with a vintage feel. Shared bathrooms are available, making it a great choice for solo travelers.
+
+Prices can vary based on dates and availability, so it’s a good idea to book early! 🏨✨
+
+
+
+🔧 Tool Used: search_real_time_data
+➡️  Input Args: {'query': 'latest news in New York City'}
+✅ Output: Here’s what’s buzzing in New York City right now:
+
+1. **MTA Unveils New Subway Map**
+   The MTA has released its first new subway map in over 45 years! Check out the details [here](https://abc7ny.com/post/nyc-subway-map-mta-unveils-first-new-diagram-45-years/16119274/).
+   ![Subway Map](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpGJgaqDNgsriA_mSX6RdzzUm_G22d__zWzpCj8bDbtGmVQn6S0-7j4_Wzrw&s)
+
+2. **Trump's Casino Deal Potential**
+   A high-stakes contest for a new casino in NYC could mean a $115 million payday for Donald Trump. More info [here](https://apnews.com/article/trump-casino-new-york-252cc3bafd1b097adf7a8afd516f1859).
+   ![Trump Casino](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_K2Lv-xPaCWJHenlkS-uL6Md3mFttyyrTVouQP50VBrMhtlBsBRoGUDL78Q&s)
+
+3. **Corruption Case Against Mayor Adams Dismissed**
+   A judge has thrown out the corruption case against NYC Mayor Eric Adams, ruling it couldn't be revived. Read more [here](https://www.aljazeera.com/news/2025/4/2/us-judge-throws-out-corruption-case-against-nyc-mayor-eric-adams).
+   ![Mayor Adams](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8qBYeTY4SFv5-VQfscJj38nBvb4UZ5OFPvptIMKAkAypSflgZPl4vRMsEiQ&s)
+
+4. **Knicks vs. Cavaliers Game**
+   The Knicks faced off against the Cavaliers on April 2, 2025. Check out the box scores [here](https://www.nba.com/game/nyk-vs-cle-0022401103/box-score).
+   ![Knicks Game](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTs-QYIKccK6Bbpj59nHlV6EvYQw7NlbBiE-YwSrGr_MSPgIT1qB1DV0mRzcA&s)
+
+5. **Indonesian Food Bazaar in Queens**
+   Indonesian residents in Queens are celebrating their culture with a monthly food bazaar. Delicious details [here](https://www.npr.org/2025/04/02/nx-s1-5319313/indonesian-residents-in-new-york-hold-monthly-food-bazaar-to-celebrate-their-culture).
+
+There’s always something happening in the city that never sleeps! 🗽✨
+
+[🧠 Agent]:Here's a 2-day itinerary for your upcoming weekend trip to New York City, incorporating the latest news, weather, and hotel deals:
+
+### Latest News in NYC:
+1. **MTA Unveils New Subway Map**: The MTA has released its first new subway map in over 45 years. This could be a great opportunity to explore the city using the updated transit system.
+2. **Indonesian Food Bazaar in Queens**: Experience a cultural delight with the monthly Indonesian food bazaar in Queens.
+3. **Knicks vs. Cavaliers Game**: If you're a basketball fan, catch up on the latest Knicks game highlights.
+
+### Weather Forecast:
+- **Highs**: Around 63°F (17°C)
+- **Chance of Rain**: 70%
+- **Winds**: Northwest at 5 to 10 mph
+
+### Hotel Deals:
+- **HI New York City Hostel**: Starting at $50 per night, located on the Upper West Side.
+- **Pod 51 Hotel**: Starting at $100 per night, located in Midtown East.
+- **The Jane Hotel**: Starting at $120 per night, located in the West Village.
+
+### Day 1: Exploring Midtown and Cultural Experiences
+- **Morning**:
+  - Start your day with a visit to the **MTA's new subway map** exhibit and explore the city using the updated transit system.
+  - Head to **Pod 51 Hotel** for a quick check-in if you choose this accommodation.
+
+- **Afternoon**:
+  - Visit the **Museum of Modern Art (MoMA)** to enjoy some world-class art.
+  - Grab lunch at a nearby café.
+
+- **Evening**:
+  - Attend the **Indonesian Food Bazaar** in Queens for a unique dining experience.
+  - Return to your hotel for a restful night.
+
+### Day 2: Downtown Adventures and Relaxation
+- **Morning**:
+  - Enjoy a leisurely breakfast at a local diner.
+  - Explore the **West Village** and check out the quirky **Jane Hotel** if you’re staying there.
+
+- **Afternoon**:
+  - Visit the **9/11 Memorial & Museum** for a poignant experience.
+  - Have lunch at a nearby restaurant.
+
+- **Evening**:
+  - If you're a sports fan, catch up on the **Knicks vs. Cavaliers** game highlights.
+  - Enjoy dinner at a rooftop bar, such as the one at **Moxy NYC Times Square**.
+
+### Tips:
+- Keep an umbrella handy due to the chance of rain.
+- Book your hotel early to secure the best rates.
+- Use the new subway map to navigate the city efficiently.
+
+Enjoy your weekend in the vibrant city of New York! 🌆🗽
+```
+
+## Conclusion
+
+This notebook has guided you how to build a real-time, LLM-powered travel assistant by combining LlamaIndex with Dappier. It walks through creating a dynamic 2-day itinerary for New York City based on current news, weather conditions, and hotel availability.
+
+In this notebook, explored:
+
+-   **Dappier**: A platform that connects LLMs and agentic AI agents to real-time, rights-cleared data from trusted sources. It delivers verified, prompt-ready information across domains like web search, finance, news, and more.
+
+-   **LlamaIndex**: A data framework that allows seamless integration of external tools with LLMs. It enables structured workflows for tool use, reasoning, and response generation.
+
+-   **OpenAI**: An advanced AI model provider used here to power the assistant’s reasoning, planning, and response generation.
+
+This setup offers a practical example of building context-aware applications with real-time data access. It can be easily extended to other domains requiring live insights and AI-driven decision-making.
