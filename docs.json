@@ -76,7 +76,7 @@
                             "integrations/langchain-integration",
                             "integrations/llama-index-integration",
                             "integrations/open-ai-agents-integration",
-                            "integrations/open-ai-agents-mcp-integration",
+                            "integrations/open-ai-agents-dappier-mcp-integration",
                             "integrations/open-ai-function-calling-integration",
                             "integrations/open-ai-gpt-integration",
                             "integrations/replit-integration",
