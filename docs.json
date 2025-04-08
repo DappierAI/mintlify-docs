@@ -72,7 +72,7 @@
                             "integrations/agent-ai-integration",
                             "integrations/camel-integration",
                             "integrations/cursor-mcp-integration",
-                            "integrations/dappier-mcp-integration",
+                            "integrations/dappier-mcp-server-integration",
                             "integrations/langchain-integration",
                             "integrations/llama-index-integration",
                             "integrations/open-ai-agents-sdk-integration",
