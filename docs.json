@@ -71,7 +71,8 @@
                         "pages": [
                             "integrations/agent-ai-integration",
                             "integrations/camel-integration",
-                            "integrations/cursor-mcp-integration",
+                            "integrations/claude-dappier-mcp-server-integration",
+                            "integrations/cursor-dappier-mcp-integration",
                             "integrations/dappier-mcp-server-integration",
                             "integrations/langchain-integration",
                             "integrations/llama-index-integration",
