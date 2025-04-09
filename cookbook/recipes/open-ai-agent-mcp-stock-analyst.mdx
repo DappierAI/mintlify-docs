@@ -1,0 +1,280 @@
+---
+title: "🧲 AI Stock Analyst with OpenAI Agents + Real-Time Financial Insights via Dappier MCP"
+---
+
+This cookbook demonstrates how to build a real-time **Stock Analyst Agent** using **OpenAI Agents** and the **Dappier MCP**. By combining structured agent workflows with live financial data, this notebook walks you through building a dynamic assistant that analyzes a chosen **tech sector**, summarizes key news and trends, and recommends a tailored investment strategy.
+
+In this cookbook, you'll explore:
+
+- **OpenAI Agents SDK**: A powerful toolkit that enables large language models to operate as autonomous agents, use tools, and execute multi-step workflows with memory and structured decision-making.
+- **Dappier MCP**: A Model Context Protocol server that connects your agents to real-time, rights-cleared tools — including live search, financial data, stock tickers, content recommendations, AI-powered summaries, and more. Dappier MCP acts as a gateway to trusted data and intelligent utilities your agent can use dynamically.
+- **Real-Time Stock Analysis**: A practical use case where the agent analyzes a user-selected tech sector, pulls live financial signals, and generates a smart, explainable investment strategy with top stock picks.
+
+This notebook offers a foundation for building real-time, data-augmented AI agents that operate with current financial context, and can be extended to support any domain where market conditions matter.
+
+
+## 📦 Installation
+
+To get started, install the required tools and dependencies:
+
+**Step 1: Install `uv` (required to run the Dappier MCP server)**
+
+**macOS / Linux**:
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+**Windows**:
+
+```bash
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+---
+
+**Step 2: Install Python Packages**
+
+Install the required Python packages including the OpenAI Agents SDK and the Dappier MCP server:
+
+```bash
+pip install openai-agents dappier-mcp
+```
+
+Or, if you have `uv` installed:
+
+```bash
+uv pip install openai-agents dappier-mcp
+```
+
+## 🔑 Setting Up API Keys
+
+You’ll need API keys for both **Dappier** and **OpenAI** to authenticate your requests and access real-time tools.
+
+**Dappier API Key**
+
+Head to [Dappier](https://platform.dappier.com/profile/api-keys) to sign up and generate your API key. Dappier offers free credits to get started.
+
+You can set your API key as an environment variable in your terminal:
+
+```bash
+export DAPPIER_API_KEY=your-dappier-api-key
+```
+
+Or programmatically in your Python script:
+
+```python Python
+import os
+
+os.environ["DAPPIER_API_KEY"] = "your-dappier-api-key"
+```
+
+---
+
+**OpenAI API Key**
+
+Visit [OpenAI](https://platform.openai.com/account/api-keys) to retrieve your API key.
+
+Set it in your terminal:
+
+```bash
+export OPENAI_API_KEY=your-openai-api-key
+```
+
+Or in your Python script:
+
+```python Python
+os.environ["OPENAI_API_KEY"] = "your-openai-api-key"
+```
+
+## ⚙️ Import Dependencies
+
+Start by importing all required modules to build the stock analyst agent. This includes components from the OpenAI Agents SDK and the Dappier MCP server.
+
+```python Python
+import asyncio
+import shutil
+import os
+from datetime import datetime
+
+from agents import Agent, Runner, trace
+from agents.mcp import MCPServer, MCPServerStdio
+from openai.types.responses import ResponseTextDeltaEvent
+```
+
+These imports enable:
+
+- Running the MCP server locally via `MCPServerStdio`
+- Tracing and managing the agent's execution with `Runner` and `trace`
+- Streaming the assistant's output using `ResponseTextDeltaEvent`
+
+
+## 📝 Define User Input
+
+We’ll collect the tech sector the user is interested in analyzing.
+
+```python Python
+def get_user_input():
+    sector = input("Enter the tech sector you are interested in (e.g., AI, semiconductors, cloud computing): ").strip()
+    return sector
+```
+
+## 🛰️ Run the Agent with Dappier MCP
+
+This function sets up the agent, formulates the user query, and streams the response using tools served via Dappier MCP.
+
+```python Python
+async def run(mcp_server: MCPServer, sector: str):
+    agent = Agent(
+        name="StockAnalyst",
+        instructions="""
+        You are a financial investment assistant specializing in the technology sector. Your job is to:
+        1. Understand the user's interest in a specific tech sector.
+        2. Use Dappier's tools to gather the most recent financial news related to that sector.
+        3. Analyze the news and suggest a strategy to invest in that sector.
+        4. Identify the top 5 stock recommendations with reasoning.
+        Make sure to provide clear, up-to-date, and actionable financial insights.
+        """,
+        mcp_servers=[mcp_server],
+        model="gpt-4o-mini"
+    )
+
+    query = f"""
+        I am interested in investing in the {sector} sector. Please do the following:
+
+        1. Use Dappier's real-time tools to search for the latest financial news and developments in the {sector} sector.
+        2. Summarize the key trends, opportunities, and risks.
+        3. Based on your analysis, formulate a detailed investment strategy tailored to the current market conditions.
+        4. Recommend the top 5 tech stocks in this sector with reasons for each choice, including any links or references if available.
+
+        Ensure your answer is precise, data-backed, and investor-friendly.
+    """
+
+    print("\n" + "-" * 40)
+    print(f"Analyzing investment opportunities in the {sector} sector")
+    print("\n=== Streaming Start ===\n")
+
+    result = Runner.run_streamed(agent, query)
+
+    async for event in result.stream_events():
+        if event.type == "raw_response_event" and isinstance(event.data, ResponseTextDeltaEvent):
+            print(event.data.delta, end="", flush=True)
+
+    print("\n\n=== Streaming Complete ===\n")
+```
+
+## 🚦 Initialize and Launch the Workflow
+
+The `main()` function sets up the Dappier MCP server, enables tracing for observability, and runs the stock analysis agent.
+
+```python Python
+async def main():
+    sector = get_user_input()
+
+    async with MCPServerStdio(
+        cache_tools_list=True,
+        params={
+            "command": "uvx",
+            "args": ["dappier-mcp"],
+            "env": {"DAPPIER_API_KEY": os.environ["DAPPIER_API_KEY"]},
+        },
+    ) as server:
+        with trace(workflow_name="AI Stock Analyst with Dappier MCP"):
+            await run(server, sector)
+```
+
+## 🧪 Run the Stock Analyst Agent
+
+This block checks for the required `uvx` binary and launches the full async workflow. Make sure `uvx` is installed and available in your system path.
+
+```python Python
+if __name__ == "__main__":
+    if not shutil.which("uvx"):
+        raise RuntimeError(
+            "uvx is not installed. Please install it with `pip install uvx` or "
+            "`curl -LsSf https://astral.sh/uv/install.sh | sh`."
+        )
+
+    asyncio.run(main())
+```
+
+```json
+Enter the tech sector you are interested in (e.g., AI, semiconductors, cloud computing): AI
+
+----------------------------------------
+Analyzing investment opportunities in the AI sector
+
+=== Streaming Start ===
+
+### Summary of Key Trends, Opportunities, and Risks in the AI Sector
+
+#### Key Trends:
+1. **Market Downturn**: Major AI stocks, such as Microsoft and Nvidia, are currently facing declines due to uncertainties around tariff policies affecting the broader tech market.
+2. **Increased Adoption of AI Tools**: Companies are launching innovative AI tools that automate and enhance operational efficiency, suggesting growth in various sectors leveraging AI.
+3. **Focus on AI in Trading**: There is a noticeable rise in using AI for trading and investment strategies, indicating a trend towards making tech-driven financial decisions.
+
+#### Opportunities:
+1. **Emerging AI Startups**: Investment in smaller companies and new AI tools are seen as potential avenues for excellent returns beyond established tech giants.
+2. **Sector Diversification**: Expanding interest in AI applications, including legal technology and automated trading, suggests potential for growth areas.
+3. **Long-Term Viability**: Analysts predict that despite current challenges, the AI market could rebound strongly, especially as businesses adopt AI solutions to enhance operational efficiencies.
+
+#### Risks:
+1. **Market Volatility**: The uncertainty surrounding tariff implications poses a risk to investor sentiment, leading to fluctuating stock prices.
+2. **High Expectations**: With significant hype around AI, there is a danger of overvalued stocks that may not meet investor expectations.
+
+---
+
+### Investment Strategy Tailored to Current Market Conditions
+
+1. **Diversification**: Invest not only in established tech giants but also in promising AI startups or smaller companies developing innovative tools.
+   
+2. **Long-Term Perspective**: Consider a long-term investment horizon as the current downturn may provide buying opportunities in undervalued stocks.
+
+3. **Risk Management**: Allocate funds according to risk tolerance, with a more substantial portion in stable companies and a smaller portion in high-risk startups.
+
+4. **Monitor Policy Changes**: Keep abreast of policy changes impacting the tech sector, particularly tariffs, to make informed decisions regarding portfolio adjustments.
+
+5. **Leverage AI Tools**: Use AI-driven investment analysis tools to inform trading strategies and stock selections.
+
+---
+
+### Top 5 Stock Recommendations in the AI Sector
+
+1. **Nvidia (NVDA)**
+   - **Rationale**: A leader in graphic processing units (GPUs) essential for AI computing. Despite recent declines, Nvidia's technology underpins many AI applications, making it a long-term hold.
+   - **Link**: [Nvidia Investor Relations](https://www.nvidia.com/en-us/)
+
+2. **Microsoft (MSFT)**
+   - **Rationale**: With a strong focus on integrating AI across its cloud services and products, Microsoft remains a cornerstone investment, especially with its new AI assistant tools.
+   - **Link**: [Microsoft Investor Relations](https://www.microsoft.com/en-us/investor)
+
+3. **Alphabet (GOOGL)**
+   - **Rationale**: Google's parent company is heavily invested in AI research and development across various applications, from search algorithms to machine learning. 
+   - **Link**: [Alphabet Investor Relations](https://abc.xyz/investor)
+
+4. **Palantir Technologies (PLTR)**
+   - **Rationale**: Specializes in big data analytics and AI solutions for governments and corporations, providing robust growth potential as demand grows for data-driven insights.
+   - **Link**: [Palantir Investor Relations](https://www.palantir.com/investors/)
+
+5. **Salesforce (CRM)**
+   - **Rationale**: Investing in AI through its Einstein platform shows Salesforce's commitment to integrating AI into business solutions, offering significant growth potential.
+   - **Link**: [Salesforce Investor Relations](https://investor.salesforce.com/)
+
+---
+
+These recommendations take into account current market sentiments and the potential for future growth within the AI sector, making them suitable for investors looking to capitalize on emerging trends in technology.
+
+=== Streaming Complete ===
+```
+
+## 🌟 Highlights
+
+This notebook has guided you through setting up and running a real-time stock analyst using **OpenAI Agents** and the **Dappier MCP Server**. By connecting your agent to real-time tools via MCP, you’ve created an assistant capable of analyzing sector-specific trends and recommending investment strategies grounded in live data.
+
+Key components of this workflow include:
+
+- **OpenAI Agents SDK**: A powerful toolkit that enables large language models to operate as autonomous agents, use tools, and execute multi-step workflows with memory and structured decision-making.
+- **Dappier MCP**: A Model Context Protocol server that connects your agents to real-time, rights-cleared, AI-powered tools such as financial news, stock tickers, earnings data, live search, and content recommendations.
+- **AI Stock Analysis**: A real-world use case where the assistant analyzes a user-selected tech sector, gathers current financial signals, and returns a detailed, data-backed investment strategy with top stock picks.
+
+This architecture can be adapted to other use cases requiring live data integration, intelligent tool use, and context-aware decision-making using the Agents SDK and MCP ecosystem.

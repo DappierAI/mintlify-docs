@@ -1,0 +1,360 @@
+---
+title: "🧲 Dynamic Travel Planner with OpenAI Agents + Real-Time Insights via Dappier MCP"
+---
+
+This cookbook demonstrates how to set up and leverage **OpenAI Agents** combined with **Dappier MCP** for dynamic travel planning. By integrating real-time data and automated tool orchestration via the **Model Context Protocol (MCP)**, this notebook walks you through a practical approach to building adaptive travel agents.
+
+In this cookbook, you'll explore:
+
+-   **OpenAI Agents SDK**: A powerful toolkit that enables large language models to operate as autonomous agents, use tools, and execute multi-step workflows with memory and structured decision-making.
+-   **Dappier MCP**: A Model Context Protocol server that connects your agents to real-time, rights-cleared, AI-powered tools such as live search, weather, stock data, and content recommendations.
+-   **Dynamic Travel Planning**: A real-world use case where the assistant creates a multi-day itinerary using live weather, events, and hotel data sourced via MCP.
+
+This example demonstrates a flexible architecture for building real-time, tool-augmented assistants and lays the foundation for other real-world applications powered by dynamic context, tool use, and AI reasoning.
+
+{/* TODO: Add video once ready */}
+{/* ## 📺 Video Walkthrough
+
+Prefer watching? Here’s a video version of this notebook:
+
+<iframe
+    width="560"
+    height="315"
+    src="https://www.youtube.com/embed/XHfsooz3Dlk?si=HaOwBBBBR294E4FJ"
+    title="YouTube video player"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    referrerpolicy="strict-origin-when-cross-origin"
+    allowfullscreen
+></iframe> */}
+
+## 📦 Installation
+
+To get started, install the required tools and dependencies:
+
+**Step 1: Install `uv` (required to run the Dappier MCP server)**
+
+**macOS / Linux**:
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+**Windows**:
+
+```bash
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+---
+
+**Step 2: Install Python Packages**
+
+Install the required Python packages including the OpenAI Agents SDK and the Dappier MCP server:
+
+```bash
+pip install openai-agents dappier-mcp
+```
+
+Or, if you have `uv` installed:
+
+```bash
+uv pip install openai-agents dappier-mcp
+```
+
+## 🔑 Setting Up API Keys
+
+You’ll need API keys for both **Dappier** and **OpenAI** to authenticate your requests and access tools.
+
+**Dappier API Key**
+
+Head to [Dappier](https://platform.dappier.com/profile/api-keys) to sign up and generate your API key. Dappier offers free credits to get started.
+
+You can set your API key as an environment variable in your terminal:
+
+```bash
+export DAPPIER_API_KEY=your-dappier-api-key
+```
+
+Or programmatically in your Python script:
+
+```python Python
+import os
+
+os.environ["DAPPIER_API_KEY"] = "your-dappier-api-key"
+```
+
+---
+
+**OpenAI API Key**
+
+Visit [OpenAI](https://platform.openai.com/account/api-keys) to retrieve your API key.
+
+Set it in your terminal:
+
+```bash
+export OPENAI_API_KEY=your-openai-api-key
+```
+
+Or in your Python script:
+
+```python Python
+os.environ["OPENAI_API_KEY"] = "your-openai-api-key"
+```
+
+
+## ⚙️ Import Dependencies
+
+Start by importing all required modules to build the travel planner agent. This includes components from the OpenAI Agents SDK and the Dappier MCP server.
+
+```python Python
+import asyncio
+import shutil
+import os
+from datetime import datetime
+
+from agents import Agent, Runner, trace
+from agents.mcp import MCPServer, MCPServerStdio
+from openai.types.responses import ResponseTextDeltaEvent
+```
+
+These imports enable:
+
+- Running the MCP server locally via `MCPServerStdio`
+- Tracing and managing the agent's execution with `Runner` and `trace`
+- Streaming the assistant's output using `ResponseTextDeltaEvent`
+
+
+## 📝 Define User Input
+
+We’ll collect basic trip preferences from the user: city, number of days, and travel start date.
+
+```python Python
+def get_user_input():
+    city = input("Enter the city for your travel: ").strip()
+    num_days = input("Enter the number of days for the trip: ").strip()
+    travel_date = input("Enter the start date of travel (YYYY-MM-DD): ").strip()
+    return city, num_days, travel_date
+```
+
+## 🛰️ Run the Agent with Dappier MCP
+
+This function sets up the agent, formulates the user query, and streams the response using tools served via Dappier MCP.
+
+```python Python
+async def run(mcp_server: MCPServer, city: str, num_days: str, travel_date: str):
+    agent = Agent(
+        name="TravelPlanner",
+        instructions="""
+        You are a dynamic travel planning assistant. Your goal is to build a customized travel itinerary.
+        Use Dappier's tools to get any real time information.
+        """,
+        mcp_servers=[mcp_server],
+        model="gpt-4o-mini"
+    )
+
+    query = f"""
+        Generate a {num_days}-day travel itinerary for {city}, tailored to the real-time weather forecast for the selected date: {travel_date}. Follow these steps:
+
+        Determine Current Date and Travel Period:
+        Use Dappier's real-time search to identify the current date and calculate the trip duration based on user input.
+
+        Fetch Weather Data:
+        Retrieve the weather forecast for {city} during the selected dates to understand the conditions for each day.
+
+        Fetch Live Events Data:
+        Use Dappier's real-time search to find live events happening in {city} during the trip dates.
+
+        Fetch Hotel Deals Data:
+        Use Dappier's real-time search to find the best hotel deals with booking links in {city} during the trip dates.
+
+        Design the Itinerary:
+        Use the weather insights, live events, hotel deals to plan activities and destinations that suit the expected conditions. For each suggested location:
+
+        Output:
+        Present a detailed {num_days}-day itinerary, including timing, activities, booking links, weather information for each day and travel considerations. Ensure the plan is optimized for convenience and enjoyment.
+    """
+
+    print("\n" + "-" * 40)
+    print(f"Running itinerary generation for {city} starting {travel_date} for {num_days} days")
+    print("\n=== Streaming Start ===\n")
+
+    result = Runner.run_streamed(agent, query)
+
+    async for event in result.stream_events():
+        if event.type == "raw_response_event" and isinstance(event.data, ResponseTextDeltaEvent):
+            print(event.data.delta, end="", flush=True)
+
+    print("\n\n=== Streaming Complete ===\n")
+```
+
+
+## 🚦 Initialize and Launch the Workflow
+
+The `main()` function sets up the Dappier MCP server, enables tracing for observability, and runs the travel planning agent.
+
+```python Python
+async def main():
+    city, num_days, travel_date = get_user_input()
+
+    async with MCPServerStdio(
+        cache_tools_list=True,
+        params={
+            "command": "uvx",
+            "args": ["dappier-mcp"],
+            "env": {"DAPPIER_API_KEY": os.environ["DAPPIER_API_KEY"]},
+        },
+    ) as server:
+        with trace(workflow_name="Dynamic Travel Planner with Dappier MCP"):
+            await run(server, city, num_days, travel_date)
+```
+
+## 🧪 Run the Travel Planner Agent
+
+This block checks for the required `uvx` binary and launches the full async workflow. Make sure `uvx` is installed and available in your system path.
+
+```python Python
+if __name__ == "__main__":
+    if not shutil.which("uvx"):
+        raise RuntimeError(
+            "uvx is not installed. Please install it with `pip install uvx` or "
+            "`curl -LsSf https://astral.sh/uv/install.sh | sh`."
+        )
+
+    asyncio.run(main())
+```
+
+```json
+Enter the city for your travel: Tokyo
+Enter the number of days for the trip: 2
+Enter the start date of travel: tomorrow
+
+----------------------------------------
+Running itinerary generation for Tokyo starting tomorrow for 2 days
+
+=== Streaming Start ===
+
+Here's a cozy and adventurous 2-day itinerary for your trip to Tokyo, tailored for April 10-11, 2025, with considerations for the weather, live events, and accommodation options.
+
+---
+
+### **Day 1: April 10, 2025 (Overcast & Showers)**
+
+**Morning:**
+- **Breakfast at a local café.**  
+   - Recommended: **Doutor Coffee Shop** for a hearty breakfast.
+- **Activity:** Visit **Ueno Park**.  
+   - A great place to enjoy flowering cherry blossoms and explore museums.
+   - **Tip:** Bring an umbrella! Expect passing showers throughout the day.
+
+**Time: 9:00 AM – 12:00 PM**
+
+---
+
+**Lunch:**
+- **Location:** **Ameyoko Market**  
+   - Explore various street foods.
+   - Try some grilled fish skewers and taiyaki for dessert!
+
+**Time: 12:30 PM – 1:30 PM**
+
+---
+
+**Afternoon:**
+- **Activity:** Visit the **National Museum of Nature and Science.**  
+   - Indoor activity, perfect for the rainy weather.
+   - Engage with interactive exhibits about Japan’s flora, fauna, and technology.
+
+**Time: 2:00 PM – 4:30 PM**
+
+---
+
+**Evening:**
+- **Dinner:** Enjoy dinner at **Ippudo Ramen** in Akihabara.  
+   - Experience delicious tonkotsu ramen, perfect for a rainy evening.
+
+**Time: 5:00 PM – 7:00 PM**
+
+---
+
+**Live Event:**
+- **Explore local venues for music or comedy shows.**  
+   - While specific events aren’t listed for April 10, many venues often have surprise performances!
+
+---
+
+**Accommodation:**
+- **Hotel Suggestion:**  **HOTEL GROOVE SHINJUKU, A PARKROYAL Hotel**  
+  - Price: Approx. **$109/night**  
+  - Location: Central, near Shinjuku. Free cancellation available.  
+
+---
+
+### **Day 2: April 11, 2025 (Pleasant & Partly Cloudy)**
+
+**Morning:**
+- **Breakfast:** Local breakfast at your hotel or **Sarabeth's** for a delightful brunch.  
+- **Activity:** Visit **Meiji Shrine.**  
+  - A peaceful shrine surrounded by a beautiful forest—enjoy leisurely walks.
+
+**Time: 8:00 AM – 11:00 AM**
+
+---
+
+**Lunch:**
+- **Location:** **Omotesando Hills**  
+   - Explore shops and cafés; grab a bite at the **Café Kitsuné.**
+
+**Time: 11:30 AM – 1:00 PM**
+
+---
+
+**Afternoon:**
+- **Activity:** Shopping in **Harajuku** & explore **Takeshita Street.**  
+   - Discover quirky shops and stylish street fashion.
+
+**Time: 1:30 PM – 3:30 PM**
+
+---
+
+**Evening:**
+- **Live Event:** Attend the **Music Bridge Tokyo 2025** 
+   - Check out a variety of performances happening in the evening!
+
+**Dinner:**
+- **Location:** Restaurant nearby the event venue.  
+   - Enjoy Tokyo-style sushi or izakaya dining.
+
+**Time: 5:00 PM – 8:00 PM**
+
+---
+
+**Accommodation:**
+- **Option:** If staying longer, consider **Park Hotel Tokyo** or **Hotel Century Southern Tower** for convenience and comfort.
+
+### **Weather Overview:**
+- **April 10:** 20°C (68°F), overcast with showers. 🌧️
+- **April 11:** 20°C (68°F), pleasant and partly cloudy. 🌤️
+
+### **Travel Considerations:**
+- **Transport:** Use the Tokyo Metro or JR trains for easy commuting.
+- **Pack an umbrella** for Day 1 and wear comfortable shoes for walking.
+
+---
+
+Enjoy your delightful Tokyo trip filled with unique experiences! 🗼✨
+
+=== Streaming Complete ===
+```
+
+## 🌟 Highlights
+
+This cookbook has guided you through setting up and running a dynamic travel planner using **OpenAI Agents** and the **Dappier MCP Server**. By connecting your agent to real-time tools via MCP, you’ve created an assistant capable of generating rich, up-to-date itineraries that adapt to weather, events, and deals.
+
+Key components of this workflow include:
+
+-   **OpenAI Agents SDK**: A powerful toolkit that enables large language models to operate as autonomous agents, use tools, and execute multi-step workflows with memory and structured decision-making.
+-   **Dappier MCP**: A Model Context Protocol server that connects your agents to real-time, rights-cleared, AI-powered tools such as live search, weather, stock data, and content recommendations.
+-   **Dynamic Travel Planning**: A real-world use case where the assistant creates a multi-day itinerary using live weather, events, and hotel data sourced via MCP.
+
+This architecture can be adapted to other use cases requiring live data integration, intelligent tool use, and context-aware output generation using the Agents SDK and MCP ecosystem.

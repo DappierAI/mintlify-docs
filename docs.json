@@ -132,10 +132,18 @@
                         ]
                     },
                     {
-                        "group": "OpenAI Agents SDK",
+                        "group": "OpenAI Agents",
                         "pages": [
                             "cookbook/recipes/open-ai-agent-travel-assistant",
                             "cookbook/recipes/open-ai-agent-stock-analyser"
+                        ]
+                    },
+                    {
+                        "group": "OpenAI Agents MCP",
+                        "pages": [
+                            "cookbook/recipes/open-ai-agent-mcp-travel-assistant",
+                            "cookbook/recipes/open-ai-agent-mcp-stock-analyst",
+                            "cookbook/recipes/open-ai-agent-mcp-news-letter"
                         ]
                     },
                     {
