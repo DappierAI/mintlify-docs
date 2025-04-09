@@ -1,0 +1,129 @@
+---
+title: "Open AI Agents x Dappier MCP"
+icon: "usb"
+---
+
+## Overview
+
+The integration of **OpenAI Agents SDK** and the **Dappier MCP Server** empowers developers to build **real-time, tool-augmented AI applications** by combining agentic reasoning with **dynamic, rights-cleared data**. Through the use of the **Model Context Protocol (MCP)**, OpenAI agents can seamlessly connect to the Dappier MCP Server, gaining access to tools for **real-time search, recommendations, and domain-specific insights**.
+
+## Real-Life Implementations
+
+### Explore These Cookbooks for Step-by-Step Implementations:
+
+- **[Smart Content Curator with OpenAI Agents + Real-Time AI Recommendations via Dappier MCP](https://docs.dappier.com/cookbook/recipes/open-ai-agent-mcp-news-letter)** – A real-time **LLM-powered newsletter assistant** that pulls **AI-powered content recommendations** across **sports**, **lifestyle**, and **pet care**, and formats them into newsletter-ready summaries.  
+- **[AI Stock Analyst with OpenAI Agents + Real-Time Financial Insights via Dappier MCP](https://docs.dappier.com/cookbook/recipes/open-ai-agent-mcp-stock-analyst)** – Build a dynamic **Stock Analyst Agent** that analyzes a chosen **tech sector**, summarizes trends, and recommends an investment strategy using **live financial signals**.  
+- **[Dynamic Travel Planner with OpenAI Agents + Real-Time Insights via Dappier MCP](https://docs.dappier.com/cookbook/recipes/open-ai-agent-mcp-travel-assistant)** – A practical **travel planning assistant** that creates multi-day itineraries using **live weather, hotel, and event data** through Dappier’s real-time tools.
+
+## OpenAI Agents
+
+The **OpenAI Agents SDK** supports the **Model Context Protocol**, allowing agents to dynamically connect to and use external tool servers such as the **Dappier MCP Server**. This lets developers build flexible agents that can adapt to new tools and data contexts without hardcoding.
+
+### Features of OpenAI Agents SDK:
+
+-   **Agents** – Modular, instruction-following LLMs with tool access.
+-   **MCP Integration** – Connect agents to local or remote MCP-compliant servers.
+-   **Tool Caching** – Reduce latency by caching tool metadata between runs.
+-   **Tracing** – Built-in support for tracking tool calls and debugging usage.
+
+---
+
+## Dappier MCP Server
+
+The **Dappier MCP Server** is a **locally-run tool server** that exposes Dappier’s proprietary, real-time data tools through the **Model Context Protocol (MCP)**. It enables agents to become experts in finance, news, sports, and lifestyle topics by tapping into Dappier’s premium, structured data sources.
+
+### Key Features of Dappier MCP Server:
+
+-   **Real-Time Web Search** – Google-style web results, weather, travel, and financial market queries.
+-   **Stock Market Tools** – Live financial data, trades, stock prices, and breaking news.
+-   **AI-Powered Recommendations** – Personalized and trending content across domains like sports, pet care, and sustainability.
+-   **Structured Output** – Clean JSON responses with rich metadata and source links.
+
+> **Explore Dappier's data and AI models at** [marketplace.dappier.com](https://marketplace.dappier.com).
+
+---
+
+## Why Integrate OpenAI Agents SDK with Dappier MCP?
+
+By integrating OpenAI agents with the Dappier MCP Server, developers can:
+
+-   **Connect agents to real-time tools** with no need for custom tool interfaces.
+-   **Provide dynamic, verified insights** to reduce hallucinations.
+-   **Build adaptive agents** that fetch content and analysis on-demand.
+-   **Leverage a standardized protocol (MCP)** to simplify AI tool orchestration.
+
+### Example Use Cases:
+
+1. **Market Intelligence Bots** – Use tools like `dappier_real_time_search` to scan for **breaking stock updates**.
+2. **Content Curation Assistants** – Deploy agents that recommend trending articles and personalized news using `dappier_ai_recommendations`.
+3. **Query-Driven AI Assistants** – Answer questions like “What’s trending today in tech?” with fresh data pulled at runtime.
+4. **Domain-Specific Reasoners** – Turn any agent into a **finance, sports, or travel specialist** using the appropriate tool set.
+
+---
+
+## Basic Use Case: OpenAI Agents SDK + Dappier MCP Server
+
+### Setup API Keys
+
+You'll need to set up your API keys for OpenAI and Dappier.  
+This ensures that the tools can interact with external services securely.
+
+You can go to [here](https://platform.dappier.com/profile/api-keys) to get API Key from Dappier with **free** credits.
+
+```bash
+export DAPPIER_API_KEY="your-api-key"
+```
+
+You can go to [here](https://platform.openai.com/settings/organization/api-keys) to get API Key from OpenAI.
+
+```bash
+export OPENAI_API_KEY="your-api-key"
+```
+
+### Using Dappier MCP Server with OpenAI Agent (Python Code Example)
+
+```python Python
+import asyncio
+import os
+
+from agents import Agent, Runner, trace
+from agents.mcp import MCPServer, MCPServerStdio
+
+async def run(mcp_server: MCPServer):
+    agent = Agent(
+        name="Assistant",
+        instructions="Always respond in haiku form. You are an expert assistant that can answer real-time questions using Dappier's tools.",
+        mcp_servers=[mcp_server]
+    )
+
+    result = await Runner.run(starting_agent=agent, input="How is the weather today in Austin, TX?")
+    
+    print(result.final_output)
+
+
+async def main():
+    async with MCPServerStdio(
+        cache_tools_list=True,
+        params={
+            "command": "uvx",
+            "args": ["dappier-mcp"],
+            "env": {"DAPPIER_API_KEY": os.environ["DAPPIER_API_KEY"]},
+        },
+    ) as server:
+        with trace(workflow_name="Dappier MCP usage example"):
+            await run(server)
+
+asyncio.run(main())
+```
+
+```json
+Chilly morning air,  
+Austin at fifty-three now,  
+Light jacket advised. 🌤️
+```
+
+---
+
+## Conclusion
+
+Integrating the **OpenAI Agents SDK** with the **Dappier MCP Server** allows developers to build powerful, real-time AI agents that use live, structured data from trusted sources. Whether your application needs **financial monitoring**, **personalized content recommendations**, or **real-time web search**, this combination provides a flexible and production-ready solution using the **Model Context Protocol**.

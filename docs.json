@@ -71,11 +71,13 @@
                         "pages": [
                             "integrations/agent-ai-integration",
                             "integrations/camel-integration",
-                            "integrations/cursor-mcp-integration",
+                            "integrations/claude-dappier-mcp-server-integration",
+                            "integrations/cursor-dappier-mcp-integration",
                             "integrations/dappier-mcp-server-integration",
                             "integrations/langchain-integration",
                             "integrations/llama-index-integration",
-                            "integrations/open-ai-agents-sdk-integration",
+                            "integrations/open-ai-agents-integration",
+                            "integrations/open-ai-agents-dappier-mcp-integration",
                             "integrations/open-ai-function-calling-integration",
                             "integrations/open-ai-gpt-integration",
                             "integrations/replit-integration",
@@ -131,10 +133,18 @@
                         ]
                     },
                     {
-                        "group": "OpenAI Agents SDK",
+                        "group": "OpenAI Agents",
                         "pages": [
                             "cookbook/recipes/open-ai-agent-travel-assistant",
                             "cookbook/recipes/open-ai-agent-stock-analyser"
+                        ]
+                    },
+                    {
+                        "group": "OpenAI Agents MCP",
+                        "pages": [
+                            "cookbook/recipes/open-ai-agent-mcp-travel-assistant",
+                            "cookbook/recipes/open-ai-agent-mcp-stock-analyst",
+                            "cookbook/recipes/open-ai-agent-mcp-news-letter"
                         ]
                     },
                     {
