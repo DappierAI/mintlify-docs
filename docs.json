@@ -1,6 +1,14 @@
 {
     "$schema": "https://mintlify.com/docs.json",
     "theme": "mint",
+    "integrations": {
+        "ga4": {
+            "measurementId": "G-M7EJNC2L88"
+        },
+        "gtm": {
+            "tagId": "GTM-NSH85QD9"
+        }
+    },
     "name": "Dappier API Guide",
     "colors": {
         "primary": "#8353E2",
