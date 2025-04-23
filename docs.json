@@ -84,6 +84,7 @@
                             "integrations/dappier-mcp-server-integration",
                             "integrations/langchain-integration",
                             "integrations/llama-index-integration",
+                            "/integrations/mcp-use-integration",
                             "integrations/open-ai-agents-integration",
                             "integrations/open-ai-agents-dappier-mcp-integration",
                             "integrations/open-ai-function-calling-integration",
@@ -138,6 +139,14 @@
                             "cookbook/recipes/llama-index-dyamic-travel-planner",
                             "cookbook/recipes/llama-index-stock-analyzer",
                             "cookbook/recipes/llama-index-smart-news-letter"
+                        ]
+                    },
+                    {
+                        "group": "MCP Use",
+                        "pages": [
+                            "cookbook/recipes/mcp-use-dynamic-travel-planner",
+                            "cookbook/recipes/mcp-use-stock-analyst",
+                            "cookbook/recipes/mcp-use-news-letter"
                         ]
                     },
                     {

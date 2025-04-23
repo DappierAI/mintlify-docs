@@ -1,0 +1,310 @@
+---
+title: "🎲 Dynamic Travel Planner with LangChain + Dappier MCP using `mcp-use`"
+---
+
+This cookbook demonstrates how to build a real-time, AI-powered travel planner using **LangChain**, **Dappier MCP**, and the lightweight `**mcp-use**` client. By integrating live data through the **Model Context Protocol (MCP)**, this guide walks through how to create structured, tool-augmented agents without using the OpenAI Agents SDK.
+
+In this cookbook, you'll explore:
+
+-   **LangChain + OpenAI**: A modular framework to build LLM-powered applications with support for agents, tools, and memory.
+-   **Dappier MCP**: A Model Context Protocol server that connects your agents to real-time, rights-cleared, AI-powered tools such as live search, weather, stock data, and content recommendations.
+-   **mcp-use**: A lightweight Python client that bridges any LLM with any MCP server using standard transports like `stdio` and `http`—without relying on proprietary SDKs.
+-   **Dynamic Travel Planning**: A real-world use case where the assistant creates a multi-day itinerary using live weather, events, and hotel data sourced via MCP.
+
+This example demonstrates a flexible architecture for building real-time, tool-augmented assistants and lays the foundation for other real-world applications powered by dynamic context, tool use, and AI reasoning.
+
+
+## 📦 Installation
+
+To get started, install the required tools and dependencies:
+
+---
+
+**Step 1: Install `uv` (required to run the Dappier MCP server)**
+
+**macOS / Linux**:
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+**Windows**:
+
+```bash
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+---
+
+**Step 2: Create a Virtual Environment (Recommended)**
+
+Create and activate a virtual environment to isolate dependencies.
+
+**macOS / Linux**:
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+**Windows**:
+
+```bash
+python -m venv venv
+venv\Scripts\activate
+```
+
+---
+
+**Step 3: Install Python Packages**
+
+Install the necessary Python dependencies including LangChain and `mcp-use`.
+
+```bash
+pip install langchain-openai mcp-use python-dotenv
+```
+
+## 🔑 Setting Up API Keys
+
+You’ll need API keys for both **Dappier** and **OpenAI** to authenticate your requests and access tools.
+
+---
+
+**Dappier API Key**
+
+Visit [Dappier](https://platform.dappier.com/profile/api-keys) to generate your API key. Dappier provides free credits to help you get started.
+
+You can set the API key as an environment variable in your terminal:
+
+```bash
+export DAPPIER_API_KEY=your-dappier-api-key
+```
+
+Or include it in a `.env` file at the root of your project:
+
+```env
+DAPPIER_API_KEY=your-dappier-api-key
+```
+
+---
+
+**OpenAI API Key**
+
+Go to [OpenAI](https://platform.openai.com/account/api-keys) to retrieve your API key.
+
+Set it in your terminal:
+
+```bash
+export OPENAI_API_KEY=your-openai-api-key
+```
+
+Or include it in your `.env` file:
+
+```env
+OPENAI_API_KEY=your-openai-api-key
+```
+
+In your Python script, load the `.env` file:
+
+```python Python
+from dotenv import load_dotenv
+
+load_dotenv()
+```
+
+## ⚙️ Import Dependencies
+
+Start by importing the required modules to build the travel planner agent. This includes components from `mcp-use`, LangChain, and environment configuration.
+
+```python Python
+import asyncio
+import os
+from dotenv import load_dotenv
+from langchain_openai import ChatOpenAI
+from mcp_use import MCPAgent, MCPClient
+```
+
+These imports enable:
+
+- Loading API keys from the environment using `dotenv`
+- Running asynchronous workflows with `asyncio`
+- Accessing OpenAI models via LangChain
+- Connecting to the Dappier MCP server and executing tool-augmented queries using `mcp-use`
+
+## 📝 Define User Input
+
+We’ll collect basic trip preferences from the user: city, number of days, and travel start date.
+
+```python Python
+def get_user_input():
+    city = input("Enter the city for your travel: ").strip()
+    num_days = input("Enter the number of days for the trip: ").strip()
+    travel_date = input("Enter the start date of travel (YYYY-MM-DD): ").strip()
+    return city, num_days, travel_date
+```
+
+## 🛰️ Run the Agent with Dappier MCP
+
+This function sets up the MCP agent using `mcp-use`, formulates the travel planning query, and executes it using real-time tools provided by the Dappier MCP server.
+
+```python Python
+async def run_travel_planner(city: str, num_days: str, travel_date: str):
+    # Load environment variables
+    load_dotenv()
+
+    # Retrieve API key
+    api_key = os.getenv("DAPPIER_API_KEY")
+    if not api_key:
+        raise ValueError("DAPPIER_API_KEY is not set")
+
+    # MCPClient configuration using stdio transport (via uvx dappier-mcp)
+    config = {
+        "mcpServers": {
+            "dappier": {
+                "command": "uvx",
+                "args": ["dappier-mcp"],
+                "env": {
+                    "DAPPIER_API_KEY": api_key
+                }
+            }
+        }
+    }
+
+    # Create MCP client and LLM
+    client = MCPClient.from_dict(config)
+    llm = ChatOpenAI(model="gpt-4o")
+
+    # Create the agent
+    agent = MCPAgent(llm=llm, client=client, max_steps=30)
+
+    try:
+        # Formulate query
+        query = f"""
+        Generate a {num_days}-day travel itinerary for {city}, tailored to the real-time weather forecast for the selected date: {travel_date}. Follow these steps:
+
+        Determine Current Date and Travel Period:
+        Use Dappier's real-time search to identify the current date and calculate the trip duration based on user input.
+
+        Fetch Weather Data:
+        Retrieve the weather forecast for {city} during the selected dates to understand the conditions for each day.
+
+        Fetch Live Events Data:
+        Use Dappier's real-time search to find live events happening in {city} during the trip dates.
+
+        Fetch Hotel Deals Data:
+        Use Dappier's real-time search to find the best hotel deals with booking links in {city} during the trip dates.
+
+        Design the Itinerary:
+        Use the weather insights, live events, hotel deals to plan activities and destinations that suit the expected conditions.
+
+        Output:
+        Present a detailed {num_days}-day itinerary, including timing, activities, booking links, weather information for each day and travel considerations.
+        """
+
+        print("\n" + "-" * 40)
+        print(f"Running itinerary generation for {city} starting {travel_date} for {num_days} days")
+        print("\n=== Response ===\n")
+
+        result = await agent.run(query, max_steps=30, Verbose=True)
+        print(result)
+
+    finally:
+        # Clean up sessions
+        if client.sessions:
+            await client.close_all_sessions()
+```
+
+## 🚦 Initialize and Launch the Workflow
+
+The `main()` function collects user input, then launches the asynchronous workflow to run the travel planner using `mcp-use` and Dappier MCP.
+
+```python Python
+async def main():
+    city, num_days, travel_date = get_user_input()
+    await run_travel_planner(city, num_days, travel_date)
+```
+
+To start the planner, run the main function using `asyncio`:
+
+```python Python
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+```json
+Enter the city for your travel: london
+Enter the number of days for the trip: 5
+Enter the start date of travel: today  
+
+----------------------------------------
+Running itinerary generation for london starting today for 5 days
+
+=== Response ===
+
+[04/23/25 13:16:16] INFO     Processing request of type ListToolsRequest                                                                        server.py:534
+                    INFO     Processing request of type ListToolsRequest                                                                        server.py:534
+[04/23/25 13:16:22] INFO     Processing request of type CallToolRequest                                                                         server.py:534
+[04/23/25 13:16:25] INFO     HTTP Request: POST https://api.dappier.com/app/aimodel/am_01j06ytn18ejftedz6dyhz2b15 "HTTP/1.1 200 OK"           _client.py:1025
+[04/23/25 13:16:29] INFO     Processing request of type CallToolRequest                                                                         server.py:534
+[04/23/25 13:16:37] INFO     HTTP Request: POST https://api.dappier.com/app/aimodel/am_01j06ytn18ejftedz6dyhz2b15 "HTTP/1.1 200 OK"           _client.py:1025
+                    INFO     Processing request of type CallToolRequest                                                                         server.py:534
+[04/23/25 13:16:45] INFO     HTTP Request: POST https://api.dappier.com/app/aimodel/am_01j06ytn18ejftedz6dyhz2b15 "HTTP/1.1 200 OK"           _client.py:1025
+                    INFO     Processing request of type CallToolRequest                                                                         server.py:534
+[04/23/25 13:16:51] INFO     HTTP Request: POST https://api.dappier.com/app/aimodel/am_01j06ytn18ejftedz6dyhz2b15 "HTTP/1.1 200 OK"           _client.py:1025
+Here's a detailed 5-day travel itinerary for your trip to London, tailored to the real-time weather forecast and live events from April 23 to April 27, 2025. 🌟
+
+---
+
+### Day 1: April 23, 2025 (Wednesday)
+- **Weather**: Cloudy with rain, especially in the morning. High 55°F (13°C) / Low 47°F (8°C).
+- **Suggested Activities**:
+  - **St George's Day Celebrations**: Enjoy various events including Morris dancing and whisky tasting across the city. 🇬🇧
+  - **The Queen of the Night Show**: Attend this tribute to Whitney Houston. 🎤
+  - **Hotel**: Check into the Strand Palace for comfort and convenience.
+
+### Day 2: April 24, 2025 (Thursday)
+- **Weather**: Overcast with possible sprinkles. High 62°F (17°C) / Low 45°F (7°C).
+- **Suggested Activities**:
+  - Explore local venues for various concerts and live music. 🎶
+  - **Shopping**: Visit Covent Garden and enjoy the nearby Resident Covent Garden Hotel for style and comfort.
+
+### Day 3: April 25, 2025 (Friday)
+- **Weather**: Mainly cloudy. High 64°F (18°C) / Low 42°F (6°C).
+- **Suggested Activities**:
+  - **Theatre Shows**: Catch a classic or modern production on the West End. 🎭
+  - **Hotel**: Consider staying at the Royal National Hotel for a budget-friendly option.
+
+### Day 4: April 26, 2025 (Saturday)
+- **Weather**: Drizzly skies. High 62°F (17°C) / Low 49°F (9°C).
+- **Suggested Activities**:
+  - **Vivaldi by Candlelight**: Attend a stunning classical music experience. 🎻
+  - **Explore Local Live Music**: Visit nearby gigs for a night out.
+  - **Hotel**: Book the Corbigoe Hotel with prices starting at $64/night.
+
+### Day 5: April 27, 2025 (Sunday)
+- **Weather**: Mostly cloudy, chance of light rain. High 60°F (16°C) / Low 48°F (9°C).
+- **Suggested Activities**:
+  - **London Marathon**: Watch or even participate in this iconic event. 🏃‍♀️🏃‍♂️
+  - **Theatre and Concerts**: End your trip with a flourish by catching another live performance.
+  - **Hotel**: Relax at St Athans Hotel, known for its cozy setting.
+
+---
+
+**Travel Considerations:**
+- **Hotel Booking**: Most hotels offer flexible options—consider locking in deals on Orbitz for exclusive offers and cancellation policies.
+- **Packing**: Bring a light jacket, umbrella, and comfortable shoes for exploring the city.
+
+Enjoy your spectacular 5-day trip to London filled with culture, entertainment, and cozy accommodations! 🌆✨
+```
+
+## 🌟 Highlights
+
+This cookbook has guided you through building a dynamic travel planner using **LangChain**, **Dappier MCP**, and the `**mcp-use**` Python client. By connecting your agent to real-time tools via MCP, you’ve created an assistant capable of generating up-to-date travel itineraries based on live weather, events, and hotel deals.
+
+Key components of this workflow include:
+
+-   **LangChain + OpenAI**: A modular framework for creating LLM-powered applications with agent capabilities.
+-   **Dappier MCP**: A Model Context Protocol server that enables access to live, rights-cleared data through AI tools like real-time search, weather, and finance.
+-   **mcp-use**: A lightweight open-source client to connect any LLM to any MCP server using `stdio` or `http` transports, without vendor lock-in.
+
+This architecture can be extended to other real-time applications requiring dynamic data, tool use, and intelligent orchestration powered by the MCP ecosystem.

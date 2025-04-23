@@ -1,0 +1,297 @@
+---
+title: "🎲 Stock Research & Investment Strategy Agent with LangChain + Dappier MCP using `mcp-use`"
+---
+
+This cookbook demonstrates how to build a real-time stock analysis and investment planning assistant using **LangChain**, **Dappier MCP**, and the lightweight `**mcp-use**` client. By integrating live financial data through the **Model Context Protocol (MCP)**, this guide walks through constructing agents that deliver in-depth market insights and actionable strategies.
+
+In this cookbook, you'll explore:
+
+-   **LangChain + OpenAI**: A modular framework to build LLM-powered applications with support for agents, tools, and memory.
+-   **Dappier MCP**: A Model Context Protocol server that connects your agents to real-time, rights-cleared, AI-powered tools such as financial news, live stock data, and market summaries.
+-   **mcp-use**: A lightweight Python client that bridges any LLM with any MCP server using standard transports like `stdio` and `http`—without relying on proprietary SDKs.
+-   **Stock Analysis & Investment Strategy**: A real-world use case where the assistant performs deep research on a specific stock ticker and generates a strategic investment plan based on current market data.
+
+This example demonstrates a flexible architecture for building real-time, tool-augmented assistants and lays the foundation for other real-world applications powered by dynamic context, tool use, and AI reasoning.
+
+## 📦 Installation
+
+To get started, install the required tools and dependencies:
+
+---
+
+**Step 1: Install `uv` (required to run the Dappier MCP server)**
+
+**macOS / Linux**:
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+**Windows**:
+
+```bash
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+---
+
+**Step 2: Create a Virtual Environment (Recommended)**
+
+Create and activate a virtual environment to isolate dependencies.
+
+**macOS / Linux**:
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+**Windows**:
+
+```bash
+python -m venv venv
+venv\Scripts\activate
+```
+
+---
+
+**Step 3: Install Python Packages**
+
+Install the necessary Python dependencies including LangChain and `mcp-use`.
+
+```bash
+pip install langchain-openai mcp-use python-dotenv
+```
+
+## 🔑 Setting Up API Keys
+
+You’ll need API keys for both **Dappier** and **OpenAI** to authenticate your requests and access tools.
+
+---
+
+**Dappier API Key**
+
+Visit [Dappier](https://platform.dappier.com/profile/api-keys) to generate your API key. Dappier provides free credits to help you get started.
+
+You can set the API key as an environment variable in your terminal:
+
+```bash
+export DAPPIER_API_KEY=your-dappier-api-key
+```
+
+Or include it in a `.env` file at the root of your project:
+
+```env
+DAPPIER_API_KEY=your-dappier-api-key
+```
+
+---
+
+**OpenAI API Key**
+
+Go to [OpenAI](https://platform.openai.com/account/api-keys) to retrieve your API key.
+
+Set it in your terminal:
+
+```bash
+export OPENAI_API_KEY=your-openai-api-key
+```
+
+Or include it in your `.env` file:
+
+```env
+OPENAI_API_KEY=your-openai-api-key
+```
+
+In your Python script, load the `.env` file:
+
+```python Python
+from dotenv import load_dotenv
+
+load_dotenv()
+```
+
+## ⚙️ Import Dependencies
+
+Start by importing the required modules to build the stock research agent. This includes components from `mcp-use`, LangChain, and environment configuration.
+
+```python Python
+import asyncio
+import os
+from dotenv import load_dotenv
+from langchain_openai import ChatOpenAI
+from mcp_use import MCPAgent, MCPClient
+```
+
+These imports enable:
+
+- Loading API keys from the environment using `dotenv`
+- Running asynchronous workflows with `asyncio`
+- Accessing OpenAI models via LangChain
+- Connecting to the Dappier MCP server and executing tool-augmented financial research using `mcp-use`
+
+## 📝 Define User Input
+
+We’ll collect the name of the company or stock from the user, which will be used to perform real-time research and analysis.
+
+```python Python
+def get_user_input():
+    stock_name = input("Enter the name of the company or stock: ").strip()
+    return stock_name
+```
+
+## 🛰️ Run the Agent with Dappier MCP
+
+This function sets up the MCP agent using `mcp-use`, formulates the stock research query, and executes it using real-time financial tools provided by the Dappier MCP server.
+
+```python Python
+async def run_stock_research(stock_name: str):
+    # Load environment variables
+    load_dotenv()
+
+    # Retrieve API key
+    api_key = os.getenv("DAPPIER_API_KEY")
+    if not api_key:
+        raise ValueError("DAPPIER_API_KEY is not set")
+
+    # MCPClient configuration using stdio transport (via uvx dappier-mcp)
+    config = {
+        "mcpServers": {
+            "dappier": {
+                "command": "uvx",
+                "args": ["dappier-mcp"],
+                "env": {
+                    "DAPPIER_API_KEY": api_key
+                }
+            }
+        }
+    }
+
+    # Create MCP client and LLM
+    client = MCPClient.from_dict(config)
+    llm = ChatOpenAI(model="gpt-4o")
+
+    # Create the agent
+    agent = MCPAgent(llm=llm, client=client, max_steps=30)
+
+    try:
+        # Formulate query
+        query = f"""
+        Conduct a comprehensive investment research on the stock: {stock_name}. Follow these steps:
+
+        1. Use Dappier's real-time search to gather the latest financial news related to {stock_name}.
+        2. Retrieve recent trading data and market performance for the stock.
+        3. Analyze sentiment and performance trends from recent investor commentary or news coverage.
+        4. Generate a detailed stock analysis, including historical trends, recent developments, and key performance indicators.
+        5. Based on the research, determine whether this is a good time to invest or if it's better to wait. If investing now, provide guidance on:
+            - A suitable target sell price or time frame for selling
+            - An appropriate stop-loss level to manage downside risk
+        6. If the recommendation is to wait, explain the indicators or conditions to monitor before investing.
+
+        Ensure the final output includes:
+        - A structured summary of findings
+        - Relevant real-time news links
+        - Clear investment strategy recommendation with timing and risk management considerations
+        """
+
+        print("\n" + "-" * 40)
+        print(f"Running stock analysis for: {stock_name}")
+        print("\n=== Response ===\n")
+
+        result = await agent.run(query, max_steps=30)
+        print(result)
+
+    finally:
+        # Clean up sessions
+        if client.sessions:
+            await client.close_all_sessions()
+```
+
+## 🚦 Initialize and Launch the Workflow
+
+The `main()` function collects user input, then launches the asynchronous workflow to run the stock research agent using `mcp-use` and Dappier MCP.
+
+```python Python
+async def main():
+    stock_name = get_user_input()
+    await run_stock_research(stock_name)
+```
+
+To start the agent, run the main function using `asyncio`:
+
+```python Python
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+```json
+Enter the name of the company or stock: TSLA
+
+----------------------------------------
+Running stock analysis for: TSLA
+
+=== Response ===
+
+[04/23/25 13:35:25] INFO     Processing request of type ListToolsRequest                                                                        server.py:534
+                    INFO     Processing request of type ListToolsRequest                                                                        server.py:534
+[04/23/25 13:35:27] INFO     Processing request of type CallToolRequest                                                                         server.py:534
+[04/23/25 13:35:31] INFO     HTTP Request: POST https://api.dappier.com/app/aimodel/am_01j749h8pbf7ns8r1bq9s2evrh "HTTP/1.1 200 OK"           _client.py:1025
+                    INFO     Processing request of type CallToolRequest                                                                         server.py:534
+[04/23/25 13:35:37] INFO     HTTP Request: POST https://api.dappier.com/app/aimodel/am_01j749h8pbf7ns8r1bq9s2evrh "HTTP/1.1 200 OK"           _client.py:1025
+[04/23/25 13:35:38] INFO     Processing request of type CallToolRequest                                                                         server.py:534
+[04/23/25 13:36:04] INFO     HTTP Request: POST https://api.dappier.com/app/aimodel/am_01j749h8pbf7ns8r1bq9s2evrh "HTTP/1.1 200 OK"           _client.py:1025
+Here's a comprehensive analysis and investment research on Tesla, Inc. (TSLA):
+
+### Summary of Findings
+
+1. **Latest Financial News:**
+   - **Challenges and Strategic Decisions:** Tesla is facing challenges termed as a "mini disaster" with concerns from investors about the company's handling of macroeconomic factors and earnings ([Motley Fool](https://www.fool.com/investing/2023/10/22/where-does-tesla-stock-go-from-here-after-the-mini/)).
+   - **Earnings and Investor Sentiment:** Elon Musk's management and communication strategies have sparked mixed reactions among investors ([Benzinga](https://www.benzinga.com/analyst-ratings/analyst-color/23/10/35365351/tesla-investor-says-elon-musk-overplayed-macro-card-as-he-details-game-plan-to-lift)).
+   - **Energy Business Growth:** Tesla’s energy business has shown significant growth, outpacing its automotive segment, which provides diversification and additional revenue streams ([Motley Fool](https://www.fool.com/investing/2023/10/22/tsla-energy-business-q3-earnings/)).
+
+2. **Recent Trading Data and Market Performance:**
+   - **Current Price:** $259.60
+   - **Recent Trade Prices:** Range between $259.52 and $259.58, indicating very minimal fluctuations at the time of the latest trade report.
+
+3. **Sentiment and Performance Trends:**
+   - Recent investor commentary highlights a cautious sentiment due to perceived overplaying of external economic conditions by management.
+   - Strong growth in the energy sector is seen as a positive diversifier for the company.
+
+4. **Stock Analysis:**
+   - **Historical Trends:** Tesla has been a high-growth stock with significant fluctuations influenced by market sentiment and broader economic conditions.
+   - **Recent Developments:** Positive growth in non-automotive sectors like energy, with some concerns over automotive sales and market share.
+   - **Key Performance Indicators:** Best observed in the expanding energy division, boosting overall profitability.
+
+### Investment Strategy Recommendation
+
+Based on the analysis, if investing now, consider the following guidance:
+
+- **Target Sell Price/Time Frame:** Given the current volatility and positive long-term outlook in energy, a target stall price of around $300 over the next 6-12 months could be reasonable, assuming market conditions improve.
+  
+- **Stop-Loss Level:** A prudent stop-loss level would be around $240, given recent price support levels.
+
+If opting to **wait before investing**, monitor these key indicators or conditions:
+
+- **Market Conditions and Macro Environment:** Watch for stability in economic indicators that could mitigate current investor worries.
+- **Automotive Sales Performance:** Look for signs of growth recovery or market share retention in Tesla's primary automotive business.
+- **Performance of the Energy Sector:** Continued robust growth in Tesla's energy division can bolster investor confidence significantly.
+
+### Relevant Real-Time News Links
+- [Where Does Tesla Stock Go From Here After the "Mini Disaster?"](https://www.fool.com/investing/2023/10/22/where-does-tesla-stock-go-from-here-after-the-mini/)
+- [Tesla Investor Says Elon Musk Overplayed Macro Card](https://www.benzinga.com/analyst-ratings/analyst-color/23/10/35365351/tesla-investor-says-elon-musk-overplayed-macro-card-as-he-details-game-plan-to-lift)
+- [Tesla's Energy Business: Faster-Growing and Now More Profitable](https://www.fool.com/investing/2023/10/22/tsla-energy-business-q3-earnings/)
+
+By considering these factors and keeping updated with ongoing developments, investors can make informed decisions on the timing of entry and risk management for TSLA.
+```
+
+## 🌟 Highlights
+
+This cookbook has guided you through building a real-time stock research and investment strategy assistant using **LangChain**, **Dappier MCP**, and the `**mcp-use**` Python client. By connecting your agent to live financial tools via MCP, you’ve enabled detailed market analysis and actionable investment recommendations based on up-to-date data.
+
+Key components of this workflow include:
+
+-   **LangChain + OpenAI**: A modular framework for creating LLM-powered applications with agent capabilities.
+-   **Dappier MCP**: A Model Context Protocol server that enables access to real-time, rights-cleared financial tools including stock data, news, and market sentiment.
+-   **mcp-use**: A lightweight open-source client to connect any LLM to any MCP server using `stdio` or `http` transports.
+
+This architecture can be extended to build research agents across other financial domains, such as ETF analysis, portfolio monitoring, or earnings prediction using real-time data and tool orchestration.
