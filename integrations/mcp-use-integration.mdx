@@ -106,7 +106,7 @@ async def main():
                 "command": "uvx",
                 "args": ["dappier-mcp"],
                 "env": {
-                    "DAPPIER_API_KEY": api_key
+                    "DAPPIER_API_KEY": os.getenv("DAPPIER_API_KEY")
                 }
             }
         }
