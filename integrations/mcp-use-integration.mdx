@@ -1,0 +1,155 @@
+---
+title: "MCP-Use"
+icon: "diagram-project"
+---
+
+## Overview
+
+The integration of **MCP-Use** with the **Dappier MCP Server** enables developers to build powerful, **tool-augmented AI agents** that connect to real-time, rights-cleared content using the **Model Context Protocol (MCP)**. By combining any LangChain-supported LLM with Dappier’s specialized tools — including live search, AI recommendations, and financial insights — this integration allows you to orchestrate intelligent, real-time assistants using a lightweight, open-source client.
+
+With **MCP-Use**, you can dynamically spin up MCP-compatible agents using just a few lines of Python, connect to multiple tool servers in parallel, and run rich, context-aware workflows that adapt to user input in real time.
+
+## Real-Life Implementations
+
+### Explore These Cookbooks for Step-by-Step Implementations:
+
+- **[Dynamic Travel Planner with LangChain + Dappier MCP using `mcp-use`](https://docs.dappier.com/cookbook/recipes/mcp-use-dynamic-travel-planner)** – A **real-time itinerary assistant** that uses live weather, events, and hotel data to generate structured travel plans via the Dappier MCP server.
+
+- **[Stock Research & Investment Strategy Agent with LangChain + Dappier MCP using `mcp-use`](https://docs.dappier.com/cookbook/recipes/mcp-use-stock-analyst)** – Create a **stock analyst agent** that pulls live financial data, summarizes trends, and produces actionable investment strategies in real time.
+
+- **[Smart Content Curator with LangChain + Dappier MCP using `mcp-use`](https://docs.dappier.com/cookbook/recipes/mcp-use-news-letter)** – Build a **real-time content recommendation assistant** that fetches personalized summaries across domains like lifestyle, sports, pet care, and sustainability — ready for newsletter or editorial output.
+
+## MCP-Use
+
+**MCP-Use** is a lightweight, open-source Python client that connects **any LLM** to **any MCP server** using standard transports such as `stdio` or `http`. It allows developers to quickly prototype and deploy **tool-augmented agents** without relying on proprietary SDKs or vendor-specific infrastructure.
+
+By integrating with **Dappier MCP**, MCP-Use enables real-time access to structured data models including **live search**, **financial updates**, and **AI-powered recommendations** — all exposed through the **Model Context Protocol (MCP)**.
+
+### Features of MCP-Use:
+
+-   **Zero Lock-In** – Works with any LangChain-compatible LLM that supports tool usage (OpenAI, Anthropic, Groq, etc.).
+-   **Standard Protocol Support** – Seamlessly connects to MCP servers using `stdio` or `http` transport layers.
+-   **Multi-Server Configuration** – Run agents that use tools from multiple MCP servers in parallel.
+-   **Tool Access Control** – Restrict or whitelist specific tools for enhanced security and task control.
+-   **Dynamic Server Manager** – Automatically route agent steps to the most appropriate tool server at runtime.
+
+## Dappier MCP Server
+
+The **Dappier MCP Server** is a locally-run or remotely-accessible tool server that exposes **real-time, proprietary data models** through the **Model Context Protocol (MCP)**. By connecting your LLM agents to this server, you can build AI systems that understand and respond to current events, trends, and data-driven insights across domains like **finance**, **news**, **weather**, **travel**, and **lifestyle media**.
+
+### Key Features of Dappier MCP Server:
+
+-   **Real-Time Web Search** – Fetches current search results, news headlines, stock updates, weather conditions, and more using AI-enhanced tools.
+-   **Stock Market Tools** – Access live market data, stock prices, trade activity, and financial news via integrations like Polygon.io.
+-   **AI-Powered Content Recommendations** – Get structured, domain-specific content across verticals like pet care, sports, sustainability, and local news — powered by Dappier’s rights-cleared models.
+-   **Structured Outputs** – Returns clean JSON with metadata, summaries, images, and source URLs.
+-   **Data Model Marketplace** – Choose from a growing collection of curated data providers at [marketplace.dappier.com](https://marketplace.dappier.com/marketplace).
+
+## Why Use MCP-Use with Dappier MCP?
+
+By combining **MCP-Use** with the **Dappier MCP Server**, developers can build real-time, LLM-powered agents that operate across multiple domains — using trusted, structured data without relying on closed-source agent SDKs.
+
+This integration supports a flexible, modular approach to intelligent tool orchestration — ideal for prototyping, deploying, and scaling production-ready AI agents that respond to real-world signals.
+
+### Benefits of the Integration:
+
+-   **LLM-Agnostic** – Compatible with any LangChain-supported model that supports tool use.
+-   **Real-Time Signal Access** – Power your agents with dynamic inputs from finance, news, lifestyle media, and more.
+-   **Multi-Server Workflows** – Combine tools from Dappier with others like Playwright, Airbnb, or custom MCPs.
+-   **Standardized Interface** – Use the Model Context Protocol (MCP) to simplify tool execution across agents.
+
+### Example Use Cases:
+
+1. **Investment Research Agents** – Query stock tickers, interpret market signals, and suggest trading strategies using real-time finance tools.
+2. **Dynamic Travel Planners** – Generate live itineraries based on current weather, events, and hotel availability.
+3. **Content Curators** – Summarize trending articles, fetch personalized media updates, and format newsletter-ready output.
+4. **Multi-Domain Assistants** – Chain tools across different MCP servers for rich, reasoning-driven workflows.
+
+## Basic Use Case: MCP-Use + Dappier MCP Server
+
+### Set Up Your Environment
+
+You’ll need API keys for your chosen LLM provider (e.g., OpenAI or Anthropic) and the Dappier MCP Server.
+
+#### Example `.env` file:
+
+```env
+OPENAI_API_KEY=your-openai-key
+DAPPIER_API_KEY=your-dappier-key
+```
+
+### Install Required Dependencies
+
+Install the MCP-Use client and your preferred LangChain LLM provider.
+
+```bash
+pip install mcp-use langchain-openai  # or langchain-anthropic
+```
+
+### Run Your Agent
+
+Here’s a simple example of using `mcp-use` with the Dappier MCP server over an HTTP transport:
+
+```python Python
+import asyncio
+import os
+from dotenv import load_dotenv
+from langchain_openai import ChatOpenAI
+from mcp_use import MCPAgent, MCPClient
+
+async def main():
+    load_dotenv()
+
+    config = {
+        "mcpServers": {
+            "dappier": {
+                "command": "uvx",
+                "args": ["dappier-mcp"],
+                "env": {
+                    "DAPPIER_API_KEY": os.getenv("DAPPIER_API_KEY")
+                }
+            }
+        }
+    }
+
+    client = MCPClient.from_dict(config)
+    llm = ChatOpenAI(model="gpt-4o")
+
+    agent = MCPAgent(llm=llm, client=client, max_steps=30)
+
+    result = await agent.run("Show me the latest news about Tesla.")
+    print(result)
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+```json
+[04/23/25 14:32:27] INFO     Processing request of type ListToolsRequest                                                                        server.py:534
+                    INFO     Processing request of type ListToolsRequest                                                                        server.py:534
+[04/23/25 14:32:29] INFO     Processing request of type CallToolRequest                                                                         server.py:534
+[04/23/25 14:32:36] INFO     HTTP Request: POST https://api.dappier.com/app/aimodel/am_01j06ytn18ejftedz6dyhz2b15 "HTTP/1.1 200 OK"           _client.py:1025
+Here's the latest buzz about Tesla:
+
+1. **New Model Launch**: Tesla is introducing a new Model 3 Performance, emphasizing their cutting-edge manufacturing and engineering expertise. Exciting updates lie ahead!
+
+2. **Sales Update**: Tesla recently saw a **13%** drop in sales, with the last quarter's total revenue at **$19.3 billion**, a **9%** decrease year-over-year from **$21.3 billion** in the previous quarter.
+
+3. **Earnings Report**: Although Tesla's net income plummeted by **71%** year-over-year, shares rose over **5%** in after-hours trading. CEO Elon Musk's remarks during the earnings call were notably positive despite the disappointing quarterly outcomes.
+
+4. **Financing Deal in China**: The Tesla Model Y is now offered with a five-year, zero-interest financing deal in China, potentially boosting market sales.
+
+5. **Security Incident**: A suspect was arrested in connection with attacks on a Tesla facility and a GOP headquarters in New Mexico, causing some safety concerns.
+
+6. **Industry Challenges**: The electric vehicle industry is facing potential tariffs that might affect pricing and sales.
+
+Stay tuned for further updates as situations evolve! 🍃📈
+```
+
+## Conclusion
+
+The combination of **MCP-Use** and the **Dappier MCP Server** empowers developers to build flexible, modular, and real-time AI agents — without relying on proprietary SDKs or fixed toolchains. By leveraging the **Model Context Protocol (MCP)** and structured, rights-cleared tools from Dappier, you can enable your agents to reason, retrieve, and respond using real-world context.
+
+Whether you're building an assistant that delivers personalized content, analyzes financial trends, or plans travel using live data — MCP-Use offers a developer-friendly, open standard for real-time AI tool integration.
+
+> **Explore live tools and structured data models at** [marketplace.dappier.com](https://marketplace.dappier.com/marketplace)
