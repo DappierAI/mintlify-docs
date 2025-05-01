@@ -1,0 +1,477 @@
+---
+title: "🖇️ Dynamic Travel Planner with AgentStack, CrewAI & Dappier: Real-Time Itinerary Generation Using Multi-Agent AI"
+---
+
+This developer-focused cookbook demonstrates how to build and run a local multi-agent itinerary planner using **AgentStack**, **CrewAI**, and **Dappier**, powered by **OpenAI** and monitored via **AgentOps**. The setup guides you through generating structured travel itineraries based on real-time weather, live events, and hotel deals for a given city and date.
+
+In this tutorial, you'll explore:
+
+- **AgentStack**: A CLI-first framework for rapidly scaffolding AI agent workflows, generating agents, tasks, and tools with seamless CrewAI integration.
+- **CrewAI**: A lightweight multi-agent orchestration engine, perfect for managing sequential or collaborative task execution between agents.
+- **Dappier**: A platform that connects LLMs to real-time, rights-cleared data from trusted sources, specializing in domains like web search, finance, and travel. It delivers enriched, prompt-ready data, empowering AI with verified and up-to-date information for diverse applications.
+- **OpenAI**: A leading provider of advanced AI models capable of natural language understanding, contextual reasoning, and content generation. It enables intelligent, human-like interactions and supports a wide range of applications across various domains.
+- **AgentOps**: Track and analyze the running of CrewAI agents with full visibility into cost, token usage, execution traces, and replays.
+
+This setup not only demonstrates a practical application of AI-driven travel planning but also provides a flexible framework that can be adapted to other real-world scenarios requiring real-time data integration from Dappier, multi-agent collaboration, and contextual reasoning.
+
+## 📦 Project Initialization and Setup
+
+To get started, we'll use the `agentstack` CLI to scaffold a fully functional multi-agent project. This command generates the base project structure, config files, virtual environment, and a ready-to-customize `crew.py` file with support for tools like Dappier and frameworks like CrewAI.
+
+### Step 1: Initialize the Project
+
+Run the following command in your terminal:
+
+```bash
+agentstack init dynamic_travel_planner
+```
+
+This will generate a folder named `dynamic_travel_planner` with the complete project structure.
+
+### Step 2: Move Into the Project
+
+```bash
+cd dynamic_travel_planner
+```
+
+### Step 3: Activate the Virtual Environment
+
+Activate the virtual environment created by `agentstack`:
+
+```bash
+source .venv/bin/activate
+```
+
+If you're using a Windows terminal, use:
+
+```bash
+.venv\Scripts\activate
+```
+
+> ✅ You now have a fully bootstrapped multi-agent AI project using AgentStack and CrewAI.
+
+## 🔑 Setting Up API Keys
+
+To enable real-time data access and AI reasoning, you’ll need API keys for the following services:
+
+- **OpenAI** – for LLM-powered reasoning and summarization
+- **Dappier** – for real-time stock market data and web search
+- **AgentOps** – for run monitoring and debugging
+
+These keys are stored in the `.env` file created during project initialization.
+
+### Step 1: Open the `.env` file
+
+Inside your project root, open `.env` and update it with your API keys:
+
+```env
+# OpenAI
+OPENAI_API_KEY=your_openai_key_here
+
+# Dappier
+DAPPIER_API_KEY=your_dappier_key_here
+
+# AgentOps (Optional but recommended)
+AGENTOPS_API_KEY=your_agentops_key_here
+```
+
+You can get your keys here:
+
+- 🔑 Get your OpenAI API Key [here](https://platform.openai.com/account/api-keys)
+- 🔑 Get your Dappier API Key [here](https://platform.dappier.com/profile/api-keys) — free credits available
+- 🔑 Get your AgentOps API Key [here](https://app.agentops.ai/signin) - enables run tracking and replay
+
+> 🧪 Make sure to keep these keys private. Do not commit `.env` to version control.
+
+
+## ⚙️ Installing Dependencies
+
+After initializing the project and configuring your API keys, install the required dependencies to ensure everything runs smoothly.
+
+The key packages used in this project are:
+
+- [`crewai`](https://pypi.org/project/crewai/) – Multi-agent execution and orchestration
+- [`agentstack`](https://pypi.org/project/agentstack/) – CLI toolchain for generating agents, tasks, and crews
+- [`dappier`](https://pypi.org/project/dappier/) – Real-time data access layer for tools like stock search and news
+- [`openai`](https://pypi.org/project/openai/) – LLM access to GPT-4o and other OpenAI models (automatically included)
+
+### Step 1: Sync All Dependencies from `pyproject.toml`
+
+If you're using the pre-generated project setup from `agentstack init`, run:
+
+```bash
+uv lock
+uv sync
+```
+
+- `uv lock` will generate the `uv.lock` file based on your `pyproject.toml`
+- `uv sync` will install all dependencies into the virtual environment
+
+### Step 2: Add or Upgrade Individual Packages
+
+You need to upgrade packages manually, use:
+
+```bash
+uv remove "agentstack[crewai]"
+uv add crewai
+uv add agentstack
+```
+
+> ✅ You now have all the required dependencies installed locally and locked for reproducible agent execution.
+
+## 👤 Creating Agents
+
+Now that your environment is ready, let’s generate the agents that will power the travel planning workflow. These agents are created using the AgentStack CLI and are defined declaratively in `agents.yaml`.
+
+### Step 1: Generate the Agents
+
+You’ll use the following command to scaffold each agent:
+
+```bash
+agentstack generate agent
+```
+
+You’ll be prompted to enter the agent's name, role, goal, backstory, and model. Repeat this step for each agent in your system.
+
+Here are the agents created for this project:
+
+#### 🗺️ `travel_planner`
+
+```bash
+agentstack g a travel_planner \
+  --role="A real-time travel assistant that collects weather data, events, and hotel information using the Dappier real-time web search tool." \
+  --goal="To generate personalized multi-day itineraries based on current weather, events, and travel deals." \
+  --backstory="Trained to support personalized trip planning, this agent uses Dappier's real-time search to retrieve local weather, events, and hotel offers for a target city and date. It creates structured itineraries tailored to weather conditions and event availability." \
+  --llm=openai/gpt-4o
+```
+
+#### 📋 `itinerary_reporter`
+
+```bash
+agentstack g a itinerary_reporter \
+  --role="A travel itinerary formatter that compiles data into a complete multi-day markdown itinerary." \
+  --goal="To generate a markdown-formatted travel itinerary based on outputs from the travel planner." \
+  --backstory="This agent specializes in transforming weather and event-based trip data into user-friendly markdown plans. It includes timing, local tips, daily highlights, and weather context for each activity." \
+  --llm=openai/gpt-4o
+```
+
+## ✅ Creating Tasks
+
+Each task defines a specific responsibility to be performed by one of the agents. In this project, tasks are tightly scoped and executed sequentially by CrewAI, allowing agents to collaborate and generate a complete travel itinerary using real-time data.
+
+Tasks are defined declaratively in `tasks.yaml` and are created using the AgentStack CLI.
+
+### Step 1: Generate Tasks Using the CLI
+
+Run the following command to create a new task:
+
+```bash
+agentstack generate task
+```
+
+You’ll be prompted to provide:
+
+- `task_name` (required)
+- `--description` – a detailed instruction including `{city}`, `{travel_date}`, `{num_days}`, and `{timestamp}`
+- `--expected_output` – structured data, tables, or markdown expected from the task
+- `--agent` – the agent responsible for this task
+
+Here are the tasks used in this project:
+
+#### 📅 `determine_travel_period`
+
+```bash
+agentstack g t determine_travel_period \
+  --description="As of {timestamp}, use real-time web search to determine the current date and calculate the travel period based on the user's selected travel date: {travel_date} and trip length: {num_days} days in {city}." \
+  --expected_output="A structured summary showing current date, travel start and end dates for the selected trip." \
+  --agent=travel_planner
+```
+
+#### 🌤 `fetch_weather_forecast`
+
+```bash
+agentstack g t fetch_weather_forecast \
+  --description="As of {timestamp}, use real-time web search to retrieve the multi-day weather forecast for {city} during the selected travel period starting on {travel_date} for {num_days} days." \
+  --expected_output="Daily weather forecast for {city} including temperature, conditions, and any alerts during the trip." \
+  --agent=travel_planner
+```
+
+#### 🎉 `fetch_live_events`
+
+```bash
+agentstack g t fetch_live_events \
+  --description="As of {timestamp}, use real-time web search to find live events happening in {city} during the travel period starting on {travel_date} for {num_days} days. Include concerts, festivals, sports, and cultural events." \
+  --expected_output="A list of events with names, dates, descriptions, and links where applicable for each day of the trip." \
+  --agent=travel_planner
+```
+
+#### 🏨 `fetch_hotel_deals`
+
+```bash
+agentstack g t fetch_hotel_deals \
+  --description="As of {timestamp}, use real-time web search to find hotel deals in {city} during the travel period starting on {travel_date} for {num_days} days. Include price estimates and booking links." \
+  --expected_output="Top hotel deals with prices, availability, and booking URLs for the selected city and dates." \
+  --agent=travel_planner
+```
+
+#### 📆 `generate_travel_itinerary`
+
+```bash
+agentstack g t generate_travel_itinerary \
+  --description="As of {timestamp}, compile a detailed {num_days}-day travel itinerary for {city} by combining the outputs of all previous tasks: travel period, weather forecast, live events, and hotel deals. Include day-wise plans with weather-based suggestions, timing, activities, event highlights, hotel info, and booking links." \
+  --expected_output="A markdown-formatted itinerary for {city} covering {num_days} days, including: daily schedule, activity suggestions, weather, events, hotel info, and travel tips." \
+  --agent=itinerary_reporter
+```
+
+> ⚠️ The following two fields must be added manually to the `generate_travel_itinerary` task inside `tasks.yaml`, as they are not currently supported via the CLI:
+
+```yaml
+output_file: reports/{city}_travel_itinerary.md
+create_directory: true
+```
+
+> 🪄 All of the above tasks will be executed in sequence using CrewAI when you run the crew.
+
+## 🛠️ Adding Tools to Agents
+
+Tools enable agents to interact with external services like Dappier. In this project, Dappier provides real-time access to weather data, live events, and hotel deals, powering all the data-gathering tasks.
+
+### Add Dappier Tools to the Project
+
+Instead of manually assigning tools one-by-one, you can add the full Dappier toolkit using:
+
+```bash
+agentstack tools add dappier
+```
+
+This:
+
+- Adds all Dappier tools to the AgentStack project  
+- Automatically installs the `dappier` package by updating your `pyproject.toml` file  
+- Registers the tools under `agentstack.tools["dappier"]` for in-code access
+
+## 📝 Providing Inputs & Setting Timestamps
+
+Before running the crew, you need to define the runtime inputs that agents and tasks will use. The AgentStack project already includes an `inputs.yaml` file, which is used to inject these inputs when the crew is executed.
+
+In this project, we use three dynamic inputs:
+
+- `city`: The destination city (e.g., "paris")  
+- `travel_date`: The planned start date of the trip (e.g., "tomorrow")  
+- `num_days`: The number of days for the trip (e.g., 5)  
+- `timestamp`: The current UTC time, injected automatically via code
+
+### Step 1: Update `inputs.yaml`
+
+Open the pre-generated `inputs.yaml` file and set the travel details:
+
+```yaml
+city: paris
+travel_date: tomorrow
+num_days: 5
+```
+
+You can modify the values to plan your own custom itinerary.
+
+### Step 2: Inject a Real-Time Timestamp in `main.py`
+
+To provide the current timestamp at execution time, update the `run()` function in `main.py`:
+
+```python
+from datetime import datetime, timezone
+
+def run():
+    """
+    Run the agent.
+    """
+    inputs = agentstack.get_inputs()
+    inputs["timestamp"] = datetime.now(timezone.utc).isoformat()
+
+    instance.kickoff(inputs=inputs)
+```
+
+This will:
+
+- Dynamically inject the current UTC timestamp into the input dictionary  
+- Allow all tasks referencing `{timestamp}` in `tasks.yaml` to use consistent timing context
+
+> ⏱️ Timestamped input ensures your travel itinerary is grounded in real-time context.
+
+## 🚀 Running the Crew
+
+Once your agents, tasks, tools, and inputs are all set up, you're ready to run the multi-agent crew. The crew will execute each task in sequence, collaborating to generate a fully structured itinerary using real-time data.
+
+### Step 1: Run the AgentStack Project
+
+To start the crew execution, run the following command from the project root:
+
+```bash
+agentstack run
+```
+
+This command:
+
+- Loads your agents from `agents.yaml`  
+- Loads your tasks from `tasks.yaml`  
+- Injects inputs from `inputs.yaml` (including the runtime `timestamp`)  
+- Executes all tasks sequentially via CrewAI  
+- Stores the final output (e.g., markdown itinerary) in the path defined in `tasks.yaml`
+
+> ✅ You should see terminal output as each agent completes its assigned task.
+
+### Step 2: Debug with `--debug` Mode (Optional)
+
+For detailed execution traces, run with the debug flag:
+
+```bash
+agentstack run --debug
+```
+
+This enables verbose logging, including:
+
+- Which agent is running  
+- Which tool is being used  
+- Real-time function call results  
+- Intermediate outputs for each task
+
+> 🧪 Use debug mode to troubleshoot tool usage or model behavior during each step.
+
+### Step 3: View the Final Output
+
+After the crew finishes execution, you’ll find the generated itinerary at:
+
+```
+reports/paris_travel_itinerary.md
+```
+
+```markdown
+# Paris 5-Day Travel Itinerary  
+
+**Travel Dates:** May 2, 2025 - May 6, 2025  
+**Hotel:** Choose from options like Hôtel Malte - Astotel, Hôtel Maison Mère, or others available with deals. Ensure to book through platforms like Trivago or Expedia for competitive prices and free cancellation offers.  
+
+---
+
+## Day 1: May 2, 2025 - Arrival and Exploration  
+
+- **Weather:** Sunny, high around 83°F (28°C)  
+- **Morning:**  
+  - **Check-in to Hotel** - Settle into your chosen accommodation from the recommended list. Freshen up and prepare for a day of exploration in beautiful weather.
+
+- **Afternoon:**  
+  - **St-Germain Jazz Festival** - Dive into the Parisian music scene with jazz performances across the city. Make sure to check [Event Link] for schedules and venues.
+  - **Lunch at a Café** - Enjoy dining al fresco with delicious French cuisine nearby.
+
+- **Evening:**  
+  - **Taste of Paris Festival** - Immerse yourself in a gastronomic paradise at the Grand Palais. [Event Link] offers details on participating chefs and menu highlights.
+
+- **Local Tip:** Use public transport for convenient travel across the city; a Navigo card can be beneficial for your stay.
+
+---
+
+## Day 2: May 3, 2025 - Historical Charms and Entertainment  
+
+- **Weather:** Partly cloudy, high around 80°F (27°C)  
+- **Morning:**  
+  - **Visit the Louvre Museum** - Beat the crowds with an early visit. Don’t miss the Mona Lisa and other world-renowned artworks.
+
+- **Afternoon:**  
+  - **Roland Garros (French Open)** - Head to the courts for some thrilling tennis matches. Pre-book your tickets via the [Event Link] to secure a spot.
+
+- **Evening:**  
+  - **Candlelight Concerts at Sainte-Chapelle** - Revel in an intimate classical music performance in a mesmerizing Gothic setting. [Event Link] for details.
+
+- **Highlight:** Capture sunset views from the Pont Alexandre III.
+
+---
+
+## Day 3: May 4, 2025 - Art and Culture Extravaganza  
+
+- **Weather:** Mostly sunny, high around 81°F (27°C)  
+- **Morning:**  
+  - **Street Art Fair in Montmartre** - Discover vibrant murals and meet local artists. Be sure to visit iconic spots like Sacré-Cœur.
+
+- **Afternoon:**  
+  - **European Museums Night** - Take advantage of free and extended openings at major museums, including special events at the Louvre. Check [Event Link] for participating venues.
+
+- **Evening:**  
+  - **Dinner at Le Consulat in Montmartre** - Experience traditional French bistro vibes with authentic dishes.
+
+- **Travel Tip:** Wear comfortable shoes for walking to fully absorb Montmartre’s artistic ambiance.
+
+---
+
+## Day 4: May 5, 2025 - Adventure and Elegance  
+
+- **Weather:** Chance of rain, high around 78°F (26°C)  
+- **Morning:**  
+  - **Great Paris Steeplechase** - Enjoy the thrill of horse racing; rain gear might be handy. [Event Link] for detailed info and tickets.
+
+- **Afternoon:**  
+  - **Cosplay Festival** - Celebrate pop culture at Paris Expo Porte de Versailles, a must for anime lovers. Check [Event Link] ahead for workshops and entry details.
+
+- **Evening:**  
+  - **Dinner in Saint-Germain-des-Prés** - Dine at a cozy eatery exploring culinary delights from modest brasseries to refined Parisian cuisines.
+
+- **Pro Tip:** Be prepared for intermittent showers with a compact umbrella.
+
+---
+
+## Day 5: May 6, 2025 - Farewell Paris  
+
+- **Weather:** Cloudy, high around 76°F (24°C)  
+- **Morning:**  
+  - **Leisurely Seine River Cruise** - Relax on a boat tour taking in iconic sites like the Eiffel Tower and Notre-Dame.
+
+- **Afternoon:**  
+  - **Final Stroll and Shopping** - Explore Le Marais district for unique boutiques and last-minute souvenirs.
+
+- **Evening:**  
+  - **Candlelight Concerts** - Cap off your trip with a final magical evening of classical music. Tickets and venue details on [Event Link].
+
+- **Farewell Tip:** Dedicate time for a memorable café stop to enjoy a final indulgent Parisian pastry.
+
+---
+
+**Enjoy your unforgettable journey in Paris!** Make sure to review all event schedules and book your hotel early to embrace Paris at its finest. Bon voyage! 🌟
+```
+
+You can open this file in any markdown viewer or commit it to your workspace.
+
+> 📄 The final itinerary includes weather, events, hotel deals, and daily plans — all compiled in real time.
+
+## 📊 Viewing Agent Run Summary in AgentOps
+
+This project integrates with [AgentOps](https://app.agentops.ai/) to provide full visibility into agent execution, tool calls, and token usage. By setting the `AGENTOPS_API_KEY` in your `.env` file, all runs are automatically tracked.
+
+Below is a sample AgentOps run for this project:
+
+- **Duration**: 04m 12s  
+- **Cost**: $0.0718500  
+- **LLM Calls**: 29  
+- **Tool Calls**: 4  
+- **Tokens**: 60,006
+
+You can view the complete execution trace, including tool calls, function arguments, and model responses in AgentOps.
+
+```
+🖇 AgentOps: Replay: https://app.agentops.ai/sessions?trace_id=234cfee99d72a45edf8d4fbd3d825461
+```
+
+![AgentOps Run Summary](https://i.ibb.co/9mKhFY7D/Screenshot-2025-05-01-at-6-16-19-PM.png)
+
+> Note: The AgentOps link shown above is tied to the AgentOps account. To access your own replay, you must run the crew using your personal `AGENTOPS_API_KEY`.
+
+## 🌟 Highlights
+
+This cookbook has guided you through setting up and running a local travel planning workflow using AgentStack, CrewAI, and Dappier. You created a structured multi-agent execution that generates real-time itineraries based on weather, events, and hotel data.
+
+Key tools utilized in this cookbook include:
+
+- **AgentStack**: A CLI framework to scaffold agents, tasks, and tools with support for local execution and configuration.  
+- **CrewAI**: A lightweight multi-agent framework that executes agents in sequential or collaborative workflows.  
+- **OpenAI**: A leading provider of AI models capable of language understanding, summarization, and reasoning, used to power each agent’s intelligence.  
+- **Dappier**: A platform that connects agents to real-time, rights-cleared data from trusted sources, specializing in domains like web search, finance, and travel.  
+- **AgentOps**: A tool to track and analyze agent runs, including replay, cost breakdowns, and prompt histories.
+
+This comprehensive setup allows you to adapt and expand the example for various scenarios requiring advanced data retrieval, multi-agent collaboration, and real-time context integration.

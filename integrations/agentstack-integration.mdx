@@ -1,0 +1,122 @@
+---
+title: "AgentStack"
+icon: "terminal"
+---
+
+[**AgentStack**](https://github.com/AgentOps-AI/AgentStack) is a CLI-first framework for rapidly scaffolding AI agent workflows. It helps developers generate agents, tasks, and tool configurations with minimal setup using simple commands. AgentStack supports multi-agent execution engines such as CrewAI and LangGraph and is designed to integrate seamlessly with real-time data tools and observability platforms.
+
+[**Dappier**](https://dappier.com/developers/) is a platform that connects LLMs and Agentic AI agents to real-time, rights-cleared data from trusted sources, including web search, finance, and news. By providing enriched, prompt-ready data, Dappier empowers AI with verified and up-to-date information for a wide range of applications.
+
+## Real-Time Use Cases
+
+The following real-time cookbooks demonstrate how to use Dappier tools inside AgentStack to build fully local, multi-agent workflows. Each example includes project initialization, agent and task setup, tool configuration, and runtime execution with OpenAI and AgentOps integration.
+
+- [**Dynamic Travel Planner**](https://docs.dappier.com/cookbook/recipes/agentstack-dynamic-travel-planner)  
+  Generate a travel itinerary for a selected city and date, using Dappier's real-time web search tool. The system retrieves current weather, live events, and hotel deals, then compiles a structured markdown itinerary with daily activity suggestions and booking links.
+
+- [**Stock Market Researcher**](https://docs.dappier.com/cookbook/recipes/agentstack-stock-market-researcher)  
+  Build an end-to-end research agent that analyzes public companies using real-time web and financial data. This workflow combines company overviews, financial metrics, peer benchmarking, live stock performance, and categorized financial news into a single markdown investment report.
+
+
+## Overview
+
+The AgentStack integration with [Dappier](https://dappier.com/) allows developers to enhance their agent workflows with real-time search and AI-powered content recommendation tools. By connecting to Dappier's pre-trained, rights-cleared APIs, agents built with AgentStack can retrieve up-to-date information across domains such as news, weather, finance, sports, pet care, sustainable living, and local events.
+
+This integration includes access to the following tools:
+
+- **real_time_web_search**: Perform real-time web queries across general domains including news, weather, events, and more.
+- **stock_market_data_search**: Retrieve live financial news and stock-specific insights.
+- **get_sports_news**: Access real-time sports news and analysis from top media sources.
+- **get_lifestyle_news**: Retrieve lifestyle content recommendations from trusted lifestyle publications.
+- **get_iheartdogs_content**: Surface dog care, behavior, and health tips from iHeartDogs.
+- **get_iheartcats_content**: Fetch cat care guidance and lifestyle content from iHeartCats.
+- **get_greenmonster_guides**: Recommend sustainable living content and eco-conscious guides.
+- **get_wishtv_news**: Access local and national news, sports, entertainment, and multicultural headlines from WISH-TV.
+
+These tools can be selectively added to agents and invoked through natural language tasks. By integrating Dappier with AgentStack, developers can create agents that reason with live, trusted data to deliver context-aware, up-to-date outputs across a variety of use cases.
+
+## Usage with AgentStack
+
+To use Dappier tools inside your AgentStack project, you’ll first need to initialize a new project and then add the Dappier toolset using the CLI.
+
+### Step 1: Initialize an AgentStack Project
+
+Run the following command to scaffold a new project:
+
+```bash
+agentstack init my_project_name
+```
+
+This will generate a full project structure using crewai
+
+### Step 2: Add the Dappier Tool
+
+To add Dappier tools to your project, run:
+
+```bash
+agentstack tools add dappier
+```
+
+This will:
+
+- Automatically install the `dappier` Python package (if not already installed)  
+- Add Dappier’s toolset to your project configuration  
+- Make the tools available for use inside your agents via the `agentstack.tools["dappier"]` registry
+
+You can then selectively assign tools like `real_time_web_search` or `get_sports_news` to individual agents using helper functions inside `crew.py`.
+
+## Available Tools
+
+After running `agentstack tools add dappier`, the following tools become available in your project. These tools can be selectively assigned to agents and used to perform real-time searches or content recommendations across various domains.
+
+### Real-Time Search Tools
+
+These tools allow agents to access live data from the public web and financial markets.
+
+- **real_time_web_search**  
+  Perform a real-time web search using natural language. Useful for news, weather, events, travel, and general information.  
+  **Input**: `query (str)`  
+  **Example**: "What are the top tourist attractions in Rome today?"
+
+- **stock_market_data_search**  
+  Search for real-time financial data and headlines related to a specific stock ticker.  
+  **Input**: `query (str)`  
+  **Example**: "Show me latest updates about AAPL stock"
+
+### AI-Powered Recommendation Tools
+
+These tools return high-quality, curated article recommendations using AI-powered retrieval across vertical-specific sources.
+
+- **get_sports_news**  
+  Get sports news from trusted sources like Sportsnaut, Ringside Intel, LAFB Network, and others.  
+  **Use case**: Live sports updates, analysis, and highlights.
+
+- **get_lifestyle_news**  
+  Access lifestyle stories and trends from publishers like The Mix, Nerdable, Snipdaily, and Familyproof.  
+  **Use case**: Style, culture, wellness, and lifestyle journalism.
+
+- **get_iheartdogs_content**  
+  Dog care articles, guides, and tips from iHeartDogs.com.  
+  **Use case**: Pet ownership, health, training, and behavior.
+
+- **get_iheartcats_content**  
+  Cat care content from iHeartCats.com, including health, behavior, and lifestyle.  
+  **Use case**: Feline wellness and caregiving.
+
+- **get_greenmonster_guides**  
+  Sustainable living resources and eco-friendly lifestyle content from GreenMonster.  
+  **Use case**: Conscious consumerism, environment, and health.
+
+- **get_wishtv_news**  
+  Local and national news coverage from WISH-TV, including sports, politics, multicultural, and breaking updates.  
+  **Use case**: Hyperlocal journalism and mainstream news integration.
+
+---
+
+Each tool supports natural language queries and can be used inside AgentStack agents through `crew.py` by importing them from `agentstack.tools["dappier"]`.
+
+## Conclusion
+
+Integrating Dappier with AgentStack enables AI agents to access real-time, trusted information across a wide range of domains. Whether you're building a travel planner, stock research assistant, content summarizer, or local news agent, Dappier's tools provide factual, prompt-ready data that enhances reasoning and output quality.
+
+With just a few commands, you can scaffold your agent workflow using AgentStack and power it with live insights using Dappier — all while maintaining flexibility, observability, and modularity in your AI system design.
