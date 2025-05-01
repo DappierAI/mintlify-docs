@@ -1,0 +1,556 @@
+---
+title: "🖇️ Stock Market Research with AgentStack, CrewAI & Dappier: Real-Time Investment Intelligence using Multi-Agent AI"
+---
+
+This developer-focused cookbook demonstrates how to build and run a local multi-agent investment research system using **AgentStack**, **CrewAI**, and **Dappier**, powered by **OpenAI** and monitored via **AgentOps**. The setup guides you through generating structured investment reports from real-time financial and company data.
+
+In this tutorial, you'll explore:
+
+- **AgentStack**: A CLI-first framework for rapidly scaffolding AI agent workflows, generating agents, tasks, and tools with seamless CrewAI integration.
+- **CrewAI**: A lightweight multi-agent orchestration engine, perfect for managing sequential or collaborative task execution between agents.
+- **Dappier**: A platform that connects LLMs to real-time, rights-cleared data sources like stock market data, web search, and financial news.
+- **OpenAI**: A powerful language model provider, enabling natural language understanding, real-time reasoning, and content generation.
+- **AgentOps**: A monitoring tool to track, replay, and analyze agent runs with detailed visibility into agent reasoning and tool use.
+
+This guide walks you through creating a **local, production-grade AI research agent system** to analyze companies like Amazon, generate investment snapshots, and compile markdown-formatted financial reports — all grounded in **real-time market data** from Dappier.
+
+> 🛠️ All tasks and agents in this cookbook are generated using `agentstack` commands and executed in a Python project on your local machine. No notebooks, no server setup required.
+
+## 📦 Project Initialization and Setup
+
+To get started, we'll use the `agentstack` CLI to scaffold a fully functional multi-agent project. This command generates the base project structure, config files, virtual environment, and a ready-to-customize `crew.py` file with support for tools like Dappier and frameworks like CrewAI.
+
+### Step 1: Initialize the Project
+
+Run the following command in your terminal:
+
+```bash
+agentstack init stock_market_research
+```
+
+This will generate a folder named `stock_market_research` with the complete project structure.
+
+### Step 2: Move Into the Project
+
+```bash
+cd stock_market_research
+```
+
+### Step 3: Activate the Virtual Environment
+
+Activate the virtual environment created by `agentstack`:
+
+```bash
+source .venv/bin/activate
+```
+
+If you're using a Windows terminal, use:
+
+```bash
+.venv\Scripts\activate
+```
+
+> ✅ You now have a fully bootstrapped multi-agent AI project using AgentStack and CrewAI.
+
+## 🔑 Setting Up API Keys
+
+To enable real-time data access and AI reasoning, you’ll need API keys for the following services:
+
+- **OpenAI** – for LLM-powered reasoning and summarization
+- **Dappier** – for real-time stock market data and web search
+- **AgentOps** – for run monitoring and debugging
+
+These keys are stored in the `.env` file created during project initialization.
+
+### Step 1: Open the `.env` file
+
+Inside your project root, open `.env` and update it with your API keys:
+
+```env
+# OpenAI
+OPENAI_API_KEY=your_openai_key_here
+
+# Dappier
+DAPPIER_API_KEY=your_dappier_key_here
+
+# AgentOps (Optional but recommended)
+AGENTOPS_API_KEY=your_agentops_key_here
+```
+
+You can get your keys here:
+
+- 🔑 Get your OpenAI API Key [here](https://platform.openai.com/account/api-keys)
+- 🔑 Get your Dappier API Key [here](https://platform.dappier.com/profile/api-keys) — free credits available
+- 🔑 Get your AgentOps API Key [here](https://app.agentops.ai/signin) - enables run tracking and replay
+
+> 🧪 Make sure to keep these keys private. Do not commit `.env` to version control.
+
+
+## ⚙️ Installing Dependencies
+
+After initializing the project and configuring your API keys, install the required dependencies to ensure everything runs smoothly.
+
+The key packages used in this project are:
+
+- [`crewai`](https://pypi.org/project/crewai/) – Multi-agent execution and orchestration
+- [`agentstack`](https://pypi.org/project/agentstack/) – CLI toolchain for generating agents, tasks, and crews
+- [`dappier`](https://pypi.org/project/dappier/) – Real-time data access layer for tools like stock search and news
+- [`openai`](https://pypi.org/project/openai/) – LLM access to GPT-4o and other OpenAI models (automatically included)
+
+### Step 1: Sync All Dependencies from `pyproject.toml`
+
+If you're using the pre-generated project setup from `agentstack init`, run:
+
+```bash
+uv lock
+uv sync
+```
+
+- `uv lock` will generate the `uv.lock` file based on your `pyproject.toml`
+- `uv sync` will install all dependencies into the virtual environment
+
+### Step 2: Add or Upgrade Individual Packages
+
+You need to upgrade packages manually, use:
+
+```bash
+uv remove "agentstack[crewai]"
+uv add crewai
+uv add agentstack
+```
+
+> ✅ You now have all the required dependencies installed locally and locked for reproducible agent execution.
+
+## 👤 Creating Agents
+
+Now that your environment is ready, let’s generate the agents that will power the stock market research workflow. These agents are created using the AgentStack CLI and are defined declaratively in `agents.yaml`.
+
+### Step 1: Generate the Agents
+
+You’ll use the following command to scaffold each agent:
+
+```bash
+agentstack generate agent
+```
+
+You’ll be prompted to enter the agent's name, role, goal, backstory, and model. Repeat this step for each agent in your system.
+
+Here are the agents created for this project:
+
+#### 🧠 `web_researcher`
+
+```bash
+agentstack g a web_researcher \
+  --role="A company research analyst that collects structured business data, financials, and competitive insights from the Dappier real-time web search." \
+  --goal="To compile detailed company profiles using real-time data, covering company overview, financial performance, and peer benchmarking." \
+  --backstory="Trained to support investment research workflows, this agent uses Dappier’s real-time web search to gather trustworthy and current business information. It builds company snapshots with industry, CEO, market cap, and financial metrics like revenue and net income." \
+  --llm=openai/gpt-4o
+```
+
+#### 📊 `stock_insights_analyst`
+
+```bash
+agentstack g a stock_insights_analyst \
+  --role="A stock market intelligence analyst that retrieves real-time financial data and curated news using the Dappier stock market data search." \
+  --goal="To deliver up-to-date stock snapshots, performance metrics, and categorized financial news for informed investment analysis." \
+  --backstory="Trained to analyze real-time financial markets using Dappier’s stock market data tool, this agent specializes in stock-specific queries. It provides live insights into stock price movements, valuation ratios, earnings, and sentiment-tagged news from reliable financial feeds like Polygon.io." \
+  --llm=openai/gpt-4o
+```
+
+#### 📝 `report_analyst`
+
+```bash
+agentstack g a report_analyst \
+  --role="A financial report analyst that consolidates real-time stock and company insights into a comprehensive markdown report." \
+  --goal="To generate an investor-facing, markdown-formatted summary combining company profile, financials, benchmarking, stock performance, and real-time news with actionable insights." \
+  --backstory="Specialized in synthesizing structured data retrieved by other research agents, this agent produces detailed markdown reports that explain what's happening with a given stock ticker, why it matters, and what the short-term outlook may be." \
+  --llm=openai/gpt-4o
+```
+
+Once generated, AgentStack automatically adds these to your `agents.yaml` file.
+
+> 👥 These agents will work together to build a real-time stock market report using data from Dappier and OpenAI reasoning.
+
+## ✅ Creating Tasks
+
+Each task defines a specific responsibility to be performed by one of the agents. In this project, tasks are tightly scoped and executed sequentially by CrewAI, allowing agents to collaborate and generate a full investment report.
+
+Tasks are defined declaratively in `tasks.yaml` and are created using the AgentStack CLI.
+
+### Step 1: Generate Tasks Using the CLI
+
+Run the following command to create a new task:
+
+```bash
+agentstack generate task
+```
+
+You’ll be prompted to provide:
+
+- `task_name` (required)
+- `--description` – a detailed instruction including `{company_name}` and `{timestamp}`
+- `--expected_output` – structured data, tables, or markdown expected from the task
+- `--agent` – the agent responsible for this task
+
+Here are the tasks used in this project:
+
+#### 🏢 `company_overview`
+
+```bash
+agentstack g t company_overview \
+  --description="As of {timestamp}, fetch the company overview for {company_name} using real-time web search with the timestamp. Include company profile, industry, sector, CEO, headquarters location, employee count, market capitalization and stock ticker symbol." \
+  --expected_output="A structured company profile including: Industry, Sector, CEO, HQ Location, Employees, Market Cap, and Ticker Symbol." \
+  --agent=web_researcher
+```
+
+#### 📉 `financials_performance`
+
+```bash
+agentstack g t financials_performance \
+  --description="As of {timestamp}, use real-time web search with the timestamp to extract financial performance data for {company_name}, including Revenue (TTM), Net Income (TTM), Year-over-Year revenue growth, gross margin, and recent quarterly trends. Include any earnings trends or management commentary available." \
+  --expected_output="A summary of financial metrics for {company_name}: Revenue (TTM), Net Income (TTM), YoY Growth, Gross Margin, and Quarterly Trends." \
+  --agent=web_researcher
+```
+
+#### 🆚 `competitive_benchmarking`
+
+```bash
+agentstack g t competitive_benchmarking \
+  --description="As of {timestamp}, perform real-time web search with the timestamp to identify 3-5 peer companies in the same sector as {company_name}. Extract and compare key metrics such as P/E ratio, revenue,stock price, and market cap. Highlight any standout metrics where {company_name} outperforms or underperforms." \
+  --expected_output="A table comparing {company_name} and 3–5 peers on P/E, revenue, stock price, and market cap with highlights." \
+  --agent=web_researcher
+```
+
+#### 💹 `real_time_stock_snapshot`
+
+```bash
+agentstack g t real_time_stock_snapshot \
+  --description="As of {timestamp}, convert {company_name} to its stock ticker symbol and retrieve a real-time stock snapshot using Dappier’s stock market data tool with the timestamp. Include current price with % daily change, volume, 52-week high/low, P/E ratio, EPS, dividend yield, and chart data for 1D, 5D, 1M, YTD, and 1Y in the query." \
+  --expected_output="Structured snapshot of {company_name}: Price, Change %, Volume, 52W High/Low, P/E, EPS, Dividend, and Charts." \
+  --agent=stock_insights_analyst
+```
+
+#### 📰 `news_and_sentiment`
+
+```bash
+agentstack g t news_and_sentiment \
+  --description="As of {timestamp}, compile a comprehensive, markdown-formatted investment report for {company_name} by synthesizing the outputs of all prior tasks: company overview, financial performance, competitive benchmarking, real-time stock snapshot, and categorized financial news. Use the timestamp in all queries. Include a concise AI-generated company summary, structured data tables, sentiment-tagged news, and a narrative insight section." \
+  --expected_output="A markdown-formatted investment report containing:
+      1. Quick AI summary of {company_name} (e.g., "Apple is a global tech leader…")
+      2. Structured company profile: Industry, Sector, CEO, HQ, Employees, Market Cap
+      3. Financial performance metrics: Revenue (TTM), Net Income (TTM), YoY Growth, Gross Margin, Trends
+      4. Competitive benchmarking table: P/E, Revenue, Stock Price, Market Cap vs. 3–5 peers
+      5. Real-time stock snapshot: Price, % Change, Volume, 52W High/Low, P/E, EPS, Dividend, charts
+      6. Categorized news: Earnings, Analyst Ratings, Market Moves, Partnerships, Legal/Regulatory (with sentiment tags)
+      7. Final 3-part insight section:
+         - What's going on with {company_name}
+         - Why it matters
+         - Outlook (clearly marked as not financial advice)" \
+  --agent=stock_insights_analyst
+```
+
+#### 📄 `generate_investment_report`
+
+```bash
+agentstack g t generate_investment_report \
+  --description="As of {timestamp}, compile a markdown-formatted investment report for {company_name} using all prior task outputs. Include a summary, structured profile, financial metrics, peer comparisons, charts, news, and a 3-part insight section." \
+  --expected_output="A markdown report with company overview, financials, benchmarking, stock snapshot, categorized news, and AI-generated outlook." \
+  --agent=report_analyst
+```
+
+> ⚠️ The following two fields must be added manually to the `generate_investment_report` task inside `tasks.yaml`, as they are not currently supported via the CLI:
+
+```yaml
+output_file: reports/{company_name}_investment_report.md
+create_directory: true
+```
+
+> 🪄 All of the above tasks will be executed in sequence using CrewAI when you run the crew.
+
+## 🛠️ Adding Tools to Agents
+
+Tools enable agents to interact with external services like Dappier. In this project, Dappier provides real-time access to financial data and web search, powering all the data-gathering tasks.
+
+### Step 1: Add Dappier Tools to the Project
+
+Instead of manually assigning tools one-by-one, you can add all Dappier tools at once using:
+
+```bash
+agentstack tools add dappier
+```
+
+This will register the full Dappier toolset to the project and make it available through the `agentstack.tools["dappier"]` registry.
+
+### Step 2: Select Specific Tools Per Agent in Code
+
+Instead of assigning tools via CLI, agents in this project filter and attach only the tools they need using a custom helper function in `crew.py`:
+
+```python
+def get_dappier_tool(tool_name: str):
+    for tool in agentstack.tools["dappier"]:
+        if tool.name == tool_name:
+            return tool
+    return None
+```
+
+Then each agent uses this function to assign a single tool:
+
+#### 🧠 web_researcher
+
+```python
+tools = [get_dappier_tool("real_time_web_search")]
+```
+
+#### 📊 stock_insights_analyst
+
+```python
+tools = [get_dappier_tool("stock_market_data_search")]
+```
+
+> ⚙️ This approach ensures that each agent only receives the exact tool it needs, while keeping tool registration centralized and clean.
+
+## 📝 Providing Inputs & Setting Timestamps
+
+Before running the crew, you need to define the runtime inputs that agents and tasks will use. The AgentStack project already includes an `inputs.yaml` file, which is used to inject these inputs when the crew is executed.
+
+In this project, we use two dynamic inputs:
+
+- `company_name`: The company to analyze (e.g., "tesla")
+- `timestamp`: The current UTC time, injected automatically via code
+
+### Step 1: Update `inputs.yaml`
+
+Open the pre-generated `inputs.yaml` file and set the target company:
+
+```yaml
+company_name: tesla
+```
+
+You can modify `"tesla"` to any other publicly traded company.
+
+### Step 2: Inject a Real-Time Timestamp in `main.py`
+
+To provide the current timestamp at execution time, update the `run()` function in `main.py`:
+
+```python
+from datetime import datetime, timezone
+
+def run():
+    """
+    Run the agent.
+    """
+    inputs = agentstack.get_inputs()
+    inputs["timestamp"] = datetime.now(timezone.utc).isoformat()
+
+    instance.kickoff(inputs=inputs)
+```
+
+This will:
+
+- Dynamically inject the current UTC timestamp into the input dictionary
+- Allow all tasks referencing `{timestamp}` in `tasks.yaml` to use consistent timing context
+
+> ⏱️ Timestamped input ensures your reports are anchored to the moment of execution.
+
+## 🚀 Running the Crew
+
+Once your agents, tasks, tools, and inputs are all set up, you're ready to run the multi-agent crew. The crew will execute each task in sequence, collaborating to generate a fully structured investment research report using real-time data.
+
+### Step 1: Run the AgentStack Project
+
+To start the crew execution, run the following command from the project root:
+
+```bash
+agentstack run
+```
+
+This command:
+
+- Loads your agents from `agents.yaml`
+- Loads your tasks from `tasks.yaml`
+- Injects inputs from `inputs.yaml` (including the runtime `timestamp`)
+- Executes all tasks sequentially via CrewAI
+- Stores the final output (e.g., markdown report) in the path defined in `tasks.yaml`
+
+> ✅ You should see terminal output as each agent completes its assigned task.
+
+### Step 2: Debug with `--debug` Mode (Optional)
+
+For detailed execution traces, run with the debug flag:
+
+```bash
+agentstack run --debug
+```
+
+This enables verbose logging, including:
+
+- Which agent is running
+- Which tool is being used
+- Real-time function call results
+- Intermediate outputs for each task
+
+> 🧪 Use debug mode to troubleshoot tool usage or model behavior during each step.
+
+### Step 3: View the Final Output
+
+After the crew finishes execution, you’ll find the generated investment report at:
+
+```
+reports/tesla_investment_report.md
+```
+
+You can open this file in any markdown viewer or commit it to your workspace.
+
+```markdown
+# Investment Report: Tesla Inc. (TSLA) - May 2025
+
+---
+
+## 1. Quick AI Summary
+Tesla Inc. is a leader in the automotive and clean energy industries, spearheading innovations in electric vehicles and renewable energy solutions. The company is renowned for its electric vehicles, solar technology, and battery systems, with a strong emphasis on sustainability and future-forward designs.
+
+---
+
+## 2. Company Profile
+
+- **Industry**: Automotive, Clean Energy
+- **Sector**: Electric Vehicles, Renewable Energy
+- **CEO**: Elon Musk
+- **Headquarters**: Palo Alto, California, United States
+- **Employees**: Over 100,000
+- **Market Capitalization**: Over $1 trillion
+- **Stock Ticker Symbol**: TSLA
+
+---
+
+## 3. Financial Performance
+
+- **Revenue (TTM)**: $95.72 billion
+- **Net Income (TTM)**: $6.11 billion
+- **YoY Revenue Growth**: -9.20%
+- **Gross Margin**: 21.9%
+- **Quarterly Trends**:
+  - **Q1 2025 Revenue**: Fell 20% year-on-year, partly due to decreased automotive sales.
+  - **Gross Profit**: $16.91 billion
+  - **EBITDA**: $12.55 billion
+  - **Operating Income**: $399 million
+  - **Operating Margin**: 2.1%
+
+*Commentary: While revenue declined, Tesla exceeded market expectations for gross margins. Automotive sales faced challenges, but energy storage deployments increased significantly, suggesting potential for future growth.*
+
+---
+
+## 4. Competitive Benchmarking
+
+| Company           | P/E Ratio | Revenue (2025)     | Stock Price | Market Cap  |
+|-------------------|-----------|--------------------|-------------|-------------|
+| **Tesla**         | 52.34     | $95.72 billion     | $260.54     | >$1 trillion|
+| **Ford**          | 6.50      | $45 billion        | N/A         | $50 billion |
+| **General Motors**| 6.33      | $140 billion       | N/A         | $60 billion |
+| **Volkswagen**    | 3.60      | €250 billion (~$280 billion) | N/A | €90 billion (~$101 billion) |
+| **Hyundai**       | 3.61      | $100 billion       | N/A         | $40 billion |
+
+*Highlights: Tesla maintains the highest market cap amidst lower revenue. High P/E ratio reflects strong investor sentiment.*
+
+---
+
+## 5. Real-time Stock Snapshot
+
+- **Current Price**: $260.54
+- **Daily Change**: -0.50%
+- **Volume**: 1,200,000 shares
+- **52-Week High**: $314.67
+- **52-Week Low**: $101.81
+- **P/E Ratio**: 52.34
+- **EPS**: $4.97
+- **Dividend Yield**: 0.00%
+
+*Chart Analysis:*
+
+- **1 Day**: Shows slight movement in response to market trends.
+- **5 Days/1 Month/YTD**: Depicts volatility and recovery patterns.
+- **1 Year**: Indicates overall positive trajectory amidst industry shifts.
+
+---
+
+## 6. Categorized News
+
+### Earnings and Analyst Ratings
+- *Neutral*: Ongoing analysis of Tesla's earnings amid competitive pressures remains critical.
+
+### Market Moves
+- *Cautious*: Fluctuating stock prices reflected by new market dynamics.
+
+### Partnerships
+- *Positive*: Strategic alliances aim to boost production and market expansion.
+
+### Legal/Regulatory
+- *Watch*: Tesla's navigation of regulatory landscapes might influence market strategies.
+
+### Selected News Headlines
+1. **[Tesla's Competition Is Here. Or Is It?](https://www.fool.com/investing/2023/10/01/duplicatebad-news-for-tesla-stock-investors/)**  
+   - *Sentiment*: Cautious insight into the competition.
+
+2. **[3 Robinhood Stocks to Buy and Hold Forever](https://www.fool.com/investing/2023/10/01/3-robinhood-stocks-to-buy-and-hold-forever/)**  
+   - *Sentiment*: Positive retail investment interest.
+
+3. **[Michael Burry Stock Potential](https://www.fool.com/investing/2023/10/01/michael-burry-stock-biggest-winner-next-5-years/)**  
+   - *Sentiment*: Speculative outlook featuring TSLA.
+
+4. **[Growth Stocks to Buy](https://www.fool.com/investing/2023/10/01/got-5000-these-are-2-of-the-best-growth-stocks-to/)**  
+   - *Sentiment*: Highlights TSLA's position in growth portfolios.
+
+---
+
+## 7. Insight Section
+
+### What's Going On with Tesla
+Tesla is experiencing revenue declines due to automotive sales pressures but demonstrates resilience through robust margins and growth in energy solutions.
+
+### Why It Matters
+Tesla's market capitalization and investor confidence underscore its dominant position and the value placed on its forward-thinking strategies in EV and renewable energies.
+
+### Outlook (Not Financial Advice)
+The short-term outlook indicates potential volatility as Tesla addresses both competitive threats and opportunities in energy sectors. Investors should watch for strategic measures in scaling production and sustaining growth trajectories.
+```
+
+> 📄 The final report contains company overviews, financials, benchmarking, stock data, categorized news, and AI-generated insight — all compiled in real time.
+
+## 📊 Viewing Agent Run Summary in AgentOps
+
+This project integrates with [AgentOps](https://app.agentops.ai/) to provide full visibility into agent execution, tool calls, and token usage. By setting the `AGENTOPS_API_KEY` in your `.env` file, all runs are automatically tracked.
+
+Below is a sample AgentOps run for this project:
+
+- **Duration**: 07m 55s  
+- **Cost**: $0.1053500
+- **LLM Calls**: 43  
+- **Tool Calls**: 9 
+- **Tokens**: 73,770
+
+
+<img src="https://i.ibb.co/67qcMxdG/Screenshot-2025-05-01-at-5-31-45-PM.png" alt="Description" />
+
+
+
+You can view the complete execution trace, including tool calls, function arguments, and model responses in AgentOps.
+
+```
+🖇 AgentOps: Replay: https://app.agentops.ai/sessions?trace_id=234cfee99d72a45edf8d4fbd3d825461
+```
+
+> Note: The AgentOps link shown above is tied to the AgentOps account. To access your own replay, you must run the crew using your personal `AGENTOPS_API_KEY`.
+
+## 🌟 Highlights
+
+This cookbook has guided you through setting up and running a local stock market research workflow using AgentStack, CrewAI, and Dappier. You created a structured multi-agent execution that performs real-time investment analysis and generates a markdown-formatted report.
+
+Key tools utilized in this cookbook include:
+
+- **AgentStack**: A CLI framework to scaffold agents, tasks, and tools with support for local execution and configuration.
+- **CrewAI**: A lightweight multi-agent framework that executes agents in sequential or collaborative workflows.
+- **OpenAI**: A leading provider of AI models capable of language understanding, summarization, and reasoning, used to power each agent’s intelligence.
+- **Dappier**: A platform that connects agents to real-time, rights-cleared data from trusted sources like stock feeds and web search.
+- **AgentOps**: A tool to track and analyze agent runs, including replay, cost breakdowns, and prompt histories.
+
+This comprehensive setup allows you to adapt and expand the example for various scenarios requiring advanced data retrieval, multi-agent collaboration, and real-time context integration.
