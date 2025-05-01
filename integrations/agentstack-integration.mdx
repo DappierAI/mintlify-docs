@@ -71,49 +71,163 @@ After running `agentstack tools add dappier`, the following tools become availab
 
 ### Real-Time Search Tools
 
-These tools allow agents to access live data from the public web and financial markets.
-
-- **real_time_web_search**  
-  Perform a real-time web search using natural language. Useful for news, weather, events, travel, and general information.  
-  **Input**: `query (str)`  
-  **Example**: "What are the top tourist attractions in Rome today?"
-
-- **stock_market_data_search**  
-  Search for real-time financial data and headlines related to a specific stock ticker.  
-  **Input**: `query (str)`  
-  **Example**: "Show me latest updates about AAPL stock"
-
-### AI-Powered Recommendation Tools
-
-These tools return high-quality, curated article recommendations using AI-powered retrieval across vertical-specific sources.
-
-- **get_sports_news**  
-  Get sports news from trusted sources like Sportsnaut, Ringside Intel, LAFB Network, and others.  
-  **Use case**: Live sports updates, analysis, and highlights.
-
-- **get_lifestyle_news**  
-  Access lifestyle stories and trends from publishers like The Mix, Nerdable, Snipdaily, and Familyproof.  
-  **Use case**: Style, culture, wellness, and lifestyle journalism.
-
-- **get_iheartdogs_content**  
-  Dog care articles, guides, and tips from iHeartDogs.com.  
-  **Use case**: Pet ownership, health, training, and behavior.
-
-- **get_iheartcats_content**  
-  Cat care content from iHeartCats.com, including health, behavior, and lifestyle.  
-  **Use case**: Feline wellness and caregiving.
-
-- **get_greenmonster_guides**  
-  Sustainable living resources and eco-friendly lifestyle content from GreenMonster.  
-  **Use case**: Conscious consumerism, environment, and health.
-
-- **get_wishtv_news**  
-  Local and national news coverage from WISH-TV, including sports, politics, multicultural, and breaking updates.  
-  **Use case**: Hyperlocal journalism and mainstream news integration.
+These tools allow agents to access live data from the public web and financial markets using natural language queries. They return formatted summaries of current results pulled from trusted sources.
 
 ---
 
-Each tool supports natural language queries and can be used inside AgentStack agents through `crew.py` by importing them from `agentstack.tools["dappier"]`.
+### real_time_web_search
+
+Perform a real-time web search across a variety of domains such as news, weather, events, travel, and general updates.  
+**Use case**: Dynamic content retrieval when no stock symbol is required.
+
+#### Parameters
+
+- #### `query` (str)  
+  A natural language query describing the information to retrieve.  
+  **Required**  
+  **Example**: `"What are the top tourist attractions in Rome today?"`
+
+#### Output
+
+Returns a formatted string containing real-time search results from the public web, including summaries, source references, and context.
+
+---
+
+### stock_market_data_search
+
+Retrieve real-time financial news, stock prices, earnings data, and sentiment-tagged insights. This tool is optimized for use with stock ticker symbols.  
+**Use case**: Live stock analysis and financial market updates.
+
+#### Parameters
+
+- #### `query` (str)  
+  A natural language query including a stock ticker or financial topic.  
+  **Required**  
+  **Example**: `"Show me the latest earnings and performance of AAPL"`
+
+#### Output
+
+Returns a formatted string summarizing stock-specific financial data, including price movements, valuation metrics, and financial news headlines.
+
+---
+
+These tools are available after running `agentstack tools add dappier` and can be imported from `agentstack.tools["dappier"]` for use inside your agents via `crew.py`.
+
+### AI-Powered Recommendation Tools
+
+These tools return high-quality, curated article recommendations using AI-powered retrieval across vertical-specific sources. Each tool accepts a natural language query and supports additional options for tuning the result relevance, domain focus, and retrieval strategy.
+
+---
+
+### get_sports_news
+
+Get sports news from trusted sources like Sportsnaut, Ringside Intel, LAFB Network, and others.  
+**Use case**: Live sports updates, analysis, and highlights.
+
+#### Parameters
+
+- #### `query` (str)  
+  A natural language query for sports-related content.  
+  **Required**
+
+- #### `similarity_top_k` (int)  
+  Number of top articles to return.  
+  **Default**: `9`
+
+- #### `ref` (str)  
+  Optional domain to prioritize.  
+  **Example**: `"sportsnaut.com"`
+
+- #### `num_articles_ref` (int)  
+  Minimum number of articles from the reference domain.
+
+- #### `search_algorithm` (str)  
+  Retrieval method: `"most_recent"`, `"semantic"`, `"most_recent_semantic"`, `"trending"`  
+  **Default**: `"most_recent"`
+
+#### Output
+
+A formatted string of sports article headlines, summaries, and links.
+
+---
+
+### get_lifestyle_news
+
+Access lifestyle stories and trends from The Mix, Nerdable, Snipdaily, Familyproof, and more.  
+**Use case**: Style, wellness, culture, and lifestyle journalism.
+
+#### Parameters
+
+Same as `get_sports_news`.
+
+#### Output
+
+A formatted list of lifestyle article titles, summaries, and domains.
+
+---
+
+### get_iheartdogs_content
+
+Fetch pet care content from iHeartDogs.com covering health, training, grooming, and behavior.  
+**Use case**: Dog ownership support and informational content.
+
+#### Parameters
+
+Same as `get_sports_news`.
+
+#### Output
+
+A formatted string with dog-related article recommendations and links.
+
+---
+
+### get_iheartcats_content
+
+Access curated cat care resources from iHeartCats.com.  
+**Use case**: Feline health, enrichment, and daily care articles.
+
+#### Parameters
+
+Same as `get_sports_news`.
+
+#### Output
+
+A formatted string of recommended articles tailored to cat care topics.
+
+---
+
+### get_greenmonster_guides
+
+Get sustainable living tips and eco-conscious articles from GreenMonster.  
+**Use case**: Conscious consumerism, environmental awareness, and lifestyle.
+
+#### Parameters
+
+Same as `get_sports_news`.
+
+#### Output
+
+A list of articles related to green living, with descriptions and source references.
+
+---
+
+### get_wishtv_news
+
+Fetch localized and national headlines from WISH-TV including breaking news, sports, politics, and multicultural stories.  
+**Use case**: Hyperlocal news delivery and trending updates.
+
+#### Parameters
+
+Same as `get_sports_news`.
+
+#### Output
+
+A formatted feed of news article summaries and sources from the WISH-TV network.
+
+---
+
+These tools are available after running `agentstack tools add dappier` and can be imported from `agentstack.tools["dappier"]` for use inside your agents via `crew.py`.
+
 
 ## Conclusion
 

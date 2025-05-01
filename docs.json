@@ -104,18 +104,18 @@
             ]
           },
           {
-            "group": "AgentStack",
-            "pages": [
-              "cookbook/recipes/agentstack-dynamic-travel-planner",
-              "cookbook/recipes/agentstack-stock-market-researcher"
-            ]
-          },
-          {
             "group": "Agent.ai",
             "pages": [
               "cookbook/recipes/agent-ai-create-dappier-agent",
               "cookbook/recipes/agent-ai-dynamic-travel-planner",
               "cookbook/recipes/agent-ai-real-time-stock-market-analysis"
+            ]
+          },
+          {
+            "group": "AgentStack",
+            "pages": [
+              "cookbook/recipes/agentstack-dynamic-travel-planner",
+              "cookbook/recipes/agentstack-stock-market-researcher"
             ]
           },
           {
