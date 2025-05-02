@@ -1,0 +1,196 @@
+⚡️ **Real-Time Q&A: Integrating Dappier with IBM Watsonx AI Granite via LangChain**
+
+This cookbook guides you through setting up a powerful Question-Answering (Q&A) system using LangChain. It leverages Dappier to fetch real-time, relevant information and IBM Watsonx AI's Granite model to understand and synthesize that information, providing up-to-date answers.
+
+By combining Dappier's access to fresh data with the reasoning capabilities of IBM's Granite model, this notebook demonstrates how to build applications that answer questions based on the latest information available.
+
+In this notebook, you'll explore:
+
+*   **LangChain:** The framework orchestrating the interaction between the data retriever and the language model.
+*   **Dappier:** A platform connecting LLMs to real-time, rights-cleared data. We'll use its `DappierRetriever` for LangChain to fetch contextually relevant, up-to-the-minute data based on user queries.
+*   **IBM Watsonx AI:** A platform offering enterprise-ready AI models. We'll specifically use the `ibm/granite-13b-instruct-v2` model for its strong instruction-following and generation capabilities.
+*   **Retrieval-Augmented Generation (RAG):** The core pattern used here, where we retrieve relevant documents first (with Dappier) and then use those documents as context for the LLM (Watsonx Granite) to generate an answer.
+
+This setup provides a robust foundation for building various applications requiring access to current information, such as market analysis tools, news summarizers, or dynamic FAQ systems.
+
+📦 **Installation**
+
+First, let's install the necessary libraries: LangChain integration for IBM Watsonx, the Dappier LangChain integration, and the IBM Watson Machine Learning SDK.
+
+```bash
+!pip install langchain-ibm langchain-dappier ibm_watson_machine_learning | tail -n 1
+```
+
+🔑 **Setting Up API Keys & Credentials**
+
+You'll need API keys for Dappier and IBM Cloud (for Watsonx AI), along with your Watsonx Project ID. These ensure secure access to the services.
+
+*   **Dappier API Key:** You can get a Dappier API Key with free credits [here](https://platform.dappier.com/). Find the key under Settings -> Profile.
+*   **IBM Cloud API Key:** Generate one under "Manage" -> "Access (IAM)" -> "API keys" in your IBM Cloud account.
+*   **Watsonx Project ID:** Find this in your Watsonx.ai project settings.
+
+```python
+import os
+from getpass import getpass
+
+# Prompt for the Dappier API key securely
+dappier_api_key = getpass("Enter your Dappier API key: ")
+os.environ["DAPPIER_API_KEY"] = dappier_api_key
+
+# Prompt for the IBM Cloud API key securely
+watsonx_apikey = getpass("Enter your IBM Cloud API key: ")
+os.environ["WATSONX_APIKEY"] = watsonx_apikey
+
+# Prompt for your Watsonx project ID
+project_id = input("Enter your Watsonx Project ID: ")
+os.environ["PROJECT_ID"] = project_id
+
+# Define IBM Cloud region (ensure this matches your Watsonx project region)
+# Common regions: "us-south", "eu-de", "jp-tok"
+os.environ["IC_REGION"] = "us-south" # Replace with your region if different
+```
+
+🛰️ **Configuring the Dappier Retriever**
+
+Dappier's `DappierRetriever` for LangChain fetches real-time data relevant to a query. We need to specify the `data_model_id` to target a specific data source (like news, finance, etc.) and `k` for the number of documents to retrieve.
+
+*   **`data_model_id`**: Find available IDs on the [Dappier Marketplace](https://platform.dappier.com/marketplace). For general news/web search, `dm_01jagy9nqaeer9hxx8z1sk1jx6` is a good starting point.
+*   **`k`**: Number of documents to fetch. More documents provide more context but increase processing time and cost.
+
+```python
+from langchain_dappier import DappierRetriever
+
+# Configure the retriever
+# Using a general web/news data model ID as an example
+retriever = DappierRetriever(
+    data_model_id="dm_01jagy9nqaeer9hxx8z1sk1jx6",
+    k=3 # Fetch the top 3 relevant documents
+    # api_key=dappier_api_key # Alternatively, pass key directly
+)
+
+print("Dappier Retriever configured.")
+```
+
+🤖 **Setting Up the IBM Watsonx AI Granite Model**
+
+Now, let's configure the Watsonx LLM using LangChain. We specify the model ID (`ibm/granite-13b-instruct-v2`), provide credentials, and set generation parameters.
+
+```python
+from langchain_ibm import WatsonxLLM
+from ibm_watson_machine_learning.metanames import GenTextParamsMetaNames as GenParams
+
+# Prepare credentials dictionary
+credentials = {
+    "url": f"https://{os.environ['IC_REGION']}.ml.cloud.ibm.com",
+    "apikey": os.environ["WATSONX_APIKEY"],
+}
+
+# Define generation parameters
+# These control how the model generates text
+# greedy: deterministic output (good for Q&A)
+# temperature=0: minimizes randomness
+params = {
+    GenParams.DECODING_METHOD: "greedy",
+    GenParams.TEMPERATURE: 0,
+    GenParams.MIN_NEW_TOKENS: 10, # Ensure at least a short answer
+    GenParams.MAX_NEW_TOKENS: 300, # Limit response length
+    GenParams.STOP_SEQUENCES: ["Human:", "Observation:"], # Stop generation if these appear
+}
+
+# Instantiate the Watsonx LLM
+llm = WatsonxLLM(
+    model_id="ibm/granite-13b-instruct-v2", # Using Granite 13B Instruct model
+    url=credentials.get("url"),
+    apikey=credentials.get("apikey"),
+    project_id=os.environ["PROJECT_ID"],
+    params=params,
+)
+
+print(f"IBM Watsonx LLM configured with model: {llm.model_id}")
+```
+
+🔗 **Building the RAG Chain with LangChain**
+
+We'll now construct a Retrieval-Augmented Generation (RAG) chain using LangChain Expression Language (LCEL). This chain will:
+
+1.  Take a user's question.
+2.  Pass the question to the `DappierRetriever` to get relevant documents.
+3.  Format these documents into a single string context.
+4.  Combine the context and the original question into a prompt using a template.
+5.  Send the prompt to the `WatsonxLLM` (Granite) for answer generation.
+6.  Parse the LLM's output into a clean string.
+
+```python
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.runnables import RunnablePassthrough
+
+# Define a prompt template: instructs the LLM how to use the context
+prompt = ChatPromptTemplate.from_template(
+    """Answer the following question based *only* on the context provided below. If the context doesn't contain the answer, state that clearly.
+
+Context:
+{context}
+
+Question: {question}"""
+)
+
+# Helper function to format the retrieved documents
+def format_docs(docs):
+    """Concatenates page_content of retrieved documents."""
+    return "\n\n---\n\n".join(doc.page_content for doc in docs)
+
+# Define the RAG chain using LCEL
+chain = (
+    # The input to the chain is expected to be a dictionary {"question": "user's question"}
+    # But we can simplify invocation later by passing the question directly
+    # to RunnablePassthrough if the keys match upstream requirements.
+    # For clarity, we define the expected input structure explicitly here.
+    {
+        "context": retriever | format_docs,  # Retrieve docs and format them
+        "question": RunnablePassthrough() # Pass the original question through
+    }
+    | prompt          # Populate the prompt template
+    | llm             # Send to Watsonx LLM
+    | StrOutputParser() # Parse the LLM's string output
+)
+
+print("RAG chain created successfully!")
+```
+
+💡 **Use Case: Real-Time News Q&A**
+
+Let's use our chain to answer a question about recent events. Dappier will fetch the latest relevant news articles, and Watsonx Granite will synthesize an answer based *only* on that fresh information.
+
+**Example Scenario:** Asking about a recent major tech conference or product launch.
+
+```python
+# Define the user's question
+user_query = "What were the main announcements from Apple's latest event?"
+
+# Invoke the chain with the user query
+print(f"\nAsking the RAG chain: '{user_query}'")
+print("Fetching real-time data with Dappier and generating answer with Watsonx Granite...")
+
+# The chain expects the input question directly here because
+# the dictionary structure is handled internally by the LCEL setup.
+response = chain.invoke(user_query)
+
+print("\nGenerated Answer:")
+print(response)
+```
+
+**Expected Output (Illustrative):**
+
+The output will depend heavily on the real-time data fetched by Dappier at the moment you run the code. It might look something like this:
+
+```
+Generated Answer:
+Based on the provided context, the main announcements from Apple's latest event included the introduction of the new M4 chip powering updated iPad Pro models, significant AI features integrated into iOS 18 under the name 'Apple Intelligence' including updates to Siri and system-wide writing tools, and the launch of visionOS 2 for the Apple Vision Pro headset. The event also showcased updates to macOS Sequoia and watchOS 11.
+```
+
+*(Note: If Dappier doesn't find relevant articles for the *exact* query at that moment, or if the articles don't contain the specific information, the LLM, following the prompt, should indicate that the answer isn't in the provided context.)*
+
+🎉 **Conclusion**
+
+You've successfully built a RAG system combining Dappier's real-time data retrieval with the generative power of IBM Watsonx AI's Granite model, orchestrated by LangChain. This approach ensures your application provides answers grounded in the latest available information, making it suitable for dynamic Q&A, summarization, and insight generation tasks. You can adapt the `data_model_id` in the `DappierRetriever` and modify the prompt to tailor this system to various specific domains and use cases.
