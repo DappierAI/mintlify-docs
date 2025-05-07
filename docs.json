@@ -119,6 +119,10 @@
             ]
           },
           {
+            "group": "Bolt",
+            "pages": ["cookbook/recipes/bolt-stock-market-explorer"]
+          },
+          {
             "group": "CAMEL",
             "pages": [
               "cookbook/recipes/camel-dynamic-travel-planner-role-playing"
