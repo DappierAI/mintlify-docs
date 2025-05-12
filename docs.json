@@ -74,6 +74,7 @@
           {
             "group": "Platform Integrations",
             "pages": [
+              "integrations/activepieces-integration",
               "integrations/agent-ai-integration",
               "integrations/agentstack-integration",
               "integrations/camel-integration",
@@ -82,7 +83,7 @@
               "integrations/dappier-mcp-server-integration",
               "integrations/langchain-integration",
               "integrations/llama-index-integration",
-              "/integrations/mcp-use-integration",
+              "integrations/mcp-use-integration",
               "integrations/open-ai-agents-integration",
               "integrations/open-ai-agents-dappier-mcp-integration",
               "integrations/open-ai-function-calling-integration",
@@ -101,6 +102,13 @@
             "pages": [
               "cookbook/recipes/dappier-ai-recommendations",
               "cookbook/recipes/dappier-real-time-data"
+            ]
+          },
+          {
+            "group": "Activepieces",
+            "pages": [
+              "cookbook/recipes/activepieces-stock-market-workflow",
+              "cookbook/recipes/activepieces-auto-tweet-real-time-news-workflow"
             ]
           },
           {
