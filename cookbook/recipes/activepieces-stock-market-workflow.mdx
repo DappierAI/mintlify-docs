@@ -1,0 +1,273 @@
+---
+title: "🪄 Activepieces Stock Market Analyst Bot: Automate Investment Research with Real-Time Data & AI-Powered Reports"
+---
+
+This notebook demonstrates how to set up and leverage Activepieces’ automation platform combined with Dappier and OpenAI for stock market analysis. By combining real-time data, AI reasoning, and workflow automation, this notebook walks you through an innovative approach to creating fully automated investment research reports.
+
+In this notebook, you'll explore:
+
+* **Activepieces**: A powerful no-code automation platform that enables multi-step workflows with triggers, conditional routing, and app integrations—without writing a single line of code.
+* **Dappier**: A platform connecting LLMs and automation tools to real-time, rights-cleared data from trusted sources, specializing in domains like stock market, finance, and news. It delivers enriched, prompt-ready data, empowering AI with verified and up-to-date information.
+* **OpenAI**: A leading provider of advanced AI models capable of natural language understanding, contextual reasoning, and content generation. It enables intelligent, human-like interactions and supports a wide range of applications across various domains.
+* **Gmail**: Email-based interaction point that triggers this automation and serves as the delivery channel for the final investment report.
+
+This setup not only demonstrates a practical application of AI-driven stock market analysis but also provides a flexible framework that can be adapted to other real-world scenarios requiring real-time data integration, automation logic, and AI-powered summarization.
+
+## ⚙️ Starting with Setup in Activepieces
+
+To get started, head over to [Activepieces](https://cloud.activepieces.com) and create a **new flow**. This bot will trigger when a new email is received in your Gmail inbox, analyze the query using AI, fetch real-time financial data from Dappier, and send a full investment report via email.
+
+### Step 1: Set the Trigger – New Email in Gmail
+
+Search for the **Gmail** piece and choose the **New Email** trigger.
+
+Configure the following:
+
+* **Authentication**: Connect your Gmail account.
+* **Label**: Set to `INBOX` to monitor all incoming messages.
+* **Category**: Leave it empty to include all categories.
+
+Once this trigger is set, your automation will activate whenever a new email lands in your inbox.
+
+### Step 2: Determine Relevance – Is It a Stock Query?
+
+Add a new **OpenAI** action immediately after the trigger.
+
+Configure it as follows:
+
+* **Model**: `chatgpt-4o-latest`
+* **Prompt**:
+
+```text
+Return only a boolean value: true or false. Determine whether the following query mentions a stock ticker symbol or company name related to the stock market.
+
+Query:
+{{trigger['message']['text']}}
+```
+
+* **Max Tokens**: 2048
+* **Temperature**: 0.1
+
+## 🔀 Conditional Routing & Ticker Extraction
+
+### Step 3: Add a Router to Branch Logic
+
+Use the **Router** to evaluate the result from the previous OpenAI step.
+
+Configure two branches:
+
+* **Branch Name**: `Stock Analysis`
+
+  * **Condition**:
+
+    ```text
+    {{step_2}} exactly matches "true"
+    ```
+
+* **Branch Name**: `Otherwise`
+
+  * This fallback branch will do nothing or exit the flow if the email isn't related to a stock query.
+
+### Step 4: Extract the Stock Ticker Symbol
+
+Under the `Stock Analysis` branch, add a new **OpenAI** action.
+
+Configure it as follows:
+
+* **Model**: `chatgpt-4o-latest`
+* **Prompt**:
+
+```text
+Extract the stock ticker symbol from the following query. Respond with only the ticker symbol—no explanations, no extra text.
+
+query:
+{{trigger['message']['text']}}
+```
+* **Max Tokens**: 2048
+* **Temperature**: 0.1
+
+This action ensures you only extract the relevant stock ticker (e.g., `AAPL` from “Tell me about Apple”).
+
+## 📊 Real-Time Financial Data Retrieval using Dappier
+
+With the extracted stock ticker, we'll now gather structured financial insights using **Dappier's real-time models**. For each query below, make sure to use the **`Real Time Data`** action from the Dappier piece.
+
+### Step 5: Get Company Overview
+
+Add a **Dappier** action and select `Real Time Data`.
+
+Use the following query:
+
+```text
+Latest company overview for {{extracted_ticker}} include company profile, industry, sector, CEO, headquarters location, employee count, market capitalization and stock ticker symbol.
+```
+
+This gives a detailed snapshot of the company and its basic metadata.
+
+---
+
+### Step 6: Get Financial Performance Metrics
+
+Add another **Dappier** action (again using `Real Time Data`) and enter:
+
+```text
+Extract latest financial performance data for {{extracted_ticker}}, including Revenue (TTM), Net Income (TTM), Year-over-Year revenue growth, gross margin, and recent quarterly trends
+```
+
+This returns structured financial performance metrics and key indicators.
+
+---
+
+### Step 7: Competitive Benchmarking
+
+Add a third **Dappier** action (also using `Real Time Data`) with the query:
+
+```text
+Identify 3-5 peer companies in the same sector as {{extracted_ticker}}. Extract key metrics such as P/E ratio, revenue, stock price, and market cap.
+```
+
+This enables side-by-side comparison with industry peers.
+
+## 📈 Real-Time Stock Snapshot & Market News
+
+We’ll now use Dappier’s specialized **Stock Market Data** action to retrieve detailed market-level insights and the latest categorized financial news.
+
+### Step 8: Get Real-Time Stock Snapshot
+
+Add a **Dappier** action and select `Stock Market Data`.
+
+Use the following query:
+
+```text
+Include latest current price with %daily change, volume, 52-week high/low, P/E ratio, EPS, dividend yield, and chart data for 1D, 5D, 1M, YTD, and 1Y for {{extracted_ticker}}
+```
+
+This returns a structured snapshot of the company's live trading metrics and historical movement.
+
+---
+
+### Step 9: Get Categorized Financial News
+
+Add another **Dappier** action (also using `Stock Market Data`) with the following query:
+
+```text
+Fetch latest finanical news for {{extracted_ticker}}. Include Earnings, Analyst Ratings, Market Moves, Partnerships, and Legal/Regulatory.
+```
+
+This returns categorized, real-time news summaries, perfect for building context in your final investment report.
+
+## 🧠 Generate Investment Report with OpenAI
+
+Now that we've collected all the required data—company profile, financial performance, peer benchmarking, real-time stock snapshot, and categorized news—we'll synthesize everything into a polished, readable investment report using OpenAI.
+
+### Step 10: Compile the Full Report
+
+Add an **OpenAI** action and configure it with the following:
+
+* **Model**: `chatgpt-4o-latest`
+* **Prompt**:
+
+````text
+Compile a comprehensive investment report for **{{extracted_ticker}}**, formatted as a single HTML email body. Synthesize the outputs of all tasks: company overview, financial performance, competitive benchmarking, real-time stock snapshot, and categorized financial news.
+
+The report must include the following structured sections:
+1. **Quick Summary**  
+   A concise AI-generated summary of {{extracted_ticker}} (e.g., "Apple is a global tech leader…").
+2. **Company Profile Table**  
+   Industry, Sector, CEO, HQ Location, Employees, Market Cap.
+3. **Financial Performance Table**  
+   Revenue (TTM), Net Income (TTM), YoY Growth, Gross Margin. Include a short narrative on key trends below the table.
+4. **Competitive Benchmarking Table**  
+   Compare {{extracted_ticker}} against 3–5 peers using: P/E, Revenue, Stock Price, Market Cap.
+5. **Real-Time Stock Snapshot**  
+   Include: Price, % Change, Volume, 52-week High/Low, P/E, EPS, Dividend Yield. Present chart summaries for 1D, 5D, 1M, YTD, and 1Y as plain text descriptions or inline image URLs (if available).
+6. **Categorized Financial News**  
+   Include 5 categories:  
+   - Earnings  
+   - Analyst Ratings  
+   - Market Moves  
+   - Partnerships  
+   - Legal/Regulatory  
+   Tag each news item with sentiment: 🟢 Positive, 🟡 Neutral, 🔴 Negative.
+7. **Insight Section**  
+   Write 2–3 paragraphs with:  
+   - What’s going on with {{company_name}}  
+   - Why it matters  
+   - Outlook (*clearly labeled as not financial advice*)
+
+**Important formatting instructions**:
+- Use semantic HTML (e.g., `<h2>`, `<table>`, `<p>`)
+- Apply all styles via **inline CSS only**
+- Ensure all links are clickable (`<a href="...">`)
+- Keep it responsive and compatible with major email clients (no JavaScript, no external assets)
+- Don't include ```html in the output.
+
+All the related information is below:
+
+{{company_overview_response}}
+
+{{financial_performance_response}}
+
+{{peer_comparison_response}}
+
+{{stock_snapshot_response}}
+
+{{news_response}}
+````
+
+This action will generate a clean, richly structured report in semantic HTML format—ready to be delivered by email.
+
+## 📤 Delivering the Report via Gmail
+
+Now that the investment report is generated, let’s send it back to the original sender as a formatted HTML email using Gmail.
+
+### Step 11: Send the Email
+
+Add a **Gmail** action and choose `Send Email`.
+
+Configure the email fields as follows:
+
+* **To**:
+
+```text
+{{email_sender_address}}
+```
+
+  Use the dynamic reference to send it back to the email originator:
+
+```text
+{{trigger['message']['from']['value'][0]['address']}}
+```
+
+* **Subject**:
+
+```text
+Stock Market Analysis of {{extracted_ticker}}
+```
+
+* **Body**:
+
+```text
+{{investment_report_html}}
+```
+
+* **Body Type**: `HTML`
+
+* **CC/BCC/Reply-To**: Leave these empty unless needed.
+
+* **Draft**: Set to `false` to send the email immediately.
+
+Once configured, the flow will respond to every stock-related query with a professional-grade investment report, fully automated.
+
+## 🌟 Highlights
+
+This notebook has guided you through building a fully automated stock market analysis workflow using Activepieces, OpenAI, Dappier, and Gmail. You’ve seen how to classify queries, extract ticker symbols, fetch real-time financial data, generate detailed reports, and deliver them directly to email—all without writing a single line of backend code.
+
+Key tools utilized in this notebook include:
+
+* **Activepieces**: A powerful no-code automation platform that enables app-triggered workflows with conditional logic, AI actions, and app integrations.
+* **OpenAI**: A leading provider of advanced AI models used here to classify stock queries, extract ticker symbols, and generate investment reports in rich HTML format.
+* **Dappier**: A platform connecting LLMs and automation tools to real-time, rights-cleared data from trusted sources, specializing in domains like stock market, finance, and news. It delivers enriched, prompt-ready data, empowering automations with verified and up-to-date information.
+* **Gmail**: Serves as both the input trigger and output channel, making the workflow seamlessly email-driven.
+
+This comprehensive setup allows you to adapt and expand the example for various scenarios requiring stock research, financial insights, or real-time data–driven automation.

@@ -1,0 +1,220 @@
+---
+title: "Activepieces"
+icon: "wand-magic-sparkles"
+---
+
+[**Activepieces**](https://www.activepieces.com) is an open-source, no-code automation platform that enables users to connect apps, automate workflows, and integrate AI-powered actions through a visual interface. It supports scheduled triggers, conditional logic, and integrations with tools like Gmail, OpenAI, Slack, and Twitter—allowing technical and non-technical users to build scalable automations with ease.
+
+[**Dappier**](https://dappier.com/developers/) is a platform that connects LLMs and automation frameworks to real-time, rights-cleared data from trusted sources, including web search, finance, and news. By providing enriched, prompt-ready data, Dappier empowers automations with verified and up-to-date information for a wide range of applications.
+
+## Real-Time Use Cases
+
+The following real-time workflows demonstrate how to use Dappier actions inside Activepieces to build dynamic, real-world automations. Each example highlights scheduled triggers, real-time data retrieval, AI-powered text generation, and multi-app integrations such as Twitter and Gmail.
+
+* [**Stock Market Analyst Bot**](https://docs.dappier.com/cookbook/recipes/activepieces-stock-market-workflow)
+  Automatically analyzes any stock or public company mentioned in your inbox. This workflow identifies the stock ticker, pulls live financial data using Dappier, generates a full investment report using OpenAI, and sends it back via Gmail.
+
+* [**Auto-Tweet Real-Time News**](https://docs.dappier.com/cookbook/recipes/activepieces-auto-tweet-real-time-news-workflow)
+  Tweets trending AI-related content every few minutes. It uses Dappier to pull live headlines, OpenAI to write engaging tweets under 280 characters, and Twitter to publish them—completely hands-free.
+
+## Overview
+
+The Activepieces integration with [Dappier](https://dappier.com/) enables users to build powerful, real-time automations by connecting their flows to rights-cleared data from the public web, financial markets, and media publishers.
+
+By combining Dappier’s live data tools with OpenAI and other pieces in Activepieces, users can build end-to-end workflows that automatically respond to the latest trends, financial insights, or curated content—without writing any backend logic.
+
+This integration includes access to the following Dappier-powered actions:
+
+* **Real Time Data** – Perform live Google-like web searches including the latest news, weather, deals, events, and general updates.
+* **Stock Market Data** – Retrieve real-time financial data, earnings updates, stock prices, and market sentiment.
+* **Sports News** – Access sports headlines and breaking stories from publishers like Sportsnaut, LAFB Network, Ringside Intel, and more.
+* **Lifestyle News** – Get curated stories from lifestyle sites like The Mix, Nerdable, Snipdaily, and Familyproof.
+
+Each action accepts natural language queries and can be added to your to create responsive, AI-driven automations.
+
+## Usage with Activepieces
+
+To use Dappier actions inside your Activepieces workflow, you’ll start by setting up a new flow and then adding the Dappier piece using the visual editor. Dappier actions can be placed after any trigger (like a schedule or email) and paired with OpenAI or other integrations to act on live data.
+
+### Step 1: Create a New Flow
+
+Go to [cloud.activepieces.com](https://cloud.activepieces.com) and click **"New Flow"**. Give your flow a name and click **"Start building"**.
+
+### Step 2: Add a Trigger
+
+Choose a trigger based on your use case, such as:
+
+* **Schedule** – Run the flow every X minutes
+* **Gmail** – Trigger on new incoming emails
+* **Slack** – Trigger on a command or message
+* **Webhook** – Trigger the flow from an external system
+
+### Step 3: Add the Dappier Action
+
+Click the **"+"** button to add a new step, then search for and select the **Dappier** piece.
+
+Choose one of the following supported actions:
+
+* `Real Time Data`
+* `Stock Market Data`
+* `Sports News`
+* `Lifestyle News`
+
+You’ll be prompted to authenticate with your Dappier API key, and then enter a natural language **query** to retrieve content dynamically.
+
+### Step 4: Chain Additional Steps (Optional)
+
+Add downstream actions like:
+
+* **OpenAI** – Summarize or rephrase the results into human-friendly content
+* **Gmail** – Send the result as an email
+* **Twitter** – Post content as an auto-generated tweet
+* **Slack** – Send alerts or summaries to a channel
+
+Once done, click **"Publish"** to activate the flow.
+
+## Available Actions
+
+After adding the Dappier piece to your flow, you can select from four real-time data actions. Each action supports natural language queries and returns structured results that can be used directly or passed to other pieces like OpenAI, Gmail, or Twitter.
+
+---
+
+### Real Time Data
+
+Perform live web searches to access the latest information from trusted sources including Google-indexed news, weather updates, travel alerts, shopping deals, and more.
+**Use case**: General-purpose content automation triggered by live web search results.
+
+#### Parameters
+
+* #### `query` (str)
+
+  A natural language description of what you're searching for.
+  **Required**
+  **Example**:
+
+  ```text
+  Latest news on artificial intelligence and machine learning this week
+  ```
+
+#### Output
+
+Returns a real-time, formatted response with summaries of recent search results relevant to the query.
+
+---
+
+### Stock Market Data
+
+Access real-time stock data and financial news powered by Polygon.io. Use it to fetch company earnings, valuation metrics, price changes, and live market performance.
+**Use case**: Investment report generation, stock alert bots, and financial monitoring.
+
+#### Parameters
+
+* #### `query` (str)
+
+  A stock ticker or financial question written in natural language.
+  **Required**
+  **Example**:
+
+  ```text
+  Show stock performance and financial updates for AAPL
+  ```
+
+#### Output
+
+Returns up-to-the-minute stock information including price movements, earnings highlights, and sentiment-tagged headlines.
+
+---
+
+### Sports News
+
+Retrieve real-time sports stories from top-tier media publishers like Sportsnaut, Ringside Intel, LAFB Network, Minnesota Sports Fan, and Bounding Into Sports.
+**Use case**: Sports digest generators, highlight summaries, and AI-driven fan updates.
+
+#### Parameters
+
+* ##### `query` (str)
+
+  A natural language request for sports-related content.
+  **Required**
+  **Example**:
+
+  ```text
+  Latest sports news
+  ```
+
+* ##### `number_of_results` (int)
+
+  Maximum number of articles to retrieve.
+
+* ##### `preferred_domain` (str)
+
+  Domain to prioritize in the results (e.g., `sportsnaut.com`).
+
+* ##### `num_articles_from_domain` (int)
+
+  Minimum number of articles required from the preferred domain.
+
+* ##### `search_algorithm` (str)
+
+  Strategy for result retrieval: `"most_recent"`, `"semantic"`, `"most_recent_semantic"`, or `"trending"`.
+
+#### Output
+
+Returns a formatted list of sports headlines with summaries and source links.
+
+---
+
+### Lifestyle News
+
+Get curated lifestyle updates from sources like The Mix, Nerdable, Snipdaily, and Familyproof. Covers entertainment, wellness, pop culture, and human-interest stories.
+**Use case**: Lifestyle newsletters, trending content generators, or social media content pipelines.
+
+#### Parameters
+
+* ##### `query` (str)
+
+  A natural language request for lifestyle-related content.
+  **Required**
+  **Example**:
+
+  ```text
+  Latest lifestyle news
+  ```
+
+* ##### `number_of_results` (int)
+
+  Maximum number of articles to retrieve.
+
+* ##### `preferred_domain` (str)
+
+  Domain to prioritize in the results (e.g., `reuters.com`).
+
+* ##### `num_articles_from_domain` (int)
+
+  Minimum number of articles required from the preferred domain.
+
+* ##### `search_algorithm` (str)
+
+  Strategy for result retrieval: `"most_recent"`, `"semantic"`, `"most_recent_semantic"`, or `"trending"`.
+
+#### Output
+
+Returns a list of lifestyle-focused articles with context-rich summaries and links.
+
+## Conclusion
+
+Integrating Dappier with Activepieces unlocks powerful, real-time automation capabilities that require no code. Whether you're building a financial analyst bot, an AI news tweet generator, or a personalized content delivery system, Dappier provides high-quality, rights-cleared data from trusted sources—ready for use inside any Activepieces flow.
+
+With just a few steps, you can:
+
+* Trigger automations on a schedule or based on external events
+* Retrieve live web or financial data using Dappier
+* Use OpenAI to convert raw data into human-friendly summaries
+* Deliver content through Gmail, Twitter, Slack, or custom channels
+
+By combining Dappier’s live data tools with Activepieces' visual automation builder, you can create responsive, intelligent workflows that stay up-to-date with the world—no backend or infrastructure required.
+
+For real-world recipes, see the full cookbooks at:
+
+* [Stock Market Analyst Bot](https://docs.dappier.com/cookbook/recipes/activepieces-stock-market-workflow)
+* [Auto-Tweet Real-Time News](https://docs.dappier.com/cookbook/recipes/activepieces-auto-tweet-real-time-news-workflow)

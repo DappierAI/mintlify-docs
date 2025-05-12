@@ -1,0 +1,114 @@
+---
+title: "🪄 Activepieces AI TweetBot: Auto-Tweet Viral Content Using Dappier, OpenAI, and Twitter"
+---
+
+This notebook demonstrates how to create a fully automated Tweet generator using **Activepieces**, **Dappier**, and **OpenAI**. By combining real-time trending insights with natural language generation, this automation crafts and posts tweets—autonomously and repeatedly.
+
+In this notebook, you'll explore:
+
+* **Activepieces**: A no-code, open-source automation platform that allows you to run scheduled flows with intelligent decision logic, integrations, and multi-step workflows.
+* **Dappier**: A platform connecting LLMs and automations to real-time, rights-cleared data from trusted sources. It specializes in domains like trending news, AI research, finance, and lifestyle, delivering prompt-ready data with up-to-date insights.
+* **OpenAI**: Used here to transform raw data into engaging tweet-sized content, leveraging the creative power of GPT-4o.
+* **Twitter**: Publishes the final tweet live to your feed—automatically and without human intervention.
+
+This setup not only demonstrates a practical use case of autonomous content generation but also provides a blueprint for automating other types of social media content with real-time intelligence and LLMs.
+
+## ⏰ Schedule-Based Trigger Setup
+
+To kick off the automation, we’ll use a time-based trigger that runs every few minutes to check for trending content and post a tweet.
+
+### Step 1: Set the Trigger – Every X Minutes
+
+Search for the **Schedule** piece and select the **Every X Minutes** trigger.
+
+Configure it as follows:
+
+* **Frequency**: `Every 1 minute`
+  *(You can adjust this value depending on how frequently you want to post content—e.g., every 15 minutes, 1 hour, etc.)*
+
+This trigger ensures the workflow runs at regular intervals without manual input.
+
+Once set, the automation is live and ticking on a timed loop, ready to pull new content and generate tweets.
+
+## 🌐 Fetch Trending Content using Dappier
+
+With the schedule trigger in place, the next step is to retrieve real-time trending news content that will serve as the basis for the tweet.
+
+### Step 2: Add Dappier – Real Time Data
+
+Add a **Dappier** action and choose the `Real Time Data` action.
+
+Configure the following:
+
+* **Query**:
+
+  ```text
+  Latest trending news in artificial intelligence, AI, and machine learning this week
+  ```
+
+This will fetch up-to-date and rights-cleared news and insights from trusted sources in the AI domain. The response is structured and optimized for downstream LLM consumption.
+
+## ✍️ Generate Tweet Using OpenAI
+
+Now that you’ve retrieved trending AI news using Dappier, the next step is to craft an engaging tweet using OpenAI's powerful language model.
+
+### Step 3: Add OpenAI – Ask ChatGPT
+
+Add an **OpenAI** action and choose `Ask ChatGPT`.
+
+Configure the following settings:
+
+* **Model**: `chatgpt-4o-latest`
+* **Prompt**:
+
+```text
+Write a casual engaging tweet that is related to the below content. Keep it short under 280 characters.
+
+{{dappier_response}}
+```
+* **Max Tokens**: 2048
+* **Temperature**: 0.9
+* **Presence Penalty**: 0.6
+* **Frequency Penalty**: 0
+
+This prompt encourages the model to generate light, human-like content optimized for virality—fitting Twitter’s tone and length constraints.
+
+Here is the next section, maintaining the same style and completeness:
+
+---
+
+## 🐦 Post Tweet to Twitter Automatically
+
+Once OpenAI generates the tweet content, the final step is to post it directly to your Twitter account using the Twitter piece.
+
+### Step 4: Add Twitter – Create Tweet
+
+Add a **Twitter** action and choose `Create Tweet`.
+
+Configure the following:
+
+* **Text**:
+
+```text
+{{generated_tweet_text}}
+```
+
+Use the dynamic output from the previous OpenAI step to populate this field.
+
+* **Authentication**:
+  Connect your Twitter account via OAuth when prompted.
+
+Once set, every time this workflow runs, it will autonomously tweet engaging content based on the most recent AI news—no manual effort required.
+
+## 🌟 Highlights
+
+This notebook has guided you through building a fully automated social media workflow that tweets real-time AI news content using Activepieces, OpenAI, Dappier, and Twitter. You’ve seen how to schedule automation, retrieve trending data, generate engaging tweets, and post them—all without human intervention.
+
+Key tools utilized in this notebook include:
+
+* **Activepieces**: A powerful no-code automation platform that enables scheduled workflows, intelligent decision logic, and seamless integration with third-party apps like Twitter.
+* **Dappier**: A platform connecting LLMs and automation tools to real-time, rights-cleared data from trusted sources, specializing in trending news, finance, and lifestyle. It delivers enriched, prompt-ready data, ideal for dynamic content generation.
+* **OpenAI**: Used here for transforming trending content into engaging, human-like tweets using GPT-4o.
+* **Twitter**: The final publishing channel where the generated tweets are posted automatically.
+
+This setup is easily extendable—you can adapt it to tweet content from different domains (e.g., sports, finance, health) or trigger it based on events, RSS feeds, or even Gmail requests.
