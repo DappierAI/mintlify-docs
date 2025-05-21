@@ -1,0 +1,208 @@
+---
+title: "Google ADK"
+icon: "google"
+---
+
+## Overview
+
+The integration of **Google ADK** and **Dappier SDK** empowers developers to rapidly build **multi-agent AI applications** that combine Google’s modular agent orchestration with Dappier’s real-time, rights-cleared data sources. By pairing Gemini-powered agents with Dappier’s live insights, developers can create **smart assistants**, **dynamic analytics tools**, and **automated content recommendation systems** that operate with **accuracy, adaptability, and speed**.
+
+## Watch the Video
+
+If you prefer a visual walkthrough, check out the accompanying video below:
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/4jza4LSdgLY?si=X-QKS8HD7RxIdKRV" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+## Starter App: Google ADK + Dappier
+
+To explore the capabilities of integrating **Google ADK** with **Dappier**, check out this ready-to-run starter project:
+
+👉 [Google ADK + Dappier Starter App on Replit](https://replit.com/@dappier/Google-ADK-Dappier-Starter-App?v=1)
+
+This application demonstrates how to:
+
+- Utilize Google ADK’s `Agent` class to build AI agents powered by Gemini models.
+- Integrate Dappier’s real-time search and AI recommendation tools to fetch up-to-date information across various domains, including finance, sports, lifestyle, and pet care.
+- Configure environment variables for seamless authentication and deployment.
+
+Feel free to explore and customize this template to suit your specific use cases.
+
+## Google ADK
+
+**Google’s Agent Development Kit (ADK)** is an open-source Python framework designed to help developers build, evaluate, and deploy **modular, multi-agent AI systems**. It is optimized for Google’s **Gemini models**, but remains model-agnostic and flexible across a wide range of LLMs and environments.
+
+### Features of Google ADK:
+
+- **Agent Composition** – Build agents with modular tools and behaviors, including Sequential, Parallel, Loop, and LLM-directed control flows.
+- **Tool Integration** – Equip agents with powerful tools for tasks like web search, code execution, or third-party APIs.
+- **Context Handling** – Maintain session state, memory, and context for dynamic agent interactions.
+- **Evaluation Framework** – Assess agent accuracy and trace step-by-step reasoning during testing.
+- **Flexible Deployment** – Run locally, on Google Cloud (e.g., Cloud Run, Vertex AI), or in serverless environments like Replit.
+
+> Learn more at [google.github.io/adk-docs](https://google.github.io/adk-docs/)
+
+## Dappier
+
+**Dappier SDK** is a real-time AI data platform that connects AI agents to **verified, rights-cleared content and live information** from the web. It empowers developers to build **hallucination-free**, trustworthy, and context-aware AI applications.
+
+### Key Capabilities of Dappier:
+
+- **Real-Time Web Search** – Retrieve up-to-the-minute data across categories like news, finance, weather, travel, events, and more.
+- **AI Recommendations** – Deliver personalized content from niche domains such as sports, lifestyle, pet care, and sustainability.
+- **Data Integrity** – Powered by rights-cleared sources to ensure factual correctness and legal safety in generative AI outputs.
+- **Marketplace Models** – Access dozens of plug-and-play data models for use in AI workflows.
+
+> **Explore live data models at** [marketplace.dappier.com](https://marketplace.dappier.com)
+
+## Getting Started: Build the Google ADK + Dappier Starter App
+
+Follow these simple steps to run the starter app using **Google ADK + Dappier SDK** — no installation required.
+
+### 🔹 Step 1: Fork the Starter App on Replit
+
+1. Open the project in your browser:  
+   👉 [Google ADK + Dappier Starter App](https://replit.com/@dappier/Google-ADK-Dappier-Starter-App?v=1)
+
+2. Click **"Fork"** at the top-right to create your own copy.
+
+3. Replit will automatically set up the project environment and open the code editor.
+
+Once forked, you're ready to configure your API keys.
+
+Here’s **Step 2**, guiding users to set up their API keys securely in Replit:
+
+### 🔹 Step 2: Add API Keys via Secrets (Replit)
+
+To authenticate with Google and Dappier services, you’ll need to set up three environment variables in Replit:
+
+1. In your Replit workspace, click the **🔐 "Secrets" (lock icon)** in the left sidebar.
+2. Add the following environment variables:
+
+| Name                     | Description                                                              |
+|--------------------------|--------------------------------------------------------------------------|
+| `GOOGLE_API_KEY`         | Your Google API Key for Gemini models. [Get one here](https://makersuite.google.com/app/apikey) |
+| `GOOGLE_GENAI_USE_VERTEXAI` | Set this to `"false"` unless you're using Vertex AI.                      |
+| `DAPPIER_API_KEY`        | Your Dappier API Key. [Generate it here](https://platform.dappier.com/profile/api-keys) |
+
+3. Once added, Replit will securely inject them into your code environment.
+
+> ⚠️ Never hardcode API keys in your code. Use environment variables for security.
+
+Here’s **Step 3**, helping users understand how the agent and Dappier-powered tools are defined and connected:
+
+### 🔹 Step 3: Understand the Agent and Tool Functions
+
+At the core of this app is a **Google ADK `Agent`**, powered by **Gemini** and enhanced using **Dappier tools**.
+
+#### 🧠 Root Agent Setup
+
+```python
+from google.adk.agents import Agent
+
+root_agent = Agent(
+    name="dappier_tools_agent",
+    model="gemini-2.0-flash",
+    description="Agent to answer questions using Dappier tools.",
+    instruction="You are a helpful assistant that uses Dappier tools to fetch live data.",
+    tools=[
+        real_time_web_search,
+        stock_market_data_search,
+        get_sports_news,
+        get_lifestyle_news,
+        get_iheartdogs_content,
+        get_iheartcats_content,
+        get_greenmonster_guides
+    ]
+)
+```
+
+This `Agent` is equipped with multiple tool functions that fetch **live, trusted data** using Dappier.
+
+#### 🔧 Sample Tool Function
+
+```python
+def real_time_web_search(query: str) -> str:
+    return client.search_real_time_data_string(
+        query=query,
+        ai_model_id="am_01j06ytn18ejftedz6dyhz2b15"
+    )
+```
+
+Each tool is mapped to a specific **Dappier AI model**, like real-time search, stock updates, lifestyle news, and more.
+
+In the next step, we’ll run the agent and interact with it.
+
+### 🔹 Step 4: Run and Interact with the Agent
+
+Since the Replit "Run" button won't launch the ADK server, you'll need to start it manually using the terminal.
+
+#### ▶ How to Run
+
+1. Click the **"Run"** button at the top of your Replit workspace.
+
+3. Replit will display a live URL such as:
+   `https://<your-replit-username>.<repl-name>.repl.co`
+   Click on this URL to open the **interactive agent UI** in a new browser tab.
+
+#### 💬 Sample Prompts to Try
+
+Once the interface is running, try asking your agent:
+
+* `"What's the latest update on Tesla stock?"`
+* `"Give me trending dog health tips"`
+* `"Show me eco-friendly lifestyle news"`
+* `"What's happening in sports today?"`
+
+The agent will intelligently route your query to the appropriate **Dappier-powered tool**, fetch real-time data, and respond using **Gemini-generated answers**.
+
+Your custom AI assistant is now live and running on the web! ✅
+
+## Why Integrate Google ADK and Dappier?
+
+Combining **Google ADK** with **Dappier SDK** brings together the strengths of **modular AI agent orchestration** and **real-time, rights-cleared data access**. This integration unlocks the ability to build **dynamic, context-aware agents** that can reason, route tasks, and respond with up-to-the-minute information.
+
+### 🔍 Key Benefits
+
+- **Real-Time Decision Making**  
+  Agents can base responses on the latest stock prices, breaking news, or trending lifestyle content — not static memory.
+
+- **Reliable AI Outputs**  
+  Reduce hallucinations by fetching data from trusted sources using Dappier’s verified pipelines.
+
+- **Multi-Agent Workflows**  
+  Use Google ADK’s support for `Sequential`, `Parallel`, or LLM-directed flows to design complex, modular agents.
+
+- **Diverse Use Cases**  
+  Easily support finance, travel, sports, sustainability, and more — with plug-and-play data models from Dappier.
+
+### 💡 Example Scenarios
+
+1. **Stock Market Assistant**  
+   Track tickers like TSLA or AAPL in real time and generate Gemini-based insights.
+
+2. **Pet Care Advisor**  
+   Recommend dog or cat health content from expert-curated sources like iHeartDogs or iHeartCats.
+
+3. **Lifestyle Curator**  
+   Pull trending lifestyle updates or conscious living tips from GreenMonster and other top publications.
+
+4. **Smart News Aggregator**  
+   Build a conversational news assistant that fetches articles based on keywords and personal interest.
+
+Together, Google ADK and Dappier empower you to build AI agents that are not only smart — but **informed, safe, and ready for production**.
+
+## Conclusion
+
+The integration of **Google ADK** with **Dappier SDK** gives developers a powerful foundation to build **real-time, intelligent AI agents** that are both modular and grounded in trusted data.
+
+Whether you're building a **stock advisor**, **news assistant**, **travel planner**, or **lifestyle recommender**, this stack ensures your agents are:
+
+- Powered by **Gemini models** via Google ADK  
+- Informed by **live, verified data** via Dappier  
+- Deployable anywhere — including **Replit**, **Cloud Run**, and beyond
+
+> Try the starter template today:  
+👉 [Google ADK + Dappier Starter App](https://replit.com/@dappier/Google-ADK-Dappier-Starter-App?v=1)
+
+Ready to build the next generation of real-world AI tools?  
+This is your launchpad.
