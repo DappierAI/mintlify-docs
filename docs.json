@@ -81,6 +81,7 @@
               "integrations/claude-dappier-mcp-server-integration",
               "integrations/cursor-dappier-mcp-integration",
               "integrations/dappier-mcp-server-integration",
+              "integrations/google-adk-integration",
               "integrations/langchain-integration",
               "integrations/llama-index-integration",
               "integrations/mcp-use-integration",
