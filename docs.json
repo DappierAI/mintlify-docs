@@ -145,6 +145,13 @@
             ]
           },
           {
+            "group": "Google ADK",
+            "pages": [
+              "cookbook/recipes/google-adk-stock-market-researcher",
+              "cookbook/recipes/google-adk-dynamic-travel-planner"
+            ]
+          },
+          {
             "group": "LangChain",
             "pages": [
               "cookbook/recipes/langchain-real-time-market-strategyzer",

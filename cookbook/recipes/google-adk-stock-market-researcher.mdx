@@ -1,0 +1,351 @@
+---
+title: "🧠 Google ADK Stock Market Research Agent: Real-Time Investment Reports with Dappier"
+---
+
+You can explore this project live on Replit [here](https://replit.com/@dappier/Multi-Agent-Stock-Market-Research-or-Google-ADK-and-Dappier)
+
+This Replit app demonstrates how to build a powerful stock market research agent using **Google ADK** and **Dappier**. By combining multi-agent workflows and real-time financial data, this project showcases a novel approach to generating investment-grade markdown reports for any public company.
+
+In this app, you'll explore:
+
+-   **Google ADK (Agent Development Kit)**: A flexible framework by Google to build intelligent, multi-step agents capable of reasoning, decision-making, and orchestration using Gemini models.
+-   **Dappier**: A real-time data platform that connects LLMs to live, rights-cleared information across domains like finance, news, and web search. It enriches agent workflows with structured, prompt-ready data.
+-   **Gemini-Powered Agents**: Modular LLM agents designed to resolve ticker symbols, extract stock metrics, analyze peer companies, and generate comprehensive investment summaries.
+-   **Replit Deployment**: Run the complete multi-agent research pipeline in the browser using Replit, with secure environment variable support and real-time agent execution.
+
+This app not only delivers a practical solution for real-time stock research but also serves as a reusable foundation for any financial analytics tool powered by AI and live data.
+
+## 📦 Installation
+
+This app is built using [Replit](https://replit.com/), so you don't need to set up any local environment. Just fork or run the app directly in your browser.
+
+However, if you're setting this up manually or adapting it outside Replit, install the required packages using `pip`:
+
+```bash
+pip install google-adk dappier
+```
+
+> ✅ **Note**: Replit automatically installs the packages listed in `replit.nix` or `pyproject.toml` (if used). You can also manually add packages from the **Packages** tab in the left sidebar.
+
+Once dependencies are installed, you're ready to configure your API keys and begin running the agent workflow.
+
+## 🔑 Setting Up API Keys
+
+To run the stock market research agent, you'll need the following API keys:
+
+- `GOOGLE_API_KEY` – For accessing Gemini models via Google ADK.
+- `GOOGLE_GENAI_USE_VERTEXAI` – Set this to `"false"` to use Gemini on public API instead of Vertex AI.
+- `DAPPIER_API_KEY` – To access real-time financial and web data from Dappier.
+
+### 🔐 In Replit
+
+1. Click the **🔒 Secrets** tab (lock icon) in the left sidebar.
+2. Add the following environment variables:
+
+| Key                         | Value                          |
+|----------------------------|---------------------------------|
+| `GOOGLE_API_KEY`           | *(Your Google API Key)*         |
+| `GOOGLE_GENAI_USE_VERTEXAI`| `false`                         |
+| `DAPPIER_API_KEY`          | *(Your Dappier API Key)*        |
+
+You can get your API keys from the following sources:
+
+- **Google API Key**: https://makersuite.google.com/app/apikey
+- **Dappier API Key**: https://platform.dappier.com/profile/api-keys
+
+> ⚠️ **Important**: Do not print your API keys or commit them to public repositories. Use environment variables or secret managers to handle credentials securely.
+
+## 🔌 Real-Time Tools Powered by Dappier
+
+Dappier provides real-time, rights-cleared data that powers different stages of the stock research workflow. In this app, we use two key tool functions:
+
+1. **Web Search Tool** — For general queries like company overview, financial trends, and peer benchmarking.
+2. **Stock Market Tool** — For structured stock market data such as price snapshots, ratios, volumes, and categorized news.
+
+These are defined in the `tools.py` file and initialized using the Dappier Python SDK.
+
+```python
+from dappier import Dappier
+
+client = Dappier()
+
+def real_time_web_search(query: str) -> str:
+    """
+    Perform a real-time web search. Use this for general queries that do not include a specific stock ticker.
+    """
+    try:
+        return client.search_real_time_data_string(
+            query=query,
+            ai_model_id="am_01j06ytn18ejftedz6dyhz2b15"
+        )
+    except Exception as e:
+        return f"Error: {str(e)}"
+
+def stock_market_data_search(query: str) -> str:
+    """
+    Fetch real-time stock market data. Use this tool only when querying with a stock ticker symbol.
+    """
+    try:
+        return client.search_real_time_data_string(
+            query=query,
+            ai_model_id="am_01j749h8pbf7ns8r1bq9s2evrh"
+        )
+    except Exception as e:
+        return f"Error: {str(e)}"
+```
+
+> 🧠 These tools power the agents in different stages of the pipeline based on the query type — general vs. ticker-specific.
+> All data comes from Dappier’s trusted and rights-cleared data sources, ensuring accuracy and compliance.
+
+## 🏷️ Ticker Resolution Agent
+
+The first step in the stock research pipeline is to resolve the stock ticker symbol from a user-provided company name. This ensures downstream agents receive a valid ticker for accurate data retrieval.
+
+We define a lightweight LLM agent using Google ADK's `LlmAgent`, powered by Gemini, and backed by **Dappier's real-time web search tool**.
+
+```python
+from google.adk.agents import LlmAgent
+from datetime import datetime
+from .tools import real_time_web_search
+
+GEMINI_MODEL = "gemini-2.0-flash"
+timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+# --- Initial Agent to Resolve Ticker ---
+ticker_resolution_agent = LlmAgent(
+    name="TickerResolutionAgent",
+    model=GEMINI_MODEL,
+    instruction=f"""
+As of {timestamp}, take a user-provided company name and use real-time web search to resolve its stock ticker symbol.
+Return only the stock ticker symbol in uppercase.
+""",
+    description="Resolves stock ticker symbol from company name.",
+    tools=[real_time_web_search],
+    output_key="ticker_symbol"
+)
+```
+
+> 🎯 This agent ensures the entire pipeline starts with an accurate stock symbol, derived from the latest web data.
+> Dappier is used here to ensure up-to-date resolution, especially for lesser-known or recently listed companies.
+
+Perfect — we'll now begin documenting the **individual agents**, one at a time, starting with the **Ticker Resolution Agent**.
+
+## 🏷️ Ticker Resolution Agent
+
+The first step in the stock research pipeline is to resolve the stock ticker symbol from a user-provided company name. This ensures downstream agents receive a valid ticker for accurate data retrieval.
+
+We define a lightweight LLM agent using Google ADK's `LlmAgent`, powered by Gemini, and backed by **Dappier's real-time web search tool**.
+
+```python
+from google.adk.agents import LlmAgent
+from datetime import datetime
+from .tools import real_time_web_search
+
+GEMINI_MODEL = "gemini-2.0-flash"
+timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+# --- Initial Agent to Resolve Ticker ---
+ticker_resolution_agent = LlmAgent(
+    name="TickerResolutionAgent",
+    model=GEMINI_MODEL,
+    instruction=f"""
+As of {timestamp}, take a user-provided company name and use real-time web search to resolve its stock ticker symbol.
+Return only the stock ticker symbol in uppercase.
+""",
+    description="Resolves stock ticker symbol from company name.",
+    tools=[real_time_web_search],
+    output_key="ticker_symbol"
+)
+```
+
+> 🎯 This agent ensures the entire pipeline starts with an accurate stock symbol, derived from the latest web data.
+> Dappier is used here to ensure up-to-date resolution, especially for lesser-known or recently listed companies.
+
+## 💰 Financial Performance Agent
+
+After gathering company basics, this agent dives into the company’s recent **financial performance** using real-time search.
+
+It retrieves financial indicators such as:
+
+- Revenue (TTM)
+- Net Income (TTM)
+- YoY growth
+- Gross margin
+- Key financial trends or earnings commentary
+
+```python
+financials_agent = LlmAgent(
+    name="FinancialsPerformanceAgent",
+    model=GEMINI_MODEL,
+    instruction=f"""
+As of "{timestamp}", use real-time web search with the timestamp to extract financial performance data for {{ticker_symbol}},
+including Revenue (TTM), Net Income (TTM), YoY revenue growth, gross margin, and recent quarterly trends.
+Include any earnings trends or management commentary.
+""",
+    description="Extracts financial metrics using real-time web search.",
+    tools=[real_time_web_search],
+    output_key="financials_summary"
+)
+```
+
+## 🧮 Competitive Benchmarking Agent
+
+To evaluate a company's standing in its industry, this agent identifies and compares **3–5 peer companies** using real-time web search.
+
+It focuses on benchmarking key metrics:
+
+- P/E ratio
+- Revenue
+- Stock Price
+- Market Cap
+
+It also highlights whether the target company **outperforms or underperforms** against its peers.
+
+```python
+benchmarking_agent = LlmAgent(
+    name="CompetitiveBenchmarkingAgent",
+    model=GEMINI_MODEL,
+    instruction=f"""
+As of {timestamp}, identify 3-5 peer companies in the same sector as {{ticker_symbol}} using real-time web search.
+Extract and compare metrics: P/E ratio, revenue, stock price, market cap.
+Highlight where {{ticker_symbol}} outperforms or underperforms.
+""",
+    description="Performs competitive benchmarking using real-time web search.",
+    tools=[real_time_web_search],
+    output_key="competitive_benchmarking"
+)
+```
+
+## 📰 Stock News & Sentiment Agent
+
+Fetches categorized real-time financial news for the given ticker.
+
+```python
+news_agent = LlmAgent(
+    name="StockNewsAndSentimentAgent",
+    model=GEMINI_MODEL,
+    instruction=f"""
+As of {timestamp}, fetch real-time financial news
+for "{{ticker_symbol}}". Categorize by: Earnings, Analyst Ratings, Market Moves, Partnerships, Legal/Regulatory.
+""",
+    description="Fetches categorized stock news using stock_market_data_search.",
+    tools=[stock_market_data_search],
+    output_key="categorized_news"
+)
+```
+
+## 🤖 Parallel Research Agents
+
+Run multiple agents concurrently to improve performance and modularity.
+
+### Web Research Agent Group
+
+```python
+parallel_web_research_agent = ParallelAgent(
+    name="WebResearchAgentGroup",
+    sub_agents=[company_overview_agent, financials_agent, benchmarking_agent],
+    description="Gathers structured company data in parallel."
+)
+```
+
+### Stock Insights Agent Group
+
+```python
+parallel_stock_insights_agent = ParallelAgent(
+    name="StockInsightsAgentGroup",
+    sub_agents=[stock_snapshot_agent, news_agent],
+    description="Gathers real-time stock insights in parallel."
+)
+```
+
+## 📝 Investment Report Generator Agent
+
+Synthesizes all outputs into a single markdown-formatted investment report.
+
+```python
+report_generator_agent = LlmAgent(
+    name="InvestmentReportGenerator",
+    model=GEMINI_MODEL,
+    instruction=f"""
+As of {timestamp}, compile a comprehensive investment report for **{{stock_ticker}}**, formatted as markdown. Synthesize the outputs of all tasks: company overview, financial performance, competitive benchmarking, real-time stock snapshot, and categorized financial news.
+
+The report must include the following structured sections:
+
+1. **Quick Summary**  
+2. **Company Profile Table**  
+3. **Financial Performance Table**  
+4. **Competitive Benchmarking Table**  
+5. **Real-Time Stock Snapshot**  
+6. **Categorized Financial News**  
+7. **Insight Section**  
+
+All the related information is below:
+
+{{company_overview}}
+
+{{financials_summary}}
+
+{{competitive_benchmarking}}
+
+{{stock_snapshot}}
+
+{{categorized_news}}
+
+Output only the final markdown report.
+""",
+    description="Generates a full investment report from aggregated data.",
+    output_key="final_markdown_report"
+)
+```
+
+## 🔁 Sequential Agent Pipeline
+
+Defines the full multi-agent flow: resolves ticker → fetches data → generates report.
+
+```python
+sequential_pipeline_agent = SequentialAgent(
+    name="StockMarketResearchPipeline",
+    sub_agents=[
+        ticker_resolution_agent,
+        parallel_web_research_agent,
+        parallel_stock_insights_agent,
+        report_generator_agent
+    ],
+    description="Orchestrates multi-agent flow: resolves ticker, gathers data, and generates report."
+)
+
+# Entry point
+root_agent = sequential_pipeline_agent
+```
+
+## 💻 Running the Agent
+
+This app is fully interactive — you don’t need to write any code to run it.
+
+Just open the Replit app and use the built-in **chat interface** to enter a company name (e.g., `"Apple"` or `"Tesla"`). The agent pipeline will:
+
+1. Resolve the stock ticker.
+2. Fetch real-time data and financial insights.
+3. Generate a full investment report in markdown format.
+
+> 💬 The chat interface will display the markdown report directly in the console or browser output pane.
+
+## 🌟 Highlights
+
+This app has guided you through building and running a stock market research agent using Google ADK and Dappier. By combining real-time financial data, multi-agent workflows, and markdown generation, you’ve created a complete pipeline that transforms natural language input into a structured investment report.
+
+Key tools utilized in this app include:
+
+-   **Google ADK**: A flexible framework that enables sequential and parallel agent orchestration, built around modular LLM-based agents for complex task automation.
+-   **Dappier**: A platform connecting LLMs to real-time, rights-cleared data across domains like finance, news, and web search. It delivers enriched, prompt-ready insights, empowering agents with verified and up-to-date information.
+-   **Gemini Models**: LLMs used to reason over financial data, extract metrics, benchmark competitors, and synthesize final markdown content.
+-   **Replit**: An interactive development and execution environment that makes it easy to deploy, test, and interact with the pipeline via chat interface.
+
+This app can be adapted and expanded to support various other financial workflows such as:
+
+- Portfolio monitoring
+- Real-time earnings tracking
+- Sector-specific investment dashboards
+- Automated newsletter generation
+
+It serves as a practical template for integrating LLMs and live data APIs into real-world financial research tools.
