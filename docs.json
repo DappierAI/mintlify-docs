@@ -145,6 +145,10 @@
             ]
           },
           {
+            "group": "Google ADK",
+            "pages": ["cookbook/recipes/google-adk-stock-market-researcher"]
+          },
+          {
             "group": "LangChain",
             "pages": [
               "cookbook/recipes/langchain-real-time-market-strategyzer",
