@@ -1,0 +1,309 @@
+---
+title: "🧠 Google ADK Dynamic Travel Planner: Real-Time Itineraries with Dappier"
+---
+
+You can explore this project live on Replit [here](https://replit.com/@dappier/Dynamic-Travel-Planner-or-Google-ADK-and-Dappier)
+
+This Replit app demonstrates how to build a powerful travel planning agent using **Google ADK** and **Dappier**. By combining multi-agent workflows and real-time location-based data, this project showcases a novel approach to generating personalized, markdown-formatted itineraries for any city and date.
+
+In this app, you'll explore:
+
+* **Google ADK (Agent Development Kit)**: A flexible framework by Google to build intelligent, multi-step agents capable of reasoning, decision-making, and orchestration using Gemini models.
+* **Dappier**: A real-time data platform that connects LLMs to live, rights-cleared information across domains like local attractions, dining, events, and web search. It enriches agent workflows with structured, prompt-ready data.
+* **Gemini-Powered Agents**: Modular LLM agents designed to generate multi-day travel plans based on user preferences, travel dates, and real-time search.
+* **Replit Deployment**: Run the complete multi-agent itinerary generation pipeline in the browser using Replit, with secure environment variable support and real-time agent execution.
+
+This app not only delivers a practical solution for dynamic travel planning but also serves as a reusable foundation for any location-aware assistant powered by AI and live data.
+
+## 📦 Installation
+
+This app is built using [Replit](https://replit.com/), so you don't need to set up any local environment. Just fork or run the app directly in your browser.
+
+However, if you're setting this up manually or adapting it outside Replit, install the required packages using `pip`:
+
+```bash
+pip install google-adk dappier
+```
+
+> ✅ **Note**: Replit automatically installs the packages listed in `replit.nix` or `pyproject.toml` (if used). You can also manually add packages from the **Packages** tab in the left sidebar.
+
+## 🔑 Setting Up API Keys
+
+To run the dynamic travel planner agent, you'll need the following API keys:
+
+* `GOOGLE_API_KEY` – For accessing Gemini models via Google ADK.
+* `GOOGLE_GENAI_USE_VERTEXAI` – Set this to `"false"` to use Gemini on public API instead of Vertex AI.
+* `DAPPIER_API_KEY` – To access real-time travel and web data from Dappier.
+
+### 🔐 In Replit
+
+1. Click the **🔒 Secrets** tab (lock icon) in the left sidebar.
+2. Add the following environment variables:
+
+| Key                         | Value                    |
+| --------------------------- | ------------------------ |
+| `GOOGLE_API_KEY`            | *(Your Google API Key)*  |
+| `GOOGLE_GENAI_USE_VERTEXAI` | `false`                  |
+| `DAPPIER_API_KEY`           | *(Your Dappier API Key)* |
+
+You can get your API keys from the following sources:
+
+* **Google API Key**: [https://makersuite.google.com/app/apikey](https://makersuite.google.com/app/apikey)
+* **Dappier API Key**: [https://platform.dappier.com/profile/api-keys](https://platform.dappier.com/profile/api-keys)
+
+> ⚠️ **Important**: Do not print your API keys or commit them to public repositories. Use environment variables or secret managers to handle credentials securely.
+
+## 🔌 Real-Time Tools Powered by Dappier
+
+Dappier provides real-time, rights-cleared data that powers different stages of the itinerary generation workflow. In this app, we use a single tool function:
+
+1. **Real-Time Travel Planner Tool** — For generating structured itineraries based on location, date, number of days, and user interests.
+
+This tool is defined in the `tools.py` file and initialized using the Dappier Python SDK.
+
+```python
+from dappier import Dappier
+
+client = Dappier()
+
+def real_time_web_search(query: str) -> str:
+    """
+    Perform a real-time web search. Use this for general queries that do not include a specific stock ticker.
+    """
+    try:
+        return client.search_real_time_data_string(
+            query=query,
+            ai_model_id="am_01j06ytn18ejftedz6dyhz2b15"
+        )
+    except Exception as e:
+        return f"Error: {str(e)}"
+```
+
+> 🧠 This tool powers the core agent that dynamically generates the travel itinerary using structured, real-time data from Dappier’s travel content sources.
+> All data is fresh, localized, and sourced from rights-cleared platforms to ensure safety and compliance.
+
+## 🧾 Input Resolution Agent
+
+Extracts destination, start date, and number of travel days from user input. If any field is missing, it prompts the user to provide the missing information.
+
+```python
+from google.adk.agents import LlmAgent
+from datetime import datetime
+
+GEMINI_MODEL = "gemini-2.0-flash"
+timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+# --- Input Resolution Agent ---
+input_resolution_agent = LlmAgent(
+    name="TravelInputResolutionAgent",
+    model=GEMINI_MODEL,
+    instruction=f"""
+As of {timestamp}, extract the following structured information from the user's travel request:
+
+1. City name or destination
+2. Start date of travel (in YYYY-MM-DD format)
+3. Number of days for the trip
+
+If any of the above details are missing, ask the user for the missing information one by one in a natural and friendly tone.
+
+Do not proceed until all three values are collected.
+
+Once all values are available, return them as:
+- city
+- travel_date
+- num_days
+
+Example final output:
+- city: Tokyo
+- travel_date: 2024-06-15
+- num_days: 3
+""",
+    description="Gathers and confirms city, date, and trip duration. Prompts for missing info if needed.",
+    output_key="travel_inputs"
+)
+```
+
+## ☀️ Weather Insights Agent
+
+Fetches upcoming weather forecast for the destination using real-time data.
+
+```python
+from google.adk.agents import LlmAgent
+from datetime import datetime
+from .tools import real_time_travel_plan
+
+GEMINI_MODEL = "gemini-2.0-flash"
+timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+# --- Weather Agent ---
+weather_agent = LlmAgent(
+    name="WeatherInsightsAgent",
+    model=GEMINI_MODEL,
+    instruction=f"""
+As of {timestamp}, use real-time data to fetch a weather forecast for the given city and travel date.
+
+Use the following input:
+{{travel_inputs}}
+
+Provide a short weather summary for each day of the trip including temperature, conditions (e.g., sunny, rainy), and any alerts or recommendations.
+
+Output format:
+### Weather Forecast
+- Day 1 (June 10): 28°C, Sunny
+- Day 2 (June 11): 26°C, Light rain
+- Day 3 (June 12): 27°C, Cloudy
+""",
+    description="Provides real-time weather forecast for the trip.",
+    tools=[real_time_travel_plan],
+    output_key="weather_summary"
+)
+```
+
+## 🍽️ Restaurant Discovery Agent
+
+Finds top local restaurants for the destination city using real-time data.
+
+```python
+from google.adk.agents import LlmAgent
+from datetime import datetime
+from .tools import real_time_travel_plan
+
+GEMINI_MODEL = "gemini-2.0-flash"
+timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+# --- Restaurant Agent ---
+restaurant_agent = LlmAgent(
+    name="RestaurantDiscoveryAgent",
+    model=GEMINI_MODEL,
+    instruction=f"""
+As of {timestamp}, use real-time data to discover top-rated local restaurants at the destination.
+
+Use the following input:
+{{travel_inputs}}
+
+Find a mix of cuisines and recommend restaurants suitable for breakfast, lunch, and dinner. Include name, cuisine type, and a one-line description.
+""",
+    description="Finds popular local restaurants for the travel destination.",
+    tools=[real_time_travel_plan],
+    output_key="restaurant_recommendations"
+)
+```
+
+## 🏨 Budget Hotel Finder Agent
+
+Finds affordable and well-rated hotels near the destination using real-time data.
+
+```python
+from google.adk.agents import LlmAgent
+from datetime import datetime
+from .tools import real_time_travel_plan
+
+GEMINI_MODEL = "gemini-2.0-flash"
+timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+# --- Hotel Agent ---
+hotel_agent = LlmAgent(
+    name="BudgetHotelFinderAgent",
+    model=GEMINI_MODEL,
+    instruction=f"""
+As of {timestamp}, use real-time data to find budget-friendly hotels in the destination city.
+
+Use the following input:
+{{travel_inputs}}
+
+Recommend 3–5 options that are affordable, clean, and well-reviewed. Include hotel name, price range, and a short note on location or features.
+""",
+    description="Finds affordable and well-rated hotels for the destination.",
+    tools=[real_time_travel_plan],
+    output_key="hotel_recommendations"
+)
+```
+
+## 📅 Itinerary Generator Agent
+
+Synthesizes the final multi-day itinerary using real-time insights from weather, restaurants, and hotels.
+
+```python
+from google.adk.agents import LlmAgent
+from datetime import datetime
+
+GEMINI_MODEL = "gemini-2.0-flash"
+timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+# --- Final Itinerary Agent ---
+itinerary_generator_agent = LlmAgent(
+    name="ItineraryGeneratorAgent",
+    model=GEMINI_MODEL,
+    instruction=f"""
+As of {timestamp}, generate a markdown-formatted travel itinerary using all the collected information.
+
+Inputs:
+{{travel_inputs}}
+{{weather_summary}}
+{{restaurant_recommendations}}
+{{hotel_recommendations}}
+
+Create a day-by-day itinerary including morning, afternoon, and evening activities. Recommend meals, include hotel check-in/check-out, and consider weather conditions when planning activities.
+
+Output only the final markdown itinerary.
+""",
+    description="Generates a structured, multi-day itinerary based on all gathered insights.",
+    output_key="markdown_itinerary"
+)
+```
+
+## 🔁 Sequential Agent Pipeline
+
+Defines the full multi-agent flow: collects inputs → fetches insights → generates itinerary.
+
+```python
+from google.adk.agents import SequentialAgent
+
+# --- Full Pipeline ---
+sequential_pipeline_agent = SequentialAgent(
+    name="DynamicTravelPlannerPipeline",
+    sub_agents=[
+        input_resolution_agent,
+        weather_agent,
+        restaurant_agent,
+        hotel_agent,
+        itinerary_generator_agent
+    ],
+    description="Orchestrates the travel planning flow from user input to final itinerary."
+)
+
+# Entry point
+root_agent = sequential_pipeline_agent
+```
+
+## 💻 Running the Agent
+
+This app is fully interactive — you don’t need to write any code to run it.
+
+Just open the Replit app and use the built-in **chat interface** to enter a travel request (e.g., `"Plan a 3-day trip to Tokyo starting June 10"`). The agent pipeline will:
+
+1. Extract city, start date, and duration.
+2. Fetch real-time weather forecast, restaurants, and hotels.
+3. Generate a day-wise travel itinerary in markdown format.
+
+> 💬 The chat interface will display the itinerary directly in the console or browser output pane.
+
+## 🌟 Highlights
+
+This app has guided you through building and running a dynamic travel planner using Google ADK and Dappier. By combining real-time local data, multi-agent workflows, and markdown generation, you’ve created a complete pipeline that turns natural language travel requests into structured itineraries.
+
+Key tools utilized in this app include:
+
+* **Google ADK**: A flexible framework that enables sequential agent orchestration, built around modular LLM-based agents for intelligent task automation.
+* **Dappier**: A platform connecting LLMs to real-time, rights-cleared data across domains like travel, hospitality, weather, and web search. It delivers prompt-ready insights that power practical agent workflows.
+* **Gemini Models**: LLMs used to reason over user input and real-time data to generate complete, usable travel plans.
+* **Replit**: An interactive development and execution environment that makes it easy to deploy, test, and interact with the pipeline via a chat interface.
+
+This app can be adapted to support a wide range of location-based use cases such as:
+
+* Weekend getaway planners
+* Family or solo travel guides
+* Local event finders
+* AI-powered travel chatbots
+
+It serves as a practical template for building LLM agents that reason over live, user-relevant data to generate structured and actionable outputs.
