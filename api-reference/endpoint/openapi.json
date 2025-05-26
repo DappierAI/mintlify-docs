@@ -110,47 +110,76 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "results": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "author": {
-                            "type": "string",
-                            "description": "Author of the article."
-                          },
-                          "image_url": {
-                            "type": "string",
-                            "description": "Image URL for the article. You can add &w=400&h=200 to the end of the URL with your desired size values to automatically resize and optimize delivery of the image."
-                          },
-                          "preview_content": {
-                            "type": "string",
-                            "description": "Short preview of the article content."
-                          },
-                          "pubdate": {
-                            "type": "string",
-                            "description": "Publication date of the article."
-                          },
-                          "pubdate_unix": {
-                            "type": "integer",
-                            "description": "Publication date in UNIX timestamp."
-                          },
-                          "site": {
-                            "type": "string",
-                            "description": "Source site of the article."
-                          },
-                          "site_domain": {
-                            "type": "string",
-                            "description": "Domain of the site."
-                          },
-                          "title": {
-                            "type": "string",
-                            "description": "Title of the article."
-                          },
-                          "url": {
-                            "type": "string",
-                            "description": "URL for the article."
+                    "status": {
+                      "type": "string",
+                      "description": "Status of the API response."
+                    },
+                    "response": {
+                      "type": "object",
+                      "properties": {
+                        "query": {
+                          "type": "string",
+                          "description": "The query string used for the recommendations."
+                        },
+                        "results": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "author": {
+                                "type": "string",
+                                "description": "Author of the article."
+                              },
+                              "image_url": {
+                                "type": "string",
+                                "description": "Image URL for the article. You can add &w=400&h=200 to the end of the URL with your desired size values to automatically resize and optimize delivery of the image."
+                              },
+                              "preview_content": {
+                                "type": "string",
+                                "description": "Short preview of the article content."
+                              },
+                              "pubdate": {
+                                "type": "string",
+                                "description": "Publication date of the article."
+                              },
+                              "pubdate_unix": {
+                                "type": "integer",
+                                "description": "Publication date in UNIX timestamp."
+                              },
+                              "score": {
+                                "type": "number",
+                                "description": "Relevance score of the article."
+                              },
+                              "site": {
+                                "type": "string",
+                                "description": "Source site of the article."
+                              },
+                              "site_domain": {
+                                "type": "string",
+                                "description": "Domain of the site."
+                              },
+                              "source_url": {
+                                "type": "string",
+                                "description": "Tracking URL for the article."
+                              },
+                              "summary": {
+                                "type": "string",
+                                "description": "Summary of the article content."
+                              },
+                              "title": {
+                                "type": "string",
+                                "description": "Title of the article."
+                              },
+                              "url": {
+                                "type": "string",
+                                "description": "URL for the article."
+                              }
+                            }
                           }
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Additional message or information."
                         }
                       }
                     }
