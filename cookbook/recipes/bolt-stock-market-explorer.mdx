@@ -1,108 +1,118 @@
 ---
-title: "🔩 Build a Real-Time Stock Explorer App Using Dappier and Bolt.new"
+title: "✨ Build a Real-Time Stock Explorer App Using Dappier, Bolt.new, and Supabase"
 ---
 
-This notebook demonstrates how to build a **real-time stock market explorer** application using [Dappier](https://dappier.com/) and [Bolt.new](https://bolt.new/), a fullstack development platform that lets you generate, run, and deploy applications entirely from the browser—without requiring any local setup.
+This cookbook demonstrates how to build a **real-time stock market explorer** application using [Dappier](https://dappier.com/), [Bolt.new](https://bolt.new/), and [Supabase](https://supabase.com/)—a powerful trio that lets you generate, run, and deploy fullstack applications directly from the browser without requiring local setup.
 
 In this walkthrough, you'll explore:
 
-- **Bolt.new**: An AI-assisted development platform by StackBlitz that enables instant scaffolding of fullstack web apps using natural language prompts. It supports both frontend and backend logic, with built-in support for React, Node.js, Express, and more.
-- **Dappier**: A platform that connects LLMs and agentic AI applications to real-time, rights-cleared data from trusted sources. Dappier delivers enriched, prompt-ready data across domains like finance, news, and web search—making it ideal for real-time applications.
-- **Real-Time Stock Market App**: A fullstack application where users can enter a stock ticker or company name to retrieve the latest stock price and financial news using the Dappier API.
+* **Bolt.new**: An AI-assisted development platform by StackBlitz that enables instant scaffolding of fullstack web apps using natural language prompts. It supports both frontend and backend logic, with built-in support for React, Node.js, Express, Supabase Edge Functions, and more.
+* **Supabase**: An open-source Firebase alternative offering a scalable backend, database, and serverless Edge Functions. It's ideal for deploying APIs securely and integrating them seamlessly with frontend apps.
+* **Dappier**: A platform that connects LLMs and agentic AI applications to real-time, rights-cleared data from trusted sources. Dappier delivers enriched, prompt-ready data across domains like finance, news, and web search—making it ideal for real-time applications.
+* **Real-Time Stock Market App**: A frontend + API application where users can enter a stock ticker or company name to retrieve the latest stock price and financial news using Dappier’s AI model, optionally routed through a Supabase Edge Function for deployment on Netlify or Vercel.
 
-This setup demonstrates a practical example of how you can leverage Bolt.new and Dappier together to create useful, data-rich applications without complex infrastructure or boilerplate.
+This setup demonstrates a practical example of how you can leverage Bolt.new, Supabase, and Dappier together to create useful, data-rich applications without complex infrastructure or boilerplate.
 
-## ⚙️ Setup
+## 🚀 Getting Started: From Prompt to Deployment
 
-To get started, follow the steps below to generate your real-time stock market app using **Bolt.new** and **Dappier**.
+To build and deploy your real-time stock market app using **Bolt.new** and **Dappier**, follow these structured steps:
+
+### 🧾 Step 1: Generate the Frontend App on Bolt.new
 
 1. Open [https://bolt.new](https://bolt.new) in your browser.
-
 2. Paste the following prompt exactly as it is into the Bolt.new interface:
 
-```markdown Markdown
-# Real-Time Stock Explorer Using Dappier API
+```markdown
+Create a beautiful frontend-only web app called "Stock Market Search using Dappier".
 
-Build a fullstack web app using React (frontend) and a pure JavaScript Node.js (Express) backend. The app should allow users to enter a company name or stock ticker and display the latest stock price and financial news using the Dappier API.
+The app should have:
+- A centered input field that accepts natural language stock queries (e.g., "What’s going on with AAPL today?")
+- A bold, animated "Search" button below the input
+- On click, show a styled Markdown-formatted AI response (use placeholder content for now)
 
-## Requirements
+UI design:
+- Full-height responsive layout
+- Clean, centered container with a blurred background
+- Smooth animations for input focus, button press, and content transitions
+- Rounded corners, soft shadows, and elegant hover effects
+- Use a readable sans-serif font like Inter or SF Pro
+- Dark mode by default with a light mode toggle
+- Include a loading spinner while waiting for the Dappier AI
 
-**Frontend:**
-
-* Input field for entering a stock ticker or company name
-* Submit button
-* Render the API response as Markdown
-
-**Backend:**
-
-* POST endpoint at `/api/stock-info`
-* Accepts a JSON body with a `query` field
-* Constructs a new query string: Latest stock price of {query} and latest financial news.
-
-
-* Sends a POST request to: https://api.dappier.com/app/aimodel/am_01j749h8pbf7ns8r1bq9s2evrh
-
-* Includes headers:
-
-* `Authorization: Bearer <DAPPIER_API_KEY>` (from `.env`)
-* `Content-Type: application/json`
-* Request body:
-
-{
-    "query": "Latest stock price of Apple and latest financial news."
-}
-
-* Returns the API response:
-
-{
-    "message": "Markdown-formatted plain text"
-}
-
-
-## Notes
-
-* Use `.env` for `DAPPIER_API_KEY`
-* Frontend renders `message` as Markdown
+The interface should feel like a premium financial assistant — intuitive, modern, and production-ready.
 ```
 
-3. Click **Submit** and wait for Bolt.new to scaffold your fullstack application.
+3. Click **Submit** and wait for Bolt.new to scaffold your frontend application.
 
-## 🔑 Setting Up Your Dappier API Key
+### 🔗 Step 2: Connect Bolt.new with Supabase
 
-To enable your application to access real-time financial data, you’ll need to provide your **Dappier API Key**.
+Once your frontend application is scaffolded, follow these steps to link it with your Supabase backend:
 
-Follow the steps below:
+1. In the **Bolt.new** interface, click on the **Integrations** button located in the top-right corner of the screen.
+2. From the available integrations, select **Supabase**.
+3. Authenticate with your Supabase account if prompted.
+4. Grant access to your **organization** and select the appropriate **Supabase project** from the list.
 
-1. Visit the Dappier API Key portal:  
-   [https://platform.dappier.com/profile/api-keys](https://platform.dappier.com/profile/api-keys)
+This connection will allow you to deploy serverless functions (Edge Functions) and access Supabase-managed environment variables directly from your Bolt.new workspace.
 
-2. Sign in or create a free account if you don’t already have one.
+### 🔐 Step 3: Configure Your Dappier API Key
 
-3. Navigate to **Settings → Profile**, and copy your personal API key.
+To authorize your Supabase Edge Function to access real-time financial data from Dappier, you need to generate and securely store your API key.
 
-4. In the Bolt.new project that was generated, locate the `.env` file in the root directory (or create one if it doesn't exist).
+Follow these steps:
 
-5. Paste your API key into the `.env` file using the following format:
+1. Go to the Dappier API Key Portal:
+   👉 [https://platform.dappier.com/profile/api-keys](https://platform.dappier.com/profile/api-keys)
 
-    ```env
-    DAPPIER_API_KEY=your_api_key_here
-    ```
+2. Sign in or create a free account.
 
-6. Save the file. Your backend will now be authorized to make real-time requests to the Dappier API.
+3. Copy your personal **API Key** from the **Settings → Profile** page.
 
-🎉 You're now ready to run your app and explore live stock market data using Dappier!
+4. In your Supabase dashboard:
 
-![Bolt Stock Market Explorer](../../images/bolt-stock-market-explorer.png)
+   * Navigate to your connected project.
+   * Go to **Functions → Edge Functions**.
+   * Open the **Secrets** tab.
+   * Add a new secret with the key:
 
+     ```
+     DAPIER_API_KEY
+     ```
+
+     and paste your API key as the value.
+
+5. Save the secret and redeploy your Edge Function if needed.
+
+This ensures your function can securely authenticate requests to the Dappier API.
+
+Thank you — here is the corrected **Step 5**:
+
+---
+
+### 🚀 Step 4: Deploy with One Click
+
+Once your frontend and Supabase Edge Function are set up:
+
+1. In **Bolt.new**, click the **Deploy** button located at the top-right corner of the editor.
+
+2. Bolt will automatically build and deploy your app to **Netlify**.
+
+3. After deployment, you’ll see a link to **Claim your app on Netlify** — click it to connect the project to your Netlify account and manage it going forward.
+
+That’s it! Your real-time stock explorer is now live and powered by Dappier + Supabase.
+
+![Bolt Stock Market Search](../../images/bolt-stock-market-search.png)
 
 ## 🌟 Highlights
 
-This notebook demonstrated how to build a real-time stock market explorer by combining Bolt.new and Dappier. It provides a fast, browser-based setup that showcases a practical application of AI-generated fullstack apps powered by real-time financial data.
+This cookbook demonstrated how to build a real-time stock market explorer by combining **Bolt.new**, **Supabase**, and **Dappier**. It provides a fast, browser-based setup that showcases a practical application of AI-generated fullstack apps powered by real-time financial data.
 
-Key tools utilized in this notebook include:
+Key tools utilized in this cookbook include:
 
-- **Bolt.new**: An AI-assisted development platform that allows developers to create, edit, and deploy fullstack applications directly from the browser with natural language prompts. It supports frameworks like React, Node.js, and Express.
-- **Dappier**: A platform connecting LLMs and agentic AI applications to real-time, rights-cleared data from trusted sources, including stock market data, financial news, and web search. It delivers enriched, prompt-ready data ideal for intelligent applications.
-- **Real-Time Stock Market App**: A frontend + backend application that takes user input (company name or ticker) and displays live stock price and news, rendered as Markdown from the Dappier API.
+* **Bolt.new**: An AI-assisted development platform that allows developers to create, edit, and deploy fullstack applications directly from the browser with natural language prompts. It supports frameworks like React, Node.js, Express, and Supabase Edge Functions.
+* **Supabase**: An open-source backend platform that enables secure, serverless function execution via Edge Functions. Used here to route real-time queries to Dappier's API with proper authentication and scalable deployment.
+* **Dappier**: A platform connecting LLMs and agentic AI applications to real-time, rights-cleared data from trusted sources, including stock market data, financial news, and web search. It delivers enriched, prompt-ready data ideal for intelligent applications.
+* **Real-Time Stock Market App**: A frontend + Edge Function application that takes user input (company name or ticker) and displays live stock price and news, rendered as Markdown from the Dappier API.
 
-This complete example provides a flexible foundation that can be easily adapted for other use cases involving real-time data and dynamic, AI-enhanced interfaces.
+This complete example provides a flexible foundation that can be easily adapted for other use cases involving real-time data, serverless backends, and dynamic, AI-enhanced interfaces.
+
