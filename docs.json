@@ -15,7 +15,7 @@
     "light": "#AB8AEB",
     "dark": "#8353E2"
   },
-  "favicon": "/dappier_icon.png",
+  "favicon": "assets/dappier_icon.png",
   "navigation": {
     "tabs": [
       {
