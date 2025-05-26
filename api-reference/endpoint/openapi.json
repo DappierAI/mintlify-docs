@@ -14,8 +14,8 @@
   "paths": {
     "/app/aimodel/am_01j06ytn18ejftedz6dyhz2b15": {
       "post": {
-        "summary": "Query Real Time Data data",
-        "description": "Access real-time google web search results including the latest news, weather, travel, deals and more.",
+        "summary": "Query Real-Time Data",
+        "description": "Access real-time Google web search results, including the latest news, weather, travel, deals, and more.",
         "operationId": "query_RealTimeData_data",
         "requestBody": {
           "content": {
@@ -29,7 +29,7 @@
         },
         "responses": {
           "200": {
-            "description": "Return HTTP Status Code 200 (OK)",
+            "description": "Returns HTTP Status Code 200 (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -70,21 +70,21 @@
                 "properties": {
                   "query": {
                     "type": "string",
-                    "description": "Natural language query, keyword or URL. If URL is specified, our AI analyzes the page context, summarizes and provides semantic recommendations based on the content."
+                    "description": "Natural language query, keyword, or URL. If a URL is specified, our AI analyzes the page context, summarizes it, and provides semantic recommendations based on the content."
                   },
                   "similarity_top_k": {
                     "type": "integer",
                     "default": 9,
-                    "description": "Number of articles to return."
+                    "description": "The number of articles to return."
                   },
                   "ref": {
                     "type": "string",
-                    "description": "Site domain of where AI recommendations are being displayed. Example format: dappier.com."
+                    "description": "The site domain where AI recommendations are being displayed. Example format: dappier.com."
                   },
                   "num_articles_ref": {
                     "type": "integer",
                     "default": 0,
-                    "description": "Minimum number of articles from the `ref` domain specified above. The rest of the articles will come from other sites within the RAG model."
+                    "description": "The minimum number of articles from the `ref` domain specified above. The rest of the articles will come from other sites within the RAG model."
                   },
                   "search_algorithm": {
                     "type": "string",
@@ -94,7 +94,7 @@
                       "most_recent_semantic",
                       "trending"
                     ],
-                    "description": "Search algorithm for retrieving articles. \n `most_recent`: retrieves the most recent articles by publication date. `semantic` (default): retrieves contextually relevant articles based on the query or the page content from the provided URL. `most_recent_semantic`: performs semantic search and retrieves the most recent articles by publication date. `trending`: performs a trending search and retrieves the most relevant articles to trending keywords in the past 24 hours."
+                    "description": "The search algorithm for retrieving articles.\n `most_recent`: Retrieves the most recent articles by publication date. `semantic` (default): Retrieves contextually relevant articles based on the query or the page content from the provided URL. `most_recent_semantic`: Performs semantic search and retrieves the most recent articles by publication date. `trending`: Performs a trending search and retrieves the most relevant articles to trending keywords in the past 24 hours."
                   }
                 },
                 "required": ["query"]
@@ -112,7 +112,7 @@
                   "properties": {
                     "status": {
                       "type": "string",
-                      "description": "Status of the API response."
+                      "description": "The status of the API response."
                     },
                     "response": {
                       "type": "object",
@@ -128,51 +128,51 @@
                             "properties": {
                               "author": {
                                 "type": "string",
-                                "description": "Author of the article."
+                                "description": "The author of the article."
                               },
                               "image_url": {
                                 "type": "string",
-                                "description": "Image URL for the article. You can add &w=400&h=200 to the end of the URL with your desired size values to automatically resize and optimize delivery of the image."
+                                "description": "The image URL for the article. You can add &w=400&h=200 to the end of the URL with your desired size values to automatically resize and optimize delivery of the image."
                               },
                               "preview_content": {
                                 "type": "string",
-                                "description": "Short preview of the article content."
+                                "description": "A short preview of the article content."
                               },
                               "pubdate": {
                                 "type": "string",
-                                "description": "Publication date of the article."
+                                "description": "The publication date of the article."
                               },
                               "pubdate_unix": {
                                 "type": "integer",
-                                "description": "Publication date in UNIX timestamp."
+                                "description": "The publication date in UNIX timestamp."
                               },
                               "score": {
                                 "type": "number",
-                                "description": "Relevance score of the article."
+                                "description": "The relevance score of the article."
                               },
                               "site": {
                                 "type": "string",
-                                "description": "Source site of the article."
+                                "description": "The source site of the article."
                               },
                               "site_domain": {
                                 "type": "string",
-                                "description": "Domain of the site."
+                                "description": "The domain of the site."
                               },
                               "source_url": {
                                 "type": "string",
-                                "description": "Tracking URL for the article."
+                                "description": "The tracking URL for the article."
                               },
                               "summary": {
                                 "type": "string",
-                                "description": "Summary of the article content."
+                                "description": "A summary of the article content."
                               },
                               "title": {
                                 "type": "string",
-                                "description": "Title of the article."
+                                "description": "The title of the article."
                               },
                               "url": {
                                 "type": "string",
-                                "description": "URL for the article."
+                                "description": "The URL for the article."
                               }
                             }
                           }
@@ -204,7 +204,7 @@
           "query": {
             "type": "string",
             "title": "Query message",
-            "description": "query text to be passed to the AI model"
+            "description": "The query text to be passed to the AI model."
           }
         },
         "type": "object",
@@ -216,7 +216,7 @@
           "message": {
             "type": "string",
             "title": "Query message",
-            "description": "response of the query sent, generated by the AI model"
+            "description": "The response of the query sent, generated by the AI model."
           }
         },
         "type": "object",
