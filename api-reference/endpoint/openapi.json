@@ -46,14 +46,14 @@
         ]
       }
     },
-    "/app/datamodel/{datamodel_id}": {
+    "/app/v2/search": {
       "post": {
         "summary": "Get AI Article Recommendations",
         "description": "Retrieve articles based on queries or URLs, powered by semantic search.",
         "parameters": [
           {
-            "name": "datamodel_id",
-            "in": "path",
+            "name": "data_model_id",
+            "in": "query",
             "required": true,
             "description": "Data model ID, starting with `dm_`.",
             "schema": {
@@ -79,7 +79,7 @@
                   },
                   "ref": {
                     "type": "string",
-                    "description": "site domain of where ai recommendations are being displayed. Example format: dappier.com"
+                    "description": "Site domain of where AI recommendations are being displayed. Example format: dappier.com."
                   },
                   "num_articles_ref": {
                     "type": "integer",
