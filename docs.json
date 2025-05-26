@@ -130,7 +130,7 @@
           },
           {
             "group": "Bolt",
-            "pages": ["cookbook/recipes/bolt-stock-market-explorer"]
+            "pages": ["cookbook/recipes/bolt-stock-market-search"]
           },
           {
             "group": "CAMEL",
