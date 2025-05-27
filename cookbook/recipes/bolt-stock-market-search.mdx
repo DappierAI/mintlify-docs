@@ -13,6 +13,21 @@ In this walkthrough, you'll explore:
 
 This setup demonstrates a practical example of how you can leverage Bolt.new, Supabase, and Dappier together to create useful, data-rich applications without complex infrastructure or boilerplate.
 
+## 🔍 Live Demo
+
+Want to see the app in action?
+
+👉 **Explore the live real-time stock market search here:**
+[https://majestic-capybara-e9b31d.netlify.app/](https://majestic-capybara-e9b31d.netlify.app/)
+
+This deployment is powered by **Bolt.new**, **Supabase Edge Functions**, and **Dappier** — delivering real-time financial insights with a production-ready UI. Try entering stock queries like:
+
+* `What’s happening with AAPL today?`
+* `Show me the latest on TSLA`
+* `Stock news and price of NVIDIA`
+
+This is your AI-powered financial assistant, live and working in the browser.
+
 ## 🚀 Getting Started: From Prompt to Deployment
 
 To build and deploy your real-time stock market app using **Bolt.new** and **Dappier**, follow these structured steps:
@@ -55,7 +70,39 @@ Once your frontend application is scaffolded, follow these steps to link it with
 
 This connection will allow you to deploy serverless functions (Edge Functions) and access Supabase-managed environment variables directly from your Bolt.new workspace.
 
-### 🔐 Step 3: Configure Your Dappier API Key
+### ⚙️ Step 3: Create a Supabase Edge Function for Real-Time Search
+
+Now that your frontend is ready and connected to Supabase, use the following prompt in **Bolt.new** to generate the backend logic:
+
+````markdown
+The interface should feel premium, intuitive, and visually polished — like a product-ready financial assistant.
+
+Create a Supabase Edge Function called `stockSearch` that calls the Dappier Stock Market Search API.
+
+## Behavior:
+- Accepts a POST request with JSON payload: `{ "query": "<string>" }`
+- Extracts the `query` from the request body
+- Calls the Dappier API:
+
+  POST https://api.dappier.com/app/aimodel/am_01j749h8pbf7ns8r1bq9s2evrh  
+  Headers:
+    - Authorization: Bearer (from environment variable `DAPIER_API_KEY`)
+    - Content-Type: application/json  
+  Body:
+    ```json
+    {
+      "query": "<string>"
+    }
+    ```
+
+- Returns the full JSON response from Dappier as-is: `{ "message": "<string>" }`
+- Display the Dappier AI response on frontend instead of mocked response.
+````
+
+Once submitted, Bolt.new will scaffold the `stockSearch` Edge Function within your Supabase project.
+You can now wire your frontend to call this function and render the live results from Dappier.
+
+### 🔐 Step 4: Configure Your Dappier API Key
 
 To authorize your Supabase Edge Function to access real-time financial data from Dappier, you need to generate and securely store your API key.
 
@@ -85,11 +132,7 @@ Follow these steps:
 
 This ensures your function can securely authenticate requests to the Dappier API.
 
-Thank you — here is the corrected **Step 5**:
-
----
-
-### 🚀 Step 4: Deploy with One Click
+### 🚀 Step 5: Deploy with One Click
 
 Once your frontend and Supabase Edge Function are set up:
 
