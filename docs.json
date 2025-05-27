@@ -130,7 +130,10 @@
           },
           {
             "group": "Bolt",
-            "pages": ["cookbook/recipes/bolt-stock-market-search"]
+            "pages": [
+              "cookbook/recipes/bolt-stock-market-search",
+              "cookbook/recipes/bolt-askai-widget-integration"
+            ]
           },
           {
             "group": "CAMEL",
