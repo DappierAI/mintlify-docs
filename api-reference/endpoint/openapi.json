@@ -12,11 +12,22 @@
   ],
 
   "paths": {
-    "/app/aimodel/am_01j06ytn18ejftedz6dyhz2b15": {
+    "/app/aimodel/{ai_model_id}": {
       "post": {
         "summary": "Query Real-Time Data",
-        "description": "Access real-time Google web search results, including the latest news, weather, travel, deals, and more.",
+        "description": "Access real-time data with Dappier's AI models — from live web search and breaking news to stock prices and financial insights. Fast, reliable, and ready for monetization.",
         "operationId": "query_RealTimeData_data",
+        "parameters": [
+          {
+            "name": "ai_model_id",
+            "in": "path",
+            "required": true,
+            "description": "The ID of the AI model to query (e.g., am_01j06ytn18ejftedz6dyhz2b15).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -46,6 +57,7 @@
         ]
       }
     },
+
     "/app/v2/search": {
       "post": {
         "summary": "Get AI Article Recommendations",
