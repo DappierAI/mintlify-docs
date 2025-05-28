@@ -15,7 +15,7 @@
     "light": "#AB8AEB",
     "dark": "#8353E2"
   },
-  "favicon": "/dappier_icon.png",
+  "favicon": "images/dappier_icon.png",
   "navigation": {
     "tabs": [
       {
@@ -77,6 +77,7 @@
               "integrations/activepieces-integration",
               "integrations/agent-ai-integration",
               "integrations/agentstack-integration",
+              "integrations/bolt-integration",
               "integrations/camel-integration",
               "integrations/claude-dappier-mcp-server-integration",
               "integrations/cursor-dappier-mcp-integration",
@@ -129,7 +130,10 @@
           },
           {
             "group": "Bolt",
-            "pages": ["cookbook/recipes/bolt-stock-market-explorer"]
+            "pages": [
+              "cookbook/recipes/bolt-stock-market-search",
+              "cookbook/recipes/bolt-askai-widget-integration"
+            ]
           },
           {
             "group": "CAMEL",

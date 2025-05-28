@@ -1,0 +1,316 @@
+---
+title: "✨ Build a Health Supplement AI Advisor with Dappier, Bolt.new, and Netlify"
+---
+
+This cookbook demonstrates how to build a **real-time health supplement advisor** website using [Dappier](https://dappier.com/), [Bolt.new](https://bolt.new/), and **Netlify** for deployment. It also shows how to embed a **custom Dappier AI agent** into the site and enable **CPM-based monetization**.
+
+In this walkthrough, you'll explore:
+
+* **Bolt.new**: An AI-assisted development platform by StackBlitz that enables instant scaffolding of fullstack web apps using natural language prompts. It supports both frontend and backend logic, with built-in support for React, Node.js, Express, Supabase Edge Functions, and more.
+* **Netlify**: A platform for deploying static and frontend projects directly from Bolt.new, providing a public URL for production-ready hosting.
+* **Dappier**: A platform that connects LLMs and agentic AI applications to real-time, rights-cleared data from trusted sources. Dappier delivers enriched, prompt-ready data across domains like health, wellness, and nutrition—making it ideal for interactive applications.
+* **Real-Time Health Supplement App**: A frontend application where users can ask supplement-related questions (e.g., "What are the benefits of ashwagandha?" or "Is magnesium good for sleep?") and receive real-time answers from a custom AI agent embedded using Dappier’s AskAI widget.
+
+This setup demonstrates a practical example of how you can leverage Bolt.new, Netlify, and Dappier together to create useful, AI-powered, monetizable health applications without complex infrastructure or boilerplate.
+
+## Watch the Video Guide
+
+If you prefer a visual walkthrough, check out the accompanying video guide below:
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/N6Y108n57wk?si=umC8y5NI_ns0C0d7" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+## 🚀 Live Demo
+
+Experience a real, working Dappier Custom Agent:
+
+* 🌐 **Live Website**: [https://golden-shortbread-a5bfae.netlify.app](https://golden-shortbread-a5bfae.netlify.app)
+* 🧩 **Source Code**: [https://bolt.new/\~/sb1-fv56ycty](https://bolt.new/~/sb1-fv56ycty)
+
+This demo showcases how a fullstack AI-powered nutrition assistant was built using Dappier and Bolt.new, complete with real-time data ingestion and customizable UI.
+
+### 🧾 Step 1: Create the Health Supplement Website on Bolt.new
+
+To begin, you’ll use [**Bolt.new**](https://bolt.new/) to generate a fully responsive, modern frontend for your health supplement website — no local setup required.
+
+#### 📋 Prompt to Use on Bolt.new
+
+1. Open [https://bolt.new](https://bolt.new) in your browser.
+2. Paste the following prompt into the Bolt.new interface:
+
+```markdown
+Create a frontend-only responsive website called **NutriWise – Your AI Health Supplement Store**.
+
+The site should be structured like a modern e-commerce landing page with long-scroll layout and crawlable text content. No checkout or cart logic is needed — just focus on UI and rich product/informational content that can be indexed by Dappier.
+
+---
+
+### Page Sections:
+
+#### 1. **Hero Section**
+- Headline: “Smarter Supplements. Backed by Science.”
+- Subtext: “Explore curated health supplements and ask our AI anything — powered by real-time wellness data.”
+- Two CTA Buttons: “Browse Products” and “Ask the AI”
+
+---
+
+#### 2. **Our Mission**
+- Add 2 paragraphs describing NutriWise’s mission:
+  - Helping users make informed, safe decisions about supplementation
+  - Powered by science, built for real people
+  - Real-time answers via AI
+
+---
+
+#### 3. **Top Categories (grid layout with cards)**
+Categories to include:
+- **Immunity Boosters**
+- **Cognitive Health**
+- **Sleep & Stress Relief**
+- **Muscle & Performance**
+
+Each category card should have:
+- A short heading
+- 2–3 sentences of description
+- A few example supplements (e.g., “Vitamin C, Elderberry”)
+
+---
+
+#### 4. **Ask Our AI Advisor (Dappier Widget Placeholder)**
+Place this section **above** the product list.
+- Heading: “Ask Our AI Advisor”
+- Subtext: “Need help choosing a supplement? Ask anything and get a real-time answer.”
+- Leave a visible space with placeholder text:  
+  _“AI Chat coming soon. Powered by Dappier.”_
+
+---
+
+#### 5. **Featured Supplements (crawlable product cards)**
+Include at least 4 static product entries, each with:
+- Name (e.g., “Omega-3 Fish Oil”)
+- 2–3 sentence benefit summary
+- Use cases (heart health, brain function, etc.)
+- Ingredient highlights
+- Example static price (e.g., $29.99)
+
+Make sure each product block is crawlable for the AI.
+
+---
+
+#### 6. **FAQ – Supplement Education**
+Add at least 5 Q&A entries:
+- “What are dietary supplements?”
+- “When should I take magnesium?”
+- “Are natural supplements safer?”
+- “Can supplements help with sleep?”
+- “Do I need a multivitamin?”
+
+---
+
+#### 7. **Disclaimer**
+"This site offers general information, not medical advice. Consult your healthcare provider before starting any supplement."
+
+---
+
+#### 8. **Footer**
+- External links: `https://www.healthline.com/nutrition`, `https://examine.com/supplements`
+- Social media icons
+- Basic contact info
+- Copyright
+
+---
+
+### Design Guidelines:
+- Responsive layout with green and white color palette
+- Rounded cards, smooth transitions
+- Use modern fonts (Inter or DM Sans)
+- Support for dark mode
+- Clean, premium store-like feel
+
+The site should look and feel like a trusted online supplement advisor and store — with content optimized for AI ingestion.
+```
+
+3. Click **Submit** and let Bolt.new scaffold your frontend site.
+
+Once generated, you can further edit layout elements directly in the Bolt.new editor — no local environment required.
+
+### 🚀 Step 2: Deploy the Site to Netlify Using Bolt.new
+
+Now that your health supplement site (e.g., **NutriWise**) is ready on Bolt.new, you can deploy it to the web with just a few clicks — no manual Git setup required.
+
+Follow these steps to go live:
+
+#### 📤 One-Click Deployment from Bolt.new
+
+1. In your **Bolt.new** workspace, click the **Deploy** button in the top-right corner.
+2. Choose **Netlify** as your deployment platform.
+3. If this is your first time, Bolt will prompt you to authenticate with your Netlify account.
+4. Select a team (or personal workspace) and confirm deployment.
+
+⚡ Within seconds, your website will be deployed and accessible on a public Netlify domain.
+
+You’ll also see an option to:
+
+* **Claim your app on Netlify** – click this to take ownership of the project inside your Netlify dashboard
+* **Customize domain** – set a custom domain (like `nutriwise.ai`) if desired
+
+You now have a **live website URL** which will be used in the next step to create and embed your Dappier AI Advisor agent.
+
+
+### 🧠 Step 3: Create Your Health Supplement AI Agent on Dappier
+
+With your website now live (e.g., `https://nutriwise.netlify.app`), it’s time to create a **Dappier Custom Agent** that can provide intelligent, real-time supplement guidance based on trusted sources.
+
+Follow the steps below to set up your AI assistant and connect it to your site:
+
+#### ✅ Visit the Dappier Agent Builder
+
+Go to: [https://platform.dappier.com/my-ai](https://platform.dappier.com/my-ai)
+
+Log in or sign up using your email or Google account.
+
+#### 🧾 Define Your Agent
+
+Fill out the following fields in the **Agent Setup Form**:
+
+| Field               | Value Example                                         |
+| ------------------- | ----------------------------------------------------- |
+| **Name**            | NutriWise Assistant                                   |
+| **Description**     | Real-time advisor for health supplements and wellness |
+| **Persona & Rules** | Friendly, trustworthy, focused only on health content |
+
+This defines the voice, boundaries, and use-case of your AI advisor.
+
+#### 🔗 Add Real-Time Data Sources
+
+Provide one or more trusted sources for the agent to crawl and index. For example:
+
+* `https://www.healthline.com/nutrition`
+* `https://www.eatthis.com/supplements`
+* `https://examine.com/supplements/`
+* Your **own live site**: `https://nutriwise.netlify.app`
+
+You can combine:
+
+* **Website URLs** for live crawling
+* **RSS feeds** for health blogs
+* **PDF uploads** if you have whitepapers or product catalogs
+
+#### 🎨 Customize the Widget
+
+Choose how your widget should look and behave:
+
+| Option                 | Example Configuration                                             |
+| ---------------------- | ----------------------------------------------------------------- |
+| **Colors & Branding**  | Green palette with soft shadows, clean sans-serif font            |
+| **Prompt Suggestions** | “What are the benefits of omega-3?”, “Best supplements for sleep” |
+| **Chat Mode**          | Enabled — so users can type any question                          |
+| **Preloaded Queries**  | Optional: preload a search on page load                           |
+| **Powered by Dappier** | Toggle ON or OFF depending on your branding preference            |
+
+Once saved, Dappier will generate:
+
+* A hosted URL for standalone access (e.g., `https://nutriwise.web.dappier.com`)
+* A **script + widget tag** to embed in your site
+
+
+### 🧩 Step 4: Embed the Dappier AI Widget into Your Website
+
+Now that your NutriWise AI agent is live and ready, it’s time to integrate it into your website so users can interact with it directly from the homepage.
+
+This step will show you how to embed the Dappier AskAI widget using two quick edits in your **Bolt.new project**: one in the HTML file and one in the page content.
+
+---
+
+#### 🛠️ Part 1: Add the Script Tag in `index.html`
+
+1. In your Bolt.new editor, open the `public/index.html` file.
+2. Just after the opening `<body>` tag, paste the following line:
+
+```html
+<script src="https://cdn.dappier.com/widget.js"></script>
+```
+
+This loads the AskAI widget globally into your website.
+
+---
+
+#### 🧾 Part 2: Add the Widget Component on the Page
+
+1. Open your main React page file (typically `App.jsx` or the main homepage component).
+2. Scroll to the section where you want the AI to appear — usually just below your hero banner or in a dedicated section.
+3. Paste the widget tag:
+
+```html
+<dappier-ask-ai-widget widget-id="wd_abc123xyz"></dappier-ask-ai-widget>
+```
+
+> 🔁 Replace `wd_abc123xyz` with the **actual Widget ID** provided in your Dappier agent dashboard.
+
+---
+
+#### ✅ Result
+
+Once this is added and saved, your deployed site (e.g., `https://nutriwise.netlify.app/`) will now show a live, interactive **AI health supplement advisor**. Visitors can ask questions like:
+
+* “What are the side effects of creatine?”
+* “Which supplements help reduce stress?”
+* “Is magnesium good for sleep?”
+
+The agent will respond in real time, powered by the trusted sources you configured.
+
+### 💰 Step 5: Monetize Your Health AI Agent with CPM
+
+Once your NutriWise AI Agent is live and embedded in your website, you can turn it into a **revenue-generating asset** by enabling monetization features directly from the Dappier dashboard.
+
+Dappier allows you to set a **CPM (Cost Per 1000 queries)**, show **native ads**, or submit your agent to the **Dappier Marketplace** — perfect for health bloggers, affiliate sites, or wellness creators looking to earn from traffic.
+
+---
+
+#### 🔐 Enable Monetization in the Dappier Agent Dashboard
+
+1. Visit [https://platform.dappier.com/my-ai](https://platform.dappier.com/my-ai) and open your **NutriWise Agent**.
+2. Navigate to the **Monetization** tab.
+3. Configure the following settings:
+
+| Option                                   | Example Setting                             |
+| ---------------------------------------- | ------------------------------------------- |
+| **CPM Rate**                             | `5` (i.e., \$5 per 1000 queries)            |
+| **Marketplace Listing**                  | ✅ Enable (makes your agent publicly listed) |
+| **Native Ads / Content Recommendations** | ✅ Enable (optional)                         |
+
+> 💡 For example, a CPM of `$5` means you earn `$0.005` per query if the agent is used 1000 times.
+
+---
+
+#### 📈 Who Can Use Your Monetized Agent?
+
+Once monetized and listed on the Dappier Marketplace:
+
+* Other developers can license your agent to embed in their own projects.
+* You’ll earn revenue based on CPM pricing.
+* Dappier handles tracking, payments, and usage analytics.
+
+---
+
+#### 💡 Pro Tip: Increase Traffic = Increase Earnings
+
+You can maximize your monetization potential by:
+
+* Embedding the agent in high-traffic blog posts
+* Promoting your NutriWise site on social platforms
+* Publishing useful prompt suggestions to drive engagement
+
+That’s it! You now have a live, embeddable, real-time health advisor **with revenue built-in** — powered by Bolt.new, Netlify, and Dappier.
+
+## 🌟 Highlights
+
+This cookbook demonstrated how to build a real-time health supplement advisor by combining **Bolt.new**, **Netlify**, and **Dappier**. It provides a fast, browser-based setup that showcases a practical application of AI-generated fullstack apps powered by real-time health and nutrition data.
+
+Key tools utilized in this cookbook include:
+
+* **Bolt.new**: An AI-assisted development platform that allows developers to create, edit, and deploy fullstack applications directly from the browser with natural language prompts. It supports frameworks like React, Node.js, Express, and Supabase Edge Functions.
+* **Netlify**: A developer-friendly platform used here to deploy the frontend site created with Bolt.new, providing a public URL to embed the Dappier agent.
+* **Dappier**: A platform connecting LLMs and agentic AI applications to real-time, rights-cleared data from trusted sources, including health, wellness, and nutrition content. It delivers enriched, prompt-ready data ideal for intelligent applications.
+* **Real-Time Health Supplement App**: A frontend application that allows users to ask health supplement questions and receive real-time responses from a custom embedded Dappier AI agent, rendered directly on the page using a JavaScript widget.
+
+This complete example provides a flexible foundation that can be easily adapted for other use cases involving real-time data, embeddable AI agents, and monetizable web experiences.

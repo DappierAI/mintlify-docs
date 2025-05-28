@@ -1,205 +1,246 @@
 {
-	"openapi": "3.1.0",
-	"info": {
-	  "title": "Dappier Datamodel API",
-	  "version": "0.1.0"
-	},
-	
-	"servers": [
-		  {
-			  "url": "https://api.dappier.com"
-		  }
-	  ],
-	  
-	"paths": {
-	  "/app/aimodel/am_01j06ytn18ejftedz6dyhz2b15": {
-		"post": {
-		  "summary": "Query Real Time Data data",
-		  "description": "Access real-time google web search results including the latest news, weather, travel, deals and more.",
-		  "operationId": "query_RealTimeData_data",
-		  "requestBody": {
-			"content": {
-			  "application/json": {
-				"schema": {
-				  "$ref": "#/components/schemas/QueryRequest"
-				}
-			  }
-			},
-			"required": true
-		  },
-		  "responses": {
-			"200": {
-			  "description": "Return HTTP Status Code 200 (OK)",
-			  "content": {
-				"application/json": {
-				  "schema": {
-					"$ref": "#/components/schemas/QueryResponse"
-				  }
-				}
-			  }
-			}
-		  },
-		  "security": [
-			{
-			  "ApiKeyBearer": []
-			}
-		  ]
-		}
-	  },
-		"/app/datamodel/{datamodel_id}": {
-			"post": {
-				"summary": "Get AI Article Recommendations",
-				"description": "Retrieve articles based on queries or URLs, powered by semantic search.",
-				"parameters": [
-					{
-						"name": "datamodel_id",
-						"in": "path",
-						"required": true,
-						"description": "Data model ID, starting with `dm_`.",
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"type": "object",
-								"properties": {
-									"query": {
-										"type": "string",
-										"description": "Natural language query, keyword or URL. If URL is specified, our AI analyzes the page context, summarizes and provides semantic recommendations based on the content."
-									},
-									"similarity_top_k": {
-										"type": "integer",
-										"default": 9,
-										"description": "Number of articles to return."
-									},
-									"ref": {
-										"type": "string",
-										"description": "site domain of where ai recommendations are being displayed. Example format: dappier.com"
-									},
-									"num_articles_ref": {
-										"type": "integer",
-										"default": 0,
-										"description": "Minimum number of articles from the `ref` domain specified above. The rest of the articles will come from other sites within the RAG model."
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Dappier Datamodel API",
+    "version": "0.1.0"
+  },
 
-									},
-									"search_algorithm": {
-										"type": "string",
-										"enum": ["most_recent", "semantic", "most_recent_semantic", "trending"],
-										"description": "Search algorithm for retrieving articles. \n `most_recent`: retrieves the most recent articles by publication date. `semantic` (default): retrieves contextually relevant articles based on the query or the page content from the provided URL. `most_recent_semantic`: performs semantic search and retrieves the most recent articles by publication date. `trending`: performs a trending search and retrieves the most relevant articles to trending keywords in the past 24 hours."
-									}
-								},
-								"required": ["query"]
-							}
-						}
-					}
-				},
-				"responses": {
-					"200": {
-						"description": "Successful response with article recommendations.",
-						"content": {
-							"application/json": {
-								"schema": {
-									"type": "object",
-									"properties": {
-										"results": {
-											"type": "array",
-											"items": {
-												"type": "object",
-												"properties": {
-													"author": {
-														"type": "string",
-														"description": "Author of the article."
-													},
-													"image_url": {
-														"type": "string",
-														"description": "Image URL for the article. You can add &w=400&h=200 to the end of the URL with your desired size values to automatically resize and optimize delivery of the image."
-													},
-													"preview_content": {
-														"type": "string",
-														"description": "Short preview of the article content."
-													},
-													"pubdate": {
-														"type": "string",
-														"description": "Publication date of the article."
-													},
-													"pubdate_unix": {
-														"type": "integer",
-														"description": "Publication date in UNIX timestamp."
-													},
-													"site": {
-														"type": "string",
-														"description": "Source site of the article."
-													},
-													"site_domain": {
-														"type": "string",
-														"description": "Domain of the site."
-													},
-													"title": {
-														"type": "string",
-														"description": "Title of the article."
-													},
-													"url": {
-														"type": "string",
-														"description": "URL for the article."
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				},
-				"security": [
-					{
-						"ApiKeyBearer": []
-					}
-				]
-			}
-		}
-	},
-	"components": {
-	  "schemas": {
-		"QueryRequest": {
-		  "properties": {
-			"query": {
-			  "type": "string",
-			  "title": "Query message",
-			  "description": "query text to be passed to the AI model"
-			}
-		  },
-		  "type": "object",
-		  "required": [
-			"query"
-		  ],
-		  "title": "QueryRequest"
-		},
-		"QueryResponse": {
-		  "properties": {
-			"response": {
-			  "type": "string",
-			  "title": "Query response",
-			  "description": "response of the query sent, generated by the AI model"
-			}
-		  },
-		  "type": "object",
-		  "required": [
-			"response"
-		  ],
-		  "title": "QueryResponse"
-		}
-	  },
-	  "securitySchemes": {
-		"ApiKeyBearer": {
-		  "type": "http",
-		  "scheme": "bearer"
-		}
-	  }
-	}
+  "servers": [
+    {
+      "url": "https://api.dappier.com"
+    }
+  ],
+
+  "paths": {
+    "/app/aimodel/{ai_model_id}": {
+      "post": {
+        "summary": "Query Real-Time Data",
+        "description": "Access real-time data with Dappier's AI models — from live web search and breaking news to stock prices and financial insights. Fast, reliable, and ready for monetization.",
+        "operationId": "query_RealTimeData_data",
+        "parameters": [
+          {
+            "name": "ai_model_id",
+            "in": "path",
+            "required": true,
+            "description": "The ID of the AI model to query (e.g., am_01j06ytn18ejftedz6dyhz2b15).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QueryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Returns HTTP Status Code 200 (OK).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueryResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKeyBearer": []
+          }
+        ]
+      }
+    },
+
+    "/app/v2/search": {
+      "post": {
+        "summary": "Get AI Article Recommendations",
+        "description": "Retrieve articles based on queries or URLs, powered by semantic search.",
+        "parameters": [
+          {
+            "name": "data_model_id",
+            "in": "query",
+            "required": true,
+            "description": "Data model ID, starting with `dm_`.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "query": {
+                    "type": "string",
+                    "description": "Natural language query, keyword, or URL. If a URL is specified, our AI analyzes the page context, summarizes it, and provides semantic recommendations based on the content."
+                  },
+                  "similarity_top_k": {
+                    "type": "integer",
+                    "default": 9,
+                    "description": "The number of articles to return."
+                  },
+                  "ref": {
+                    "type": "string",
+                    "description": "The site domain where AI recommendations are being displayed. Example format: dappier.com."
+                  },
+                  "num_articles_ref": {
+                    "type": "integer",
+                    "default": 0,
+                    "description": "The minimum number of articles from the `ref` domain specified above. The rest of the articles will come from other sites within the RAG model."
+                  },
+                  "search_algorithm": {
+                    "type": "string",
+                    "enum": [
+                      "most_recent",
+                      "semantic",
+                      "most_recent_semantic",
+                      "trending"
+                    ],
+                    "description": "The search algorithm for retrieving articles.\n `most_recent`: Retrieves the most recent articles by publication date. `semantic` (default): Retrieves contextually relevant articles based on the query or the page content from the provided URL. `most_recent_semantic`: Performs semantic search and retrieves the most recent articles by publication date. `trending`: Performs a trending search and retrieves the most relevant articles to trending keywords in the past 24 hours."
+                  }
+                },
+                "required": ["query"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response with article recommendations.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "description": "The status of the API response."
+                    },
+                    "response": {
+                      "type": "object",
+                      "properties": {
+                        "query": {
+                          "type": "string",
+                          "description": "The query string used for the recommendations."
+                        },
+                        "results": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "author": {
+                                "type": "string",
+                                "description": "The author of the article."
+                              },
+                              "image_url": {
+                                "type": "string",
+                                "description": "The image URL for the article. You can add &w=400&h=200 to the end of the URL with your desired size values to automatically resize and optimize delivery of the image."
+                              },
+                              "preview_content": {
+                                "type": "string",
+                                "description": "A short preview of the article content."
+                              },
+                              "pubdate": {
+                                "type": "string",
+                                "description": "The publication date of the article."
+                              },
+                              "pubdate_unix": {
+                                "type": "integer",
+                                "description": "The publication date in UNIX timestamp."
+                              },
+                              "score": {
+                                "type": "number",
+                                "description": "The relevance score of the article."
+                              },
+                              "site": {
+                                "type": "string",
+                                "description": "The source site of the article."
+                              },
+                              "site_domain": {
+                                "type": "string",
+                                "description": "The domain of the site."
+                              },
+                              "source_url": {
+                                "type": "string",
+                                "description": "The tracking URL for the article."
+                              },
+                              "summary": {
+                                "type": "string",
+                                "description": "A summary of the article content."
+                              },
+                              "title": {
+                                "type": "string",
+                                "description": "The title of the article."
+                              },
+                              "url": {
+                                "type": "string",
+                                "description": "The URL for the article."
+                              }
+                            }
+                          }
+                        },
+                        "message": {
+                          "type": "string",
+                          "description": "Additional message or information."
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKeyBearer": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "QueryRequest": {
+        "properties": {
+          "query": {
+            "type": "string",
+            "title": "Query message",
+            "description": "The query text to be passed to the AI model."
+          }
+        },
+        "type": "object",
+        "required": ["query"],
+        "title": "QueryRequest"
+      },
+      "QueryResponse": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "title": "Query message",
+            "description": "The response of the query sent, generated by the AI model."
+          }
+        },
+        "type": "object",
+        "required": ["message"],
+        "title": "QueryResponse"
+      }
+    },
+    "securitySchemes": {
+      "ApiKeyBearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
 }
