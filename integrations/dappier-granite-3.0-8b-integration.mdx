@@ -1,0 +1,171 @@
+---
+title: "LangChain with IBM Watsonx Granite"
+icon: "microchip"
+---
+
+[LangChain](https://www.langchain.com/) is a comprehensive framework designed to simplify the creation of applications powered by large language models (LLMs). It provides modular components, pre-built chains, and agent capabilities to streamline the development of sophisticated AI applications. When combined with powerful models like **IBM Watsonx AI's Granite series**, LangChain enables developers to build robust, enterprise-grade solutions.
+
+Building your AI application with LangChain and IBM Watsonx Granite? Supercharge it with **Dappier** for immediate access to real-time, rights-cleared data spanning news, finance, market insights, weather, and much more. This allows your Granite-powered agents and chains to reason and act based on the latest information.
+
+For a comprehensive real-life use case showcasing the integration of LangChain, IBM Watsonx Granite, and Dappier for dynamic travel planning, explore this interactive [Colab Notebook](https://colab.research.google.com/drive/YOUR_TRAVEL_PLANNER_NOTEBOOK_LINK_HERE). *(Replace with the actual link to the travel planner notebook we created)*
+
+## Dappier Retriever for LangChain
+
+The `DappierRetriever` is a LangChain-compatible component that seamlessly integrates Dappier's real-time data capabilities into your LangChain workflows. It allows your LLM applications, powered by models like IBM Watsonx Granite, to fetch and utilize current information from diverse sources before generating a response or taking an action.
+
+This guide will help you get started with using the `DappierRetriever` in your LangChain and IBM Watsonx Granite projects.
+
+You can also check out a [Cookbook demonstrating a Q&A system](https://colab.research.google.com/drive/1VV8VzUTK8YFCeuiBZbXTJ5oIQce43ovP?usp=sharing) using LangChain, Dappier, and IBM Watsonx Granite.
+
+## Installation
+
+To use the `DappierRetriever` with LangChain and IBM Watsonx Granite, you'll need to install the respective packages:
+
+```bash
+pip install langchain langchain-dappier langchain-ibm ibm_watson_machine_learning
+```
+
+## Setup Dappier API Key
+
+You'll need an API key from Dappier to access its services. You can obtain one with free credits from the [Dappier Platform](https://platform.dappier.com/) (Settings -> Profile).
+
+```python Python
+import os
+
+# Securely set your Dappier API key (best practice)
+os.environ["DAPPIER_API_KEY"] = "your_dappier_api_key_here"
+
+# For IBM Watsonx, you'll also need to set:
+# os.environ["WATSONX_APIKEY"] = "your_ibm_cloud_api_key"
+# os.environ["PROJECT_ID"] = "your_watsonx_project_id"
+# os.environ["IC_REGION"] = "your_ibm_cloud_region" # e.g., "us-south"
+```
+
+(Note: IBM Watsonx setup details are covered extensively in the linked notebooks and its own documentation.)
+Using DappierRetriever
+
+The DappierRetriever conforms to LangChain's BaseRetriever interface, making it easy to plug into Retrieval-Augmented Generation (RAG) chains.
+Basic Retrieval
+
+Here's how you can instantiate and use the DappierRetriever to fetch documents based on a query. These documents can then be passed as context to your IBM Watsonx Granite LLM.
+
+```python Python
+from langchain_dappier import DappierRetriever
+from langchain_ibm import WatsonxLLM # For context, showing where LLM would be used
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.runnables import RunnablePassthrough
+
+# 1. Configure the DappierRetriever
+retriever = DappierRetriever(
+    data_model_id="dm_01jagy9nqaeer9hxx8z1sk1jx6", # Example: General Web/News
+    k=3 # Number of documents to retrieve
+)
+
+# Example usage: Get documents for a query
+query = "latest advancements in renewable energy"
+documents = retriever.invoke(query)
+
+for i, doc in enumerate(documents):
+    print(f"--- Document {i+1} ---")
+    print(f"Content: {doc.page_content[:300]}...") # Print snippet
+    if doc.metadata:
+        print(f"Source: {doc.metadata.get('source_url', 'N/A')}")
+    print("\n")
+
+# 2. (Illustrative) How you might use this with Watsonx Granite in a RAG chain:
+# This assumes 'llm' is an initialized WatsonxLLM instance
+# and 'project_id', 'watsonx_apikey' are set in os.environ
+
+# llm = WatsonxLLM(
+#     model_id="ibm/granite-13b-instruct-v2",
+#     project_id=os.environ["PROJECT_ID"],
+#     # ... other params
+# )
+
+# template = """Answer the question based only on the following context:
+# {context}
+
+# Question: {question}
+# """
+# prompt = ChatPromptTemplate.from_template(template)
+
+# def format_docs(docs):
+#     return "\n\n".join(doc.page_content for doc in docs)
+
+# rag_chain = (
+#     {"context": retriever | format_docs, "question": RunnablePassthrough()}
+#     | prompt
+#     | llm # Your WatsonxLLM instance
+#     | StrOutputParser()
+# )
+
+# response = rag_chain.invoke("What are some recent breakthroughs in solar panel efficiency?")
+# print(f"LLM Response:\n{response}")
+```
+## Example Output from retriever.invoke(query):
+
+```
+--- Document 1 ---
+Content: Recent breakthroughs in perovskite solar cells are pushing efficiency records beyond traditional silicon panels. Researchers at [University Name] have developed a new layering technique that enhances stability and power conversion, potentially making solar energy more accessible and affordable. This includes...
+Source: https://example-science-journal.com/perovskite-breakthrough
+
+--- Document 2 ---
+Content: The International Energy Agency (IEA) reports a significant surge in global renewable energy capacity, with solar PV leading the charge. Innovations in grid-scale battery storage are also critical, addressing intermittency issues and enabling wider adoption of solar and wind power. Key developments focus on...
+Source: https://www.iea.org/reports/renewable-energy-outlook-2024
+
+--- Document 3 ---
+Content: A novel approach to hydrogen production using solar-powered electrolysis has shown promising results in a pilot project by [Company Name]. This green hydrogen could decarbonize heavy industries and transportation, further boosting the impact of renewable energy sources. The system utilizes next-gen catalysts and...
+Source: N/A
+```
+
+## DappierRetriever Parameters
+
+The DappierRetriever accepts several parameters to customize its behavior:
+### `data_model_id` (str):
+
+    The Dappier data model ID to query against. Data model IDs define the scope of the data (e.g., general web, financial news, sports, weather).
+
+    Data model IDs always start with the prefix "dm_".
+
+    You can find available data model IDs at the Dappier Marketplace.
+
+    Default: If not specified, Dappier might use a general-purpose model, but explicitly setting it is recommended for targeted results.
+
+### `k` (int, optional):
+
+    The number of documents to retrieve.
+
+    Default: 9 (as per Dappier's API defaults for some underlying calls, but can vary. It's good practice to set it explicitly).
+
+### `search_algorithm` (Literal["most_recent", "most_recent_semantic", "semantic", "trending"], optional):
+
+    The search algorithm to use for retrieving articles.
+
+        "most_recent": Prioritizes the newest content.
+
+        "semantic": Prioritizes conceptual relevance to the query.
+
+        "most_recent_semantic": Balances recency and semantic relevance.
+
+        "trending": Focuses on currently popular or trending content within the data model.
+
+    Default: Dappier's default, often "most_recent". Check Dappier documentation for specifics per data model.
+
+### `ref` (str, optional):
+
+    A site domain (e.g., "example.com") to prioritize or filter results from. The exact behavior (prioritization vs. strict filtering) may depend on the Dappier data model and API.
+
+    Default: None.
+
+### `num_articles_ref` (int, optional):
+
+    When ref is specified, this suggests the minimum number of articles to be sourced from the ref domain. The retriever will attempt to fulfill this, with the rest coming from other sources within the data model.
+
+    Default: 0.
+
+### `api_key` (str, optional):
+
+    Your Dappier API key. If not provided directly, the retriever will attempt to load it from the DAPPIER_API_KEY environment variable.
+
+    Default: None (expects environment variable).
