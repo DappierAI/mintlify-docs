@@ -52,7 +52,7 @@
         "groups": [
           {
             "group": "Developer APIs",
-            "pages": ["api-reference/endpoint/real-time-data"]
+            "pages": ["api-reference/endpoint/real-time-search"]
           },
           {
             "group": "Publisher APIs",
@@ -233,7 +233,7 @@
       "anchors": [
         {
           "anchor": "Playground",
-          "href": "https://docs.dappier.com/api-reference/endpoint/real-time-data",
+          "href": "https://docs.dappier.com/api-reference/endpoint/real-time-search",
           "icon": "play"
         },
         {
