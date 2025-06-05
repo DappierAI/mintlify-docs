@@ -14,8 +14,8 @@
   "paths": {
     "/app/aimodel/{ai_model_id}": {
       "post": {
-        "summary": "Query Real-Time Data",
-        "description": "Access real-time data with Dappier's AI models — from live web search and breaking news to stock prices and financial insights. Fast, reliable, and ready for monetization.",
+        "summary": "Query Real-Time Search",
+        "description": "Access real-time search with Dappier's AI models — from live web search and breaking news to stock prices and financial insights. Fast, reliable, and ready for monetization.",
         "operationId": "query_RealTimeData_data",
         "parameters": [
           {
