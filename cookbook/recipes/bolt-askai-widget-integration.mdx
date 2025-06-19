@@ -13,6 +13,55 @@ In this walkthrough, you'll explore:
 
 This setup demonstrates a practical example of how you can leverage Bolt.new, Netlify, and Dappier together to create useful, AI-powered, monetizable health applications without complex infrastructure or boilerplate.
 
+## ⚡ Quickstart: Enable a Smart AskAI Agent
+
+Want to add a conversational AI assistant to your bolt.new app? This setup gives you a modal-style AskAI widget powered by Dappier, docked in the bottom-right corner of your screen. It responds to user questions using real-time data—perfect for search, support, and intelligent content discovery.
+
+Copy and paste the following into your project to get started:
+
+````markdown
+I'd like to enable a smart AskAI search agent on my project, docked in the bottom-right corner of the screen. When clicked, it should open a modal-style conversational experience powered by Dappier.
+
+Here's the widget I want to embed:
+
+1. Add this to the <head> section:
+
+```
+<script
+  src="https://assets.dappier.com/widget/dappier-loader.min.js"
+  widget-id="wd_01jw8xz7ztf4zr22e2whnsxp7s"
+  style-icon="chat"
+  theme="light"
+/>
+```
+
+2. And place this where the widget should mount:
+
+```
+<div id="dappier-ask-ai-widget">
+  <dappier-ask-ai-widget widgetId="wd_01jw8xz7ztf4zr22e2whnsxp7s" />
+</div>
+```
+
+It should support modal open/close behavior and work well across desktop and mobile.
+
+3. Customize the button design:
+
+Please make the button match the site's style. Some ideas:
+
+Rounded corners
+
+Chat icon next to text
+
+Sticky in the corner or part of nav
+
+Use tailwind classes like bg-indigo-600 text-white px-4 py-2 rounded-lg shadow
+````
+
+> ✅ Drop it into your Bolt app to activate a fully working, real-time AskAI assistant with no backend setup required.
+
+
+
 ## Watch the Video Guide
 
 If you prefer a visual walkthrough, check out the accompanying video guide below:
