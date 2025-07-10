@@ -107,6 +107,16 @@
                       "trending"
                     ],
                     "description": "The search algorithm for retrieving articles.\n `most_recent`: Retrieves the most recent articles by publication date. `semantic` (default): Retrieves contextually relevant articles based on the query or the page content from the provided URL. `most_recent_semantic`: Performs semantic search and retrieves the most recent articles by publication date. `trending`: Performs a trending search and retrieves the most relevant articles to trending keywords in the past 24 hours."
+                  },
+                  "page": {
+                    "type": "integer",
+                    "default": 1,
+                    "description": "Page number for pagination."
+                  },
+                  "num_results": {
+                    "type": "integer",
+                    "default": 10,
+                    "description": "Number of results per page."
                   }
                 },
                 "required": ["query"]
