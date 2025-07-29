@@ -1,0 +1,197 @@
+---
+title: "Ravenala"
+icon: "tree-palm"
+---
+
+Ravenala is an AI-native operating system for creating agentic workflows and automation across tools, APIs, and AI models. It allows users to install apps (like Zapier, WhatsApp, Mem0, and now Dappier), and use them to build real-time, AI-powered agents using models like ChatGPT, Claude, and Gemini.
+
+Ravenala supports multi-tool integration via an in-platform marketplace, zero-code and advanced prompt workflows, and streaming real-time task execution using the Model Context Protocol (MCP).
+
+[**Dappier**](https://dappier.com/developers/) is a platform that connects LLMs and Agentic AI agents to real-time, rights-cleared data from trusted sources, including web search, finance, and news. By providing enriched, prompt-ready data, Dappier empowers AI with verified and up-to-date information for a wide range of applications.
+
+Building your AI app with Ravenala? Supercharge your app with immediate access to real-time data, spanning news, entertainment, finance, stock market data, weather, and more.
+
+# Getting Started
+
+## Watch the Video
+
+If you prefer a visual walkthrough, check out the accompanying video below:
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/7rK6_PCqIQs?si=RgylF7uRvhY2VWuq" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+## Installation
+
+Users can install the Dappier App inside Ravenala directly from the marketplace:
+
+🔗 [Install Dappier App in Ravenala](https://www.ravenala.ai/apps/dappier)
+
+This app enables Ravenala agents to access Dappier's full suite of tools via secure, hosted MCP endpoints.
+
+![Ravenala Marketplace - Dappier App Installation](/images/integrations/ravenala/dappier-app-installation.png)
+
+## API Key Setup
+
+For authenticated usage (especially outside Ravenala), users can generate a Dappier API key:
+
+1. Navigate to the [Dappier platform](https://platform.dappier.com/profile/api-keys)
+2. Log in to your account (or create one if needed)
+3. Go to the API Keys section in your profile
+4. Click "Generate New API Key"
+5. Copy and securely store your API key
+
+![Dappier API Key Generation](/images/integrations/ravenala/dappier-api-key.png)
+
+# Overview
+
+## Integration Architecture
+
+Dappier provides a hosted MCP (Model Context Protocol) server that offers vertical-specific tools for Ravenala agents. All tools are hosted on Dappier's public MCP server at [https://mcp.dappier.com](https://mcp.dappier.com) and are available as callable actions within Ravenala workflows.
+
+![Ravenala-Dappier Integration Architecture](/images/integrations/ravenala/integration-architecture.png)
+
+# Available Dappier Tools
+
+Each tool is available as a callable action in Ravenala. The following tools are accessible through the Dappier App:
+
+## Real-Time Search and Data Tools
+
+| Tool Name | Cost | Description |
+| --------- | ---- | ----------- |
+| **DAPPIER_REAL_TIME_SEARCH** | Free | General-purpose web search for current events, weather, deals, and more. Used when no ticker is provided. |
+| **DAPPIER_STOCK_MARKET_DATA** | $0.007 / query | Stock ticker lookups, prices, and financial summaries. Activated when a stock symbol is detected. |
+| **DAPPIER_RESEARCH_PAPERS_SEARCH** | $0.003 / query | Search over 2.4M research papers from arXiv across fields like CS, physics, and finance. |
+
+## News and Content Tools
+
+| Tool Name | Cost | Description |
+| --------- | ---- | ----------- |
+| **DAPPIER_BENZINGA** | $0.1 / query | Real-time earnings, analyst reports, and finance news from Benzinga.com. |
+| **DAPPIER_SPORTS_NEWS** | $0.004 / query | Sports news from curated sources like Sportsnaut, Forever Blueshirts, Ringside Intel, etc. |
+| **DAPPIER_LIFESTYLE_NEWS** | $0.1 / query | Lifestyle insights and articles from The Mix, Snipdaily, Nerdable, Familyproof, and more. |
+| **DAPPIER_WISH_TV_AI** | $0.004 / query | Local news and multicultural stories from WISH-TV (politics, weather, sports, entertainment). |
+
+## Specialized Content Tools
+
+| Tool Name | Cost | Description |
+| --------- | ---- | ----------- |
+| **DAPPIER_IHEARTDOGS_AI** | $0.01 / query | Dog-care content and advice from iHeartDogs.com (health, behavior, nutrition). |
+| **DAPPIER_IHEARTCATS_AI** | $0.01 / query | Cat-care content from iHeartCats.com covering behavior, wellness, and grooming. |
+| **DAPPIER_ONE_GREEN_PLANET** | $0.01 / query | Sustainability tips, plant-based diets, and green living content from One Green Planet. |
+
+---
+
+# Usage Examples
+
+## Example 1: Stock Market Analysis
+
+**Use Case:** Get real-time market summary for Tesla (TSLA) inside a Ravenala agent.
+
+### User Prompt:
+```
+What is the current price and market performance of TSLA?
+```
+
+### Ravenala Agent Behavior:
+1. Detects the presence of a stock ticker
+2. Routes the request to the `DAPPIER_STOCK_MARKET_DATA` tool
+3. Calls the tool via the installed Dappier App
+4. Returns a real-time response
+
+### Expected Response:
+```
+TSLA is currently trading at $289.45, up 2.5% today. Latest news includes upcoming earnings expected this Thursday.
+```
+
+## Example 2: General News Search
+
+**Use Case:** Create a news aggregator that fetches the latest headlines on any topic.
+
+### User Prompt:
+```
+Give me the latest headlines about the stock market
+```
+
+### Expected Response:
+```
+Here are today's top stock market headlines:
+
+1. S&P 500 reaches new all-time high, up 0.8% in morning trading
+2. Federal Reserve signals potential rate cut in upcoming meeting
+3. Tech stocks lead market rally with NVIDIA up 3.2%
+4. Retail sector shows mixed results as consumer spending data released
+5. European markets also trending upward following positive US economic data
+```
+
+## Example 3: Sports News Aggregator
+
+**Use Case:** Build a sports news assistant that provides the latest updates on specific sports.
+
+### User Prompt:
+```
+Summarize latest football news
+```
+
+### Expected Response:
+```
+Here are the latest football headlines:
+
+1. NFL: Kansas City Chiefs sign defensive tackle to 3-year extension worth $45 million
+2. Premier League: Manchester United announces new head coach starting next season
+3. College Football: Top quarterback prospect commits to Ohio State for 2025
+4. NFL Draft: Analysts predict record number of quarterbacks in first round
+5. International: FIFA announces expanded Club World Cup format for 2025
+```
+
+## Example 4: Sustainability Content Curator
+
+**Use Case:** Create a sustainability advisor that provides eco-friendly tips and news.
+
+### User Prompt:
+```
+Show me new articles about sustainability
+```
+
+### Expected Response:
+```
+Here are the latest sustainability articles:
+
+1. "10 Simple Ways to Reduce Your Carbon Footprint at Home"
+2. "Major Companies Announce New Net-Zero Carbon Commitments"
+3. "Innovative Recycling Technologies Transforming Plastic Waste"
+4. "The Rise of Sustainable Fashion: Brands Leading the Change"
+5. "How Regenerative Agriculture is Combating Climate Change"
+```
+
+---
+
+# Key Benefits
+
+The Dappier App in Ravenala provides powerful, plug-and-play access to real-time data tools across finance, science, lifestyle, and news. Through MCP integration:
+
+## Real-Time Data Access
+- **Agents can fetch fresh content on demand**
+- Ensure your AI workflows always have the most current information
+- Eliminate stale data issues common in traditional AI systems
+
+## Enhanced Decision Making
+- **Users can enrich decision-making with live insights**
+- Combine Ravenala's powerful workflow capabilities with Dappier's trusted data
+- Create more accurate and contextually relevant AI responses
+
+## Developer Efficiency
+- **Developers can build intelligent workflows without hosting infrastructure**
+- No need to manage API endpoints or data processing pipelines
+- Reduce development time from weeks to hours
+
+## Cost Effectiveness
+- Pay only for the specific data tools you use
+- Transparent pricing with no hidden fees
+- Scale usage based on your application needs
+
+For teams building AI agents that need timely, relevant information—this integration delivers high-impact results with minimal setup.
+
+# Conclusion
+
+The Dappier integration with Ravenala represents a powerful combination of AI workflow automation and real-time data access. By following the steps outlined in this guide, you can quickly enhance your Ravenala agents with trusted, up-to-date information across multiple domains.
+
+Whether you're building financial analysis tools, news aggregators, or specialized content curators, the Dappier App provides the data foundation needed for truly intelligent AI applications.
