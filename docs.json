@@ -81,6 +81,7 @@
               "integrations/camel-integration",
               "integrations/claude-dappier-mcp-server-integration",
               "integrations/cursor-dappier-mcp-integration",
+              "integrations/dappier-granite-3.0-8b-integration",
               "integrations/dappier-mcp-server-integration",
               "integrations/google-adk-integration",
               "integrations/langchain-integration",
@@ -160,6 +161,12 @@
             "pages": [
               "cookbook/recipes/langchain-real-time-market-strategyzer",
               "cookbook/recipes/langchain-sports-news-summarizer"
+            ]
+          },
+          {
+            "group": "Granite-8B",
+            "pages": [
+              "cookbook/recipes/granite-dynamic-travel-planner"
             ]
           },
           {

@@ -1,0 +1,378 @@
+---
+title: "✈️ Dynamic Travel Planner: Real-Time Itineraries with LangChain, Dappier & IBM Watsonx Granite"
+---
+You can also check this cookbook in colab [here](https://colab.research.google.com/drive/1kQJ1aCOSnV08ToMQSNJcNUzniWtC4r3p?usp=sharing)
+
+This cookbook demonstrates how to build a dynamic travel planner using LangChain to orchestrate Dappier for real-time information (like weather and local events) and IBM Watsonx AI's Granite model for generating a tailored itinerary. By combining live data with sophisticated AI reasoning, this notebook walks you through creating adaptive travel plans.
+
+In this notebook, you'll explore:
+
+- **LangChain**: The framework used to chain together data retrieval from Dappier, prompting strategies, and inference with the IBM Watsonx Granite model.
+
+- **Dappier**: A platform connecting LLMs to real-time, rights-cleared data from trusted sources. We'll use its DappierRetriever to fetch current weather forecasts and potentially other local information crucial for travel planning.
+
+- **IBM Watsonx AI**: A platform offering enterprise-ready AI models. We'll specifically use the ibm/granite-13b-instruct-v2 model for its strong instruction-following and detailed content generation capabilities, ideal for creating itineraries.
+
+- **(Optional) AgentOps**: A tool to track and analyze your LangChain runs, providing insights into LLM calls, tool usage, and costs.
+
+This setup not only showcases a practical application of AI-driven dynamic travel planning but also provides a flexible framework that can be adapted to other real-world scenarios requiring real-time data integration and contextual reasoning.
+
+
+## 📦 Installation
+First, install the necessary libraries: LangChain, the LangChain integrations for IBM Watsonx and Dappier, and the IBM Watson Machine Learning SDK. If you plan to use AgentOps, install its SDK as well.
+```bash
+!pip install langchain langchain-ibm langchain-dappier ibm_watson_machine_learning agentops | tail -n 1
+```
+
+## 🔑 Setting Up API Keys & Credentials
+You'll need API keys for Dappier and IBM Cloud (for Watsonx AI), along with your Watsonx Project ID. If using AgentOps, you'll need its API key too.
+
+    Dappier API Key: Get your key (with free credits) from the [Dappier Platform](https://platform.dappier.com/sign-in) (Settings -> Profile).
+
+    IBM Cloud API Key: Generate one in your [IBM Cloud Account](https://cloud.ibm.com/iam/apikeys).
+
+    Watsonx Project ID: Find this within your specific project on the [IBM Watsonx.ai](https://dataplatform.cloud.ibm.com/login) platform.
+
+    IBM Cloud Region: Identify the region where your Watsonx project is hosted (e.g., us-south, eu-de).
+
+    AgentOps API Key (Optional): Get your free API key from [AgentOps](https://app.agentops.ai/signin).
+
+```python Python
+import os
+from getpass import getpass
+
+# --- Dappier ---
+dappier_api_key = getpass("Enter your Dappier API key: ")
+os.environ["DAPPIER_API_KEY"] = dappier_api_key
+
+# --- IBM Watsonx ---
+watsonx_apikey = getpass("Enter your IBM Cloud API key: ")
+os.environ["WATSONX_APIKEY"] = watsonx_apikey
+
+project_id = input("Enter your Watsonx Project ID: ") # Or set directly if known
+os.environ["PROJECT_ID"] = project_id
+
+# Set your IBM Cloud region (e.g., "us-south", "eu-de", "jp-tok")
+os.environ["IC_REGION"] = "us-south" # Ensure this matches your Watsonx project region
+
+# --- AgentOps (Optional) ---
+# agentops_api_key = getpass("Enter your AgentOps API key (or press Enter to skip): ")
+# if agentops_api_key:
+#     os.environ["AGENTOPS_API_KEY"] = agentops_api_key
+```
+
+## 📹 Monitoring with AgentOps (Optional)
+
+If you've provided an AgentOps API key, initialize it to track your LangChain execution.
+```python Python
+# import agentops
+
+# if os.environ.get("AGENTOPS_API_KEY"):
+#     agentops.init(default_tags=["LangChain Cookbook", "Dynamic Travel Planner"])
+#     print("AgentOps initialized for monitoring.")
+# else:
+#     print("AgentOps API key not provided. Skipping AgentOps initialization.")
+```
+(The AgentOps output showing the replay link will appear here if initialized)
+
+## ⚙️ Configuring Core Components: Dappier Retriever & Watsonx LLM
+### Dappier Retriever for Real-Time Information
+
+The DappierRetriever will fetch up-to-date information. For travel planning, this will primarily be weather data, but could extend to local events or news if desired (by changing data_model_id).
+
+```python Python
+from langchain_dappier import DappierRetriever
+
+# Using a general web search data model ID, as Dappier can infer weather queries
+# Alternatively, use a specific weather data model ID if available.
+travel_data_retriever = DappierRetriever(
+    data_model_id="dm_01jagy9nqaeer9hxx8z1sk1jx6", # General purpose model
+    k=2,  # Fetch top 2 relevant pieces of information for a given query
+    # search_algorithm="most_recent_semantic" # Good for timely info like weather
+)
+print("Dappier Retriever for travel data configured.")
+```
+
+## IBM Watsonx Granite LLM
+
+We'll use the Granite model for its ability to follow complex instructions and generate detailed, structured text like an itinerary.
+
+```python Python
+from langchain_ibm import WatsonxLLM
+from ibm_watson_machine_learning.metanames import GenTextParamsMetaNames as GenParams
+
+# Prepare credentials dictionary
+credentials = {
+    "url": f"https://{os.environ['IC_REGION']}.ml.cloud.ibm.com",
+    "apikey": os.environ["WATSONX_APIKEY"],
+}
+
+# Define generation parameters
+# Higher temperature for more creative/varied itineraries, lower for more factual.
+params = {
+    GenParams.DECODING_METHOD: "sample", # Use 'sample' for more diverse suggestions
+    GenParams.TEMPERATURE: 0.7,          # Allows for some creativity
+    GenParams.MIN_NEW_TOKENS: 150,
+    GenParams.MAX_NEW_TOKENS: 1024,      # Allow longer, detailed itineraries
+    GenParams.REPETITION_PENALTY: 1.1,   # Slightly discourage repetitive suggestions
+    GenParams.STOP_SEQUENCES: ["\n\nHuman:", "\n\n##"], # Stop if it starts a new thought
+}
+
+llm = WatsonxLLM(
+    model_id="ibm/granite-13b-instruct-v2", # Or other suitable Granite model
+    url=credentials.get("url"),
+    apikey=credentials.get("apikey"),
+    project_id=os.environ["PROJECT_ID"],
+    params=params,
+)
+print(f"IBM Watsonx LLM configured with model: {llm.model_id}")
+```
+
+## ✈️ Building the Dynamic Travel Planner Chain
+
+We'll create a LangChain sequence (a "chain") that:
+
+  -  Takes a user's request for a travel plan (e.g., "2-day trip to New York next weekend").
+
+  -  Uses Dappier to fetch the real-time weather forecast for the specified location and dates.
+
+  -  Feeds this weather information, along with the original request, into the Watsonx Granite model.
+
+  -  Prompts Granite to generate a detailed, weather-appropriate itinerary.
+
+## Step 1: Defining the Task and Initial Prompt
+
+The core task is to generate a travel plan. We'll use a prompt template that incorporates the fetched weather data.
+
+```python Python
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.runnables import RunnablePassthrough, RunnableLambda
+
+# Function to format retrieved documents (weather data)
+def format_retrieved_docs(docs):
+    if not docs:
+        return "No specific weather information retrieved. Plan generally."
+    return "\n\n".join([f"Context: {doc.page_content}" for doc in docs])
+
+# Function to prepare the final prompt for the LLM
+# This function will combine the original query and the fetched weather context
+def prepare_llm_input(input_dict):
+    # The Dappier retriever is invoked outside this specific function in the final chain,
+    # its output (weather_context) is passed to this function.
+    # Here we assume 'weather_context' and 'original_query' are in input_dict
+    return {
+        "weather_context": input_dict.get("weather_context", "No weather data available."),
+        "original_query": input_dict.get("original_query", "Generate a travel plan.")
+    }
+
+# The main prompt template for the LLM
+planner_prompt_template = ChatPromptTemplate.from_template(
+    """You are an expert travel planner. Your task is to create a detailed and engaging travel itinerary.
+
+    User's Request: {original_query}
+
+    Current Weather Information for the destination and dates:
+    {weather_context}
+
+    Based on the user's request and the provided weather information, generate a day-by-day itinerary.
+    For each day, suggest:
+    - Morning, Afternoon, and Evening activities.
+    - At least one dining suggestion (type of cuisine or specific if known).
+    - Emphasize activities suitable for the weather. If weather is bad, suggest indoor alternatives.
+    - Be creative and provide specific examples of places or types of activities.
+    - Structure the output clearly using Markdown. For example:
+
+    ## Day 1: [Date or Day Name] - Weather: [Brief Weather Summary from Context]
+
+    ### Morning (e.g., 9 AM - 12 PM)
+    *   Activity: [Description]
+    *   Details: [Why this activity, what to expect]
+
+    ### Lunch (e.g., 12 PM - 1 PM)
+    *   Suggestion: [Cuisine type or restaurant idea]
+
+    ### Afternoon (e.g., 1 PM - 5 PM)
+    *   Activity: [Description]
+    *   Details: [Why this activity, what to expect]
+
+    ### Evening (e.g., 6 PM onwards)
+    *   Activity: [Description]
+    *   Details: [Why this activity, what to expect]
+    *   Dinner Suggestion: [Cuisine type or restaurant idea]
+
+    Provide the itinerary now.
+    """
+)
+```
+
+## Step 2: Constructing the LangChain RAG Chain
+
+Now, let's assemble the chain. The user will provide an initial query like "Plan a 3-day trip to London next weekend".
+
+  - The travel_data_retriever (Dappier) will be invoked with a query derived from the user's request to get weather (e.g., "Weather in London next weekend").
+
+  - The retrieved weather information and the original user request will be passed to the planner_prompt_template.
+
+  - The llm (Watsonx Granite) will generate the itinerary.
+
+  - StrOutputParser will give us the final text.  
+
+```python Python
+# Define a RunnableLambda to dynamically create the Dappier query for weather
+def create_weather_query(input_dict):
+    # Example: "Plan a 2-day trip to Paris this weekend"
+    # We need to extract "Paris" and "this weekend" for the weather query.
+    # This is a simplified extraction. A more robust solution might use an LLM call
+    # or NLP techniques to parse location and date from 'original_query'.
+    original_query = input_dict.get("original_query", "")
+    
+    # Simple keyword extraction for demo purposes
+    location = "the destination" # Default
+    timeframe = "the specified dates" # Default
+    
+    words = original_query.lower().split()
+    if "to" in words:
+        try:
+            to_index = words.index("to")
+            # Attempt to grab a plausible location (1-3 words after "to")
+            potential_location = " ".join(words[to_index+1 : min(len(words), to_index+4)]).split(" this")[0].split(" next")[0].split(" for")[0].split(" on")[0]
+            # Further refine: if the potential location contains prepositions often starting timeframes, cut it there.
+            common_time_preps = ["this", "next", "for", "on", "during"]
+            for prep in common_time_preps:
+                if prep in potential_location.split():
+                    potential_location = " ".join(potential_location.split()[:potential_location.split().index(prep)])
+                    break
+            if potential_location:
+                location = potential_location.strip().title()
+
+        except (ValueError, IndexError):
+            pass # Stick to default if "to" isn't found or parsing fails
+
+    time_keywords = ["weekend", "week", "month", "days", "today", "tomorrow"]
+    for i, word in enumerate(words):
+        if word in time_keywords:
+            # Grab a few words around the time keyword
+            timeframe_parts = words[max(0, i-1) : min(len(words), i+3)]
+            # Avoid re-including the location if it's adjacent
+            if location.lower() in " ".join(timeframe_parts).lower():
+                 timeframe = " ".join([p for p in timeframe_parts if location.lower() not in p.lower()]).strip()
+            else:
+                timeframe = " ".join(timeframe_parts).strip()
+            break
+        elif "days" in word and i > 0 and words[i-1].isdigit(): # "2 days"
+            timeframe = " ".join(words[i-1:i+1])
+            break
+
+
+    weather_q = f"Weather forecast for {location} {timeframe}"
+    print(f"DEBUG: Generated weather query for Dappier: '{weather_q}' from original: '{original_query}'")
+    return weather_q
+
+# The main RAG chain for the travel planner
+travel_planner_chain = (
+    {
+        "weather_query": RunnableLambda(create_weather_query), # Dynamically create weather query
+        "original_query": RunnablePassthrough() # Pass through the original user query object
+    }
+    | {
+        "weather_context": (lambda x: x["weather_query"]) | travel_data_retriever | RunnableLambda(format_retrieved_docs), # Fetch and format weather
+        "original_query": (lambda x: x["original_query"]["original_query"]) # Extract original query string
+    }
+    | planner_prompt_template
+    | llm
+    | StrOutputParser()
+)
+
+print("Dynamic Travel Planner chain created.")
+```
+Note on create_weather_query function: The location and date parsing in the create_weather_query function is a simplified example. For a production system, you'd likely use more robust NLP techniques or even a small LLM call to reliably extract location and date entities from the user's free-form query.
+
+## Step 3: Running the Planner and Getting an Itinerary
+
+Let's ask for a travel plan!
+
+```python Python
+# User's travel request
+user_travel_request = {
+    "original_query": "Generate a 3-day relaxed travel itinerary for Kyoto, Japan next weekend. I like temples, gardens, and good food, but not too much hiking."
+}
+
+print(f"\nGenerating travel plan for: '{user_travel_request['original_query']}'")
+print("Fetching real-time weather with Dappier and generating itinerary with Watsonx Granite...")
+
+# Invoke the chain
+# The input to the chain is the dictionary as defined by the first step of the chain
+itinerary_response = travel_planner_chain.invoke(user_travel_request)
+
+# Print the rich Markdown output
+from IPython.display import display, Markdown
+display(Markdown(itinerary_response))
+```
+
+## Expected Output (Illustrative - will vary based on real-time Dappier data and LLM generation):
+
+The output will be a Markdown formatted itinerary. Here's a conceptual snippet:
+
+```markdown Markdown
+DEBUG: Generated weather query for Dappier: 'Weather forecast for Kyoto, Japan next weekend' from original: 'Generate a 3-day relaxed travel itinerary for Kyoto, Japan next weekend. I like temples, gardens, and good food, but not too much hiking.'
+
+## Day 1: Friday - Weather: Partly Cloudy, Cool, High 15°C
+
+### Morning (9 AM - 12 PM)
+*   Activity: Visit Kinkaku-ji (Golden Pavilion)
+*   Details: Start your Kyoto journey with one of its most iconic Zen Buddhist temples. The gold leaf exterior is stunning, especially in the morning light. The surrounding gardens are beautiful and perfect for a gentle stroll.
+
+### Lunch (12 PM - 1 PM)
+*   Suggestion: Enjoy some Udon or Soba noodles near Kinkaku-ji. Many small, local restaurants offer delicious and affordable options.
+
+### Afternoon (1 PM - 5 PM)
+*   Activity: Explore Ryoan-ji Temple & Its Rock Garden
+*   Details: A short bus ride from Kinkaku-ji, Ryoan-ji is famous for its Zen rock garden, a masterpiece of minimalist design inviting quiet contemplation. The temple grounds also feature a lovely pond and walking paths.
+
+### Evening (6 PM onwards)
+*   Activity: Dinner and Gion Stroll
+*   Details: Head to the Gion district. Enjoy dinner at a restaurant offering Kyoto's traditional Kyo-ryori (haute cuisine) or try some Okonomiyaki. Afterwards, take a walk through Gion's historic streets; you might even spot a geiko (Kyoto geisha).
+*   Dinner Suggestion: Izakaya for a variety of small dishes and local sake.
+
+## Day 2: Saturday - Weather: Sunny with some clouds, Pleasant, High 17°C
+
+### Morning (9 AM - 12 PM)
+*   Activity: Fushimi Inari Shrine (Thousand Torii Gates)
+*   Details: While this involves some walking, you can choose how far up the mountain you go. The thousands of vibrant red torii gates create a magical path. Stick to the lower sections for a relaxed experience. The sunny weather will make the gates even more impressive.
+
+### Lunch (12 PM - 1 PM)
+*   Suggestion: Try some street food near Fushimi Inari, like Kitsune Udon (udon with sweet fried tofu, Inari's messenger fox's favorite) or Yakitori.
+
+... and so on for Day 2 Afternoon/Evening and Day 3.
+```
+
+## ⏹️ End AgentOps Session (If Used)
+
+```python Python
+# if os.environ.get("AGENTOPS_API_KEY") and 'agentops' in globals():
+#     agentops.end_session("Success")
+#     print("AgentOps session ended.")
+```
+
+(AgentOps summary stats and replay link will appear here if used)
+
+## 🌟 Highlights
+
+This cookbook has guided you through building a dynamic travel planner that uses:
+
+  - LangChain: To orchestrate the workflow, connecting data retrieval, prompting, and LLM generation.
+
+  - Dappier: To fetch real-time weather information via its DappierRetriever, ensuring the travel plans are weather-appropriate.
+
+  - IBM Watsonx AI: Leveraging the WatsonxLLM with the Granite model to generate creative, detailed, and context-aware travel itineraries.
+
+  - RAG (Retrieval Augmented Generation): The core pattern, where external, real-time knowledge (weather) augments the LLM's generation process.
+
+This comprehensive setup allows for flexible and adaptive travel planning. You can extend this by:
+
+  - Using different data_model_ids in Dappier to fetch other relevant information (e.g., local events, news, restaurant reviews).
+
+  - Refining the prompt to cater to different travel styles (e.g., adventure, budget, luxury).
+
+  - Integrating more sophisticated NLP for location/date extraction from user queries.
