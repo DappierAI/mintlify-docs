@@ -25,7 +25,9 @@ Api reference for this endpoint can be found [here](https://docs.dappier.com/api
     "similarity_top_k": 3,
     "ref": "",
     "num_articles_ref": 0,
-    "search_algorithm": "most_recent"
+    "search_algorithm": "most_recent",
+    "page": 1,
+    "num_results" : 10
 
 })
 headers = {
@@ -56,7 +58,9 @@ headers = {
         "similarity_top_k": 3,
         "ref": "",
         "num_articles_ref": 0,
-        "search_algorithm": "most_recent"
+        "search_algorithm": "most_recent",
+        "page": 1,
+        "num_results" : 10
     }`
 
     req, err := http.NewRequest("POST", url, bytes.NewBuffer([]byte(query)))
@@ -94,7 +98,9 @@ defer resp.Body.Close()
         "similarity_top_k": 3,
         "ref": "",
         "num_articles_ref": 0,
-        "search_algorithm" : "most_recent"
+        "search_algorithm" : "most_recent",
+        "page": 1,
+        "num_results" : 10
     }'
     ```
 
