@@ -1,0 +1,300 @@
+---
+title: "Skyfire x Dappier"
+icon: "credit-card"
+---
+
+Skyfire and Dappier together demonstrate the future of **payment-enabled AI service integration**, showing how AI agents can act as **autonomous economic actors**.
+This integration empowers agents to not only fetch real-time, rights-cleared data from Dappier but also to **authenticate, estimate costs, and process payments** through Skyfire’s infrastructure — without human intervention.
+
+## About the Platforms
+
+### [Dappier](https://dappier.com/developers/)
+
+Dappier connects LLMs and automation frameworks to **real-time, rights-cleared data** from trusted sources — including web search, finance, research, and news.
+By providing enriched, prompt-ready data, Dappier enables AI automations to deliver **verified, up-to-date information** for a wide range of applications.
+
+Dappier provides:
+
+- **MCP Server** at [mcp.dappier.com](https://mcp.dappier.com)
+- Tools for **real-time search, finance, research papers, news, lifestyle, and sustainability**
+- Rights-cleared content from publishers like Benzinga, Sportsnaut, iHeartDogs, iHeartCats, and more
+
+### [Skyfire](https://app.skyfire.xyz/)
+
+Skyfire empowers AI to handle **payments, authentication, and commerce** without human intervention. From account creation to monetizing services, Skyfire enables the world’s fastest-growing consumer base: **AI agents**.
+
+Skyfire provides:
+
+- **MCP Server** at [mcp.skyfire.xyz](https://mcp.skyfire.xyz/mcp)
+- Tools for service discovery, token creation, and payments
+- A Seller Directory where providers (like Dappier) can list services:
+  [Dappier Service on Skyfire Directory](https://app.skyfire.xyz/directory/service/81085b79-68d8-4a46-9f8c-63c11a969828)
+
+Together, Dappier and Skyfire enable an ecosystem where **AI agents discover services, authenticate, pay, and execute tasks** — end-to-end.
+
+---
+
+# Getting Started
+
+## Live Demo
+
+🔗 [Skyfire x Dappier Demo](https://skyfire-demo.dappier.com/)
+
+This is a fully working demo showcasing:
+
+- Real-time service discovery
+- Authentication and token creation
+- Cost estimation before execution
+- Payment token creation and charging
+- Query execution against Dappier’s real-time tools
+- Multi-agent orchestration with Microsoft AutoGen Swarm
+
+## Local Installation
+
+Clone the repositories:
+
+- **Backend (Multi-Agent Orchestration)**
+  [dappier-skyfire-api](https://github.com/DappierAI/dappier-skyfire-api)
+
+- **Frontend (React Demo UI)**
+  [skyfire-dappier-demo-ui](https://github.com/DappierAI/skyfire-dappier-demo-ui)
+
+Follow the instructions in each README.
+
+### Environment Variables
+
+```env
+# Required API Keys
+OPENAI_API_KEY=your_openai_api_key_here
+DAPPIER_API_KEY=your_dappier_api_key_here
+SKYFIRE_SELLER_API_KEY=your_skyfire_seller_api_key_here
+
+# Optional Config
+FLASK_ENV=development
+FLASK_DEBUG=True
+```
+
+### Running the Backend
+
+```bash
+git clone https://github.com/DappierAI/dappier-skyfire-api
+cd dappier-skyfire-api
+pip install -r requirements.txt
+python app.py
+```
+
+Backend runs on `http://localhost:5000`.
+
+### Running the Frontend
+
+```bash
+git clone https://github.com/DappierAI/skyfire-dappier-demo-ui
+cd skyfire-dappier-demo-ui
+npm install
+npm run dev
+```
+
+Frontend runs on `http://localhost:5173`.
+
+---
+
+# Architecture
+
+## 10-Step Workflow with Specialized Agents
+
+The integration demonstrates a **10-step agentic workflow** coordinated by Microsoft AutoGen’s **Swarm pattern**. Each agent has a clear, specialized role:
+
+1. **Planning Agent**
+
+   - Entry point for user queries.
+   - Routes requests through the appropriate workflow.
+   - Maintains orchestration logic and conversation state.
+
+2. **Skyfire Find Seller Agent**
+
+   - Searches Skyfire’s marketplace directory.
+   - Locates the Dappier service listing and retrieves its metadata.
+
+3. **Skyfire KYA Agent (Know Your Agent)**
+
+   - Issues **authentication tokens** for secure agent-to-service interactions.
+   - Ensures buyer and seller identity verification.
+
+4. **JWT Decoder Agent**
+
+   - Validates JWT tokens created by Skyfire.
+   - Decodes payloads to ensure token integrity and extract claims.
+   - Used twice in the workflow (auth tokens and payment tokens).
+
+5. **MCP Connector Agent**
+
+   - Connects to the Dappier MCP server ([mcp.dappier.com](https://mcp.dappier.com/mcp)).
+   - Retrieves available tools and pricing information.
+
+6. **Dappier Price Calculator Agent**
+
+   - Estimates the cost of the requested Dappier query.
+   - Uses pricing logic (mocked with static JSON for the demo).
+
+7. **Skyfire KYA Payment Token Agent**
+
+   - Creates **payment tokens** with estimated amounts.
+   - Prepares the payment flow before execution.
+
+8. **JWT Decoder Agent (second usage)**
+
+   - Decodes and verifies the payment token payload.
+   - Ensures correctness before charging.
+
+9. **Dappier Agent**
+
+   - Executes the actual query against Dappier’s real-time data tools.
+   - Handles results from finance, news, research, and more.
+
+10. **Skyfire Charge Token Agent**
+
+    - Processes payment by charging the token through Skyfire’s API.
+    - Completes the loop with secure settlement.
+
+---
+
+# Tools Available via Dappier MCP Server
+
+The following tools are available when Dappier is discovered through Skyfire:
+
+| Tool Name                  | Cost           | Description                                                              |
+| -------------------------- | -------------- | ------------------------------------------------------------------------ |
+| **REAL_TIME_SEARCH**       | Free           | General-purpose web search for current events, weather, deals, and more. |
+| **STOCK_MARKET_DATA**      | $0.007 / query | Real-time stock lookups, tickers, and summaries.                         |
+| **RESEARCH_PAPERS_SEARCH** | $0.003 / query | Search across 2.4M+ arXiv research papers.                               |
+| **BENZINGA**               | $0.1 / query   | Earnings, analyst reports, finance news from Benzinga.                   |
+| **SPORTS_NEWS**            | $0.004 / query | Sports updates from trusted publishers.                                  |
+| **LIFESTYLE_NEWS**         | $0.1 / query   | Lifestyle and entertainment stories.                                     |
+| **IHEARTDOGS_AI**          | $0.01 / query  | Dog-care content and health advice.                                      |
+| **IHEARTCATS_AI**          | $0.01 / query  | Cat behavior, wellness, and grooming.                                    |
+| **ONE_GREEN_PLANET**       | $0.01 / query  | Sustainability, plant-based diets, eco-living content.                   |
+
+---
+
+# Usage Examples
+
+## Example 1: Stock Market with Payment
+
+**Use Case:** Fetch Tesla stock data (TSLA) with automated payment.
+
+**User Prompt:**
+
+```
+Get me the latest TSLA stock price
+```
+
+**Workflow:**
+
+1. Find Dappier in Skyfire marketplace
+2. Generate authentication token
+3. Decode token for verification
+4. Connect to Dappier MCP
+5. Estimate cost ($0.007)
+6. Create payment token
+7. Decode payment token
+8. Execute `STOCK_MARKET_DATA` query
+9. Charge payment token
+
+**Expected Response:**
+
+```
+TSLA is trading at $289.45, up 2.5% today. Earnings call expected Thursday.
+(Payment of $0.007 processed via Skyfire)
+```
+
+---
+
+## Example 2: AI News with Token Charging
+
+**User Prompt:**
+
+```
+What are the latest news about AI?
+```
+
+**Expected Response:**
+
+```
+1. OpenAI announces new model capabilities
+2. Google DeepMind releases robotics update
+3. Anthropic secures $1B funding round
+(Payment processed via Skyfire for Dappier query)
+```
+
+---
+
+## Example 3: Sports News Aggregator
+
+**User Prompt:**
+
+```
+Summarize today’s football news
+```
+
+**Expected Response:**
+
+```
+1. NFL: Chiefs extend defensive tackle for $45M
+2. Premier League: Manchester United announces new coach
+3. FIFA expands Club World Cup for 2025
+(Payment processed via Skyfire)
+```
+
+---
+
+# Key Benefits
+
+## Real-Time Payments
+
+- AI agents autonomously pay for services.
+- Transparent cost estimation → payment → execution cycle.
+
+## Verified Data Access
+
+- Data is rights-cleared and up-to-date.
+- Ensures accuracy and reliability for downstream use.
+
+## Developer Efficiency
+
+- AutoGen Swarm manages retries, error handling, and agent handoffs.
+- Developers focus on logic instead of infrastructure.
+
+## Scalable Monetization
+
+- Service providers list on Skyfire.
+- AI agents discover and pay seamlessly.
+
+---
+
+# Conclusion
+
+The **Skyfire x Dappier integration** demonstrates how AI agents can become **fully autonomous service consumers**.
+
+By combining **Skyfire’s payment rails** with **Dappier’s data-rich MCP tools**, developers can create intelligent agents that:
+
+- Discover services in real-time
+- Authenticate securely
+- Estimate costs before execution
+- Handle payments end-to-end
+- Retrieve trusted data with no human involvement
+
+🔗 Explore further:
+
+- [Skyfire Seller Directory – Dappier Service](https://app.skyfire.xyz/directory/service/81085b79-68d8-4a46-9f8c-63c11a969828)
+- [Skyfire Demo](https://skyfire-demo.dappier.com/)
+- [Backend Repo](https://github.com/DappierAI/dappier-skyfire-api)
+- [Frontend Repo](https://github.com/DappierAI/skyfire-dappier-demo-ui)
+
+---
+
+# References & Related Links
+
+- [Microsoft AutoGen Swarm](https://microsoft.github.io/autogen/)
+- [Model Context Protocol (MCP)](https://modelcontextprotocol.io/)
+- [Skyfire Docs](https://app.skyfire.xyz/)
+- [Dappier Developers](https://dappier.com/developers/)
