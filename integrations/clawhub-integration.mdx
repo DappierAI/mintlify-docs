@@ -1,0 +1,406 @@
+---
+title: "ClawHub"
+icon: "lobster"
+---
+
+[**ClawHub**](https://clawhub.ai) is the official skill registry for OpenClaw — a local-first,
+open-source AI agent framework. It functions as a centralized marketplace where developers
+can discover, install, and publish modular "skills" that extend an OpenClaw agent's
+capabilities. Skills are simple folder-based bundles containing a `SKILL.md` file and
+supporting scripts, installable in seconds via the ClawHub CLI.
+
+[**Dappier**](https://dappier.com/developers/) is a platform that connects
+LLMs and Agentic AI agents to real-time, rights-cleared data from trusted
+sources, including web search, finance, and news. By providing enriched,
+prompt-ready data, Dappier empowers AI with verified and up-to-date
+information for a wide range of applications.
+
+## Overview
+
+The ClawHub integration with [Dappier](https://dappier.com/) allows OpenClaw users to
+supercharge their AI agents with real-time search and AI-powered recommendation tools —
+no training or fine-tuning required. By leveraging Dappier's pre-trained, RAG-ready APIs,
+your agent can retrieve accurate, up-to-date information across key domains such as news,
+finance, weather, sports, research, and more.
+
+The [`dappier-search`](https://clawhub.ai/amaan-ai20/dappier-search) skill ships with
+two categories of tools:
+
+- **Real Time Search Tools**: Enable your OpenClaw agent to access live web data and
+  financial markets using natural language queries.
+- **AI Recommendation Tools**: Provide intelligent, curated content recommendations
+  from trusted media sources based on user intent and query context.
+
+Together, these tools help ensure your agent's outputs are factual, relevant, and enriched
+with trusted real-world data.
+
+## Prerequisites
+
+### Tools Profile
+
+The `dappier-search` skill executes Node.js scripts on your local machine and requires
+access to filesystem, runtime, and shell tools. By default, OpenClaw may run with a
+restricted tool profile that blocks these capabilities.
+
+To ensure all Dappier tools execute correctly, set your tools profile to `full` in your
+OpenClaw configuration file (`~/.openclaw/openclaw.json`):
+
+```json
+{
+	"tools": {
+		"profile": "full"
+	}
+}
+```
+
+The `full` profile places no restrictions on available tools, giving your agent unrestricted
+access to run scripts, read files, and execute shell commands. The available profiles are:
+
+| Profile     | Description                                             |
+| ----------- | ------------------------------------------------------- |
+| `minimal`   | Chat only — `session_status` tool only                  |
+| `messaging` | Messaging tools and session management only             |
+| `coding`    | Filesystem, runtime, session, memory, and image tools   |
+| `full`      | No restrictions — required for external skill execution |
+
+> **Note:** After editing `openclaw.json`, restart the OpenClaw Gateway for the change
+> to take effect: `openclaw restart`
+
+## Installation
+
+### Install the skill via ClawHub CLI
+
+```bash
+clawhub install dappier-search
+```
+
+You can also browse and download the skill directly from the ClawHub marketplace:
+
+👉 [clawhub.ai/amaan-ai20/dappier-search](https://clawhub.ai/amaan-ai20/dappier-search)
+
+### Requirements
+
+- **Node.js 18+** — required for native `fetch` support
+- **A Dappier API key** — set as the `DAPPIER_API_KEY` environment variable
+
+### Setup your API Key
+
+Generate a free API key from your [Dappier API dashboard](https://platform.dappier.com/profile/api-keys).
+
+Once you have the key, you can provide it in one of two ways:
+
+**Option 1 — Export in your shell (temporary, current session only):**
+
+```bash
+export DAPPIER_API_KEY="YOUR_KEY_HERE"
+```
+
+**Option 2 — Define it permanently in your OpenClaw environment file:**
+
+Add the following line to `~/.openclaw/.env`:
+
+```bash
+DAPPIER_API_KEY="YOUR_KEY_HERE"
+```
+
+OpenClaw automatically loads environment variables from this file at startup, so your
+key will be available to all skills — including `dappier-search` — without needing to
+export it each session.
+
+---
+
+## Real Time Search Tools
+
+The real-time search tools give your OpenClaw agent live access to the web and financial
+markets. There are two tools in this category.
+
+### 1. Real-Time Web Search
+
+Query real-time web content including the latest news, weather, travel deals, gold prices,
+and general web information.
+
+```bash
+node {baseDir}/scripts/realtime-search.mjs "query"
+```
+
+**Examples:**
+
+```bash
+node {baseDir}/scripts/realtime-search.mjs "latest news today"
+node {baseDir}/scripts/realtime-search.mjs "weather in New York today"
+node {baseDir}/scripts/realtime-search.mjs "best travel deals this week"
+node {baseDir}/scripts/realtime-search.mjs "gold price today"
+```
+
+**Sample output:**
+
+```
+## Real Time Search Results
+
+Partly cloudy in New York today with highs around 65°F and a chance of light rain in the evening.
+```
+
+### 2. Stock Market Data
+
+Access real-time financial insights, stock prices, and market news for any publicly traded
+company.
+
+> **Note:** The query **must include a stock ticker symbol** (e.g. `AAPL`, `TSLA`, `MSFT`,
+> `GOOGL`) to retrieve meaningful results.
+
+```bash
+node {baseDir}/scripts/stock-market.mjs "query with ticker symbol"
+```
+
+**Examples:**
+
+```bash
+node {baseDir}/scripts/stock-market.mjs "AAPL stock price today"
+node {baseDir}/scripts/stock-market.mjs "TSLA latest financial news"
+node {baseDir}/scripts/stock-market.mjs "MSFT earnings report"
+node {baseDir}/scripts/stock-market.mjs "GOOGL revenue growth"
+node {baseDir}/scripts/stock-market.mjs "AMZN market cap"
+```
+
+**Sample output:**
+
+```
+## Stock Market Data
+
+Meta shares rose 2.5% following an announcement of new AI products, as reported by Bloomberg.
+```
+
+### Parameters
+
+Both real-time search tools accept a single required parameter:
+
+#### `query` (str)
+
+- A natural language query used to retrieve real-time data.
+- For `stock-market`, the query **must include a ticker symbol**.
+- This parameter is required for both tools.
+
+---
+
+## AI Recommendation Tools
+
+The AI recommendation tools provide curated, real-time article recommendations from
+trusted media sources across a range of verticals. These are powered by Dappier's
+pre-trained RAG data models.
+
+### 3. Sports News
+
+Fetch AI-powered sports news and updates from top sources including **Sportsnaut**,
+**Forever Blueshirts**, **Minnesota Sports Fan**, **LAFB Network**, **Bounding Into Sports**,
+and **Ringside Intel**.
+
+```bash
+node {baseDir}/scripts/sports-news.mjs "query"
+node {baseDir}/scripts/sports-news.mjs "query" --top_k 5
+node {baseDir}/scripts/sports-news.mjs "query" --algorithm trending
+```
+
+**Examples:**
+
+```bash
+node {baseDir}/scripts/sports-news.mjs "NFL playoff results"
+node {baseDir}/scripts/sports-news.mjs "NBA trade rumors" --algorithm trending --top_k 5
+node {baseDir}/scripts/sports-news.mjs "MLB scores today" --top_k 5
+node {baseDir}/scripts/sports-news.mjs "Premier League standings"
+node {baseDir}/scripts/sports-news.mjs "UFC fight results this week" --algorithm most_recent
+```
+
+**Sample output:**
+
+```
+Result 1:
+Title: Vincent Trocheck's overtime goal lifts Rangers past Wild 5-4 for crucial victory
+Author: Jim Cerny
+Published on: Thu, 03 Apr 2025 02:23:30 +0000
+Source: Forever Blueshirts (www.foreverblueshirts.com)
+URL: https://www.foreverblueshirts.com/new-york-rangers-news/vincent-trocheck-overtime-goal-victory-wild/
+Image URL: https://images.dappier.com/dm_01j0pb465keqmatq9k83dthx34/example.jpg
+Summary: Vincent Trocheck's overtime goal gave the Rangers a 5-4 win over the Minnesota Wild,
+tying them with the Canadiens in the playoff race. Panarin had a goal and two assists.
+Score: None
+```
+
+### 4. Benzinga Financial News
+
+Access real-time financial news and market analysis directly from **Benzinga.com**.
+Best used for financial headlines, earnings updates, and market sentiment — distinct from
+raw stock price queries.
+
+```bash
+node {baseDir}/scripts/benzinga-news.mjs "query"
+node {baseDir}/scripts/benzinga-news.mjs "query" --top_k 5
+node {baseDir}/scripts/benzinga-news.mjs "query" --algorithm trending
+```
+
+**Examples:**
+
+```bash
+node {baseDir}/scripts/benzinga-news.mjs "latest market news"
+node {baseDir}/scripts/benzinga-news.mjs "NVDA news" --algorithm most_recent
+node {baseDir}/scripts/benzinga-news.mjs "AAPL earnings" --top_k 5
+node {baseDir}/scripts/benzinga-news.mjs "inflation report markets" --algorithm trending
+```
+
+**Sample output:**
+
+```
+Result 1:
+Title: NVIDIA Posts Record Revenue Amid AI Chip Boom
+Author: Sarah Markets
+Published on: Thu, 03 Apr 2025 09:00:00 +0000
+Source: Benzinga (www.benzinga.com)
+URL: https://www.benzinga.com/news/nvidia-record-revenue
+Image URL: https://images.dappier.com/example/nvidia.jpg
+Summary: NVIDIA reported record quarterly revenue driven by surging demand for AI chips,
+beating analyst expectations by a wide margin.
+Score: None
+```
+
+### 5. Lifestyle News
+
+Fetch AI-powered lifestyle news from leading publications including **The Mix**,
+**Snipdaily**, **Nerdable**, and **Familyproof** — covering wellness, family life,
+home, entertainment, and more.
+
+```bash
+node {baseDir}/scripts/lifestyle-news.mjs "query"
+node {baseDir}/scripts/lifestyle-news.mjs "query" --top_k 5
+node {baseDir}/scripts/lifestyle-news.mjs "query" --algorithm trending
+```
+
+**Examples:**
+
+```bash
+node {baseDir}/scripts/lifestyle-news.mjs "wellness trends 2026"
+node {baseDir}/scripts/lifestyle-news.mjs "family routine hacks" --algorithm trending
+node {baseDir}/scripts/lifestyle-news.mjs "home organization tips" --top_k 5
+node {baseDir}/scripts/lifestyle-news.mjs "celebrity lifestyle news" --algorithm most_recent
+```
+
+**Sample output:**
+
+```
+Result 1:
+Title: Top 10 Travel Trends for 2026
+Author: Jane Doe
+Published on: Thu, 03 Apr 2025 02:00:00 +0000
+Source: The Mix (www.themix.com)
+URL: https://www.themix.com/travel/travel-trends-2026/
+Image URL: https://images.dappier.com/example/travel-trends.jpg
+Summary: From eco-tourism to remote work getaways, these are the top trends shaping
+how we explore the world in 2026.
+Score: None
+```
+
+### 6. Research Papers Search
+
+Perform a real-time scholarly search across over **2.4 million open-access articles**
+from arXiv and other academic sources, spanning computer science, mathematics, physics,
+quantitative finance, statistics, and more.
+
+```bash
+node {baseDir}/scripts/research-papers.mjs "query"
+```
+
+**Examples:**
+
+```bash
+node {baseDir}/scripts/research-papers.mjs "transformer architecture original paper"
+node {baseDir}/scripts/research-papers.mjs "recent arXiv papers on diffusion models"
+node {baseDir}/scripts/research-papers.mjs "graph neural networks survey 2024"
+```
+
+**Sample output:**
+
+```
+## Research Papers Search
+
+The original Transformer architecture, introduced in "Attention Is All You Need" (Vaswani et al., 2017),
+proposed a novel encoder-decoder model based entirely on self-attention mechanisms, replacing
+recurrent layers used in prior sequence-to-sequence models...
+```
+
+### 7. Stellar AI (Solar & Roof Analysis)
+
+Provide a residential home address and receive an advanced solar feasibility analysis —
+including roof dimensions, solar panel placement recommendations, and estimated energy output —
+powered by Digital Satellite Imagery (DSM) and solar irradiance data.
+
+```bash
+node {baseDir}/scripts/stellar-ai.mjs "residential home address"
+```
+
+**Examples:**
+
+```bash
+node {baseDir}/scripts/stellar-ai.mjs "1600 Amphitheatre Parkway, Mountain View, CA"
+node {baseDir}/scripts/stellar-ai.mjs "1 Hacker Way, Menlo Park, CA"
+node {baseDir}/scripts/stellar-ai.mjs "221B Baker Street, London"
+```
+
+**Sample output:**
+
+```
+## Stellar AI (Solar & Roof Analysis)
+
+Roof area: ~2,400 sq ft. Estimated usable solar surface: 1,750 sq ft.
+Recommended panel count: 28–32 panels. Estimated annual output: 12,500 kWh.
+Solar irradiance index: High (5.8 peak sun hours/day).
+Payback period estimate: 6–8 years based on current utility rates.
+```
+
+### Parameters
+
+All AI Recommendation tools (`sports-news`, `benzinga-news`, `lifestyle-news`) share the
+following options. The `research-papers` and `stellar-ai` tools accept only a `query`.
+
+#### `query` (str)
+
+- The natural language query for retrieving recommendations or search results.
+- Required for all tools.
+
+#### `--top_k` (int) _Optional_
+
+- The number of result articles to return.
+- Defaults to `9`.
+- Example: `--top_k 5`
+
+#### `--algorithm` (str) _Optional_
+
+- The search algorithm used to rank and retrieve articles.
+- Defaults to `most_recent`.
+- Available options:
+
+| Value                  | Description                                              |
+| ---------------------- | -------------------------------------------------------- |
+| `most_recent`          | Returns the latest published articles (default)          |
+| `semantic`             | Returns articles most semantically relevant to the query |
+| `most_recent_semantic` | Blends recency and semantic relevance                    |
+| `trending`             | Returns articles gaining the most traction right now     |
+
+---
+
+## Conclusion
+
+Integrating Dappier with your OpenClaw agent via ClawHub gives your AI access to
+live, trustworthy data from across the web — without hallucinations or stale training data.
+Whether you need real-time stock prices, breaking sports results, academic papers, or solar
+estimates for a specific address, the `dappier-search` skill covers it all.
+
+With a single install command and your Dappier API key, your agent is ready to retrieve
+factual, fresh, and focused responses from the world's most trusted data sources.
+
+**Install the skill:**
+
+```bash
+clawhub install dappier-search
+```
+
+**Or download it from ClawHub:**
+
+👉 [clawhub.ai/amaan-ai20/dappier-search](https://clawhub.ai/amaan-ai20/dappier-search)

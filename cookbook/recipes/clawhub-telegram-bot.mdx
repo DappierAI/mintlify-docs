@@ -1,0 +1,364 @@
+---
+title: "🦞 Build a Real-Time Telegram AI Bot | Powered by Dappier and OpenClaw"
+---
+
+This guide walks you through building a fully functional Telegram AI bot using OpenClaw
+and the Dappier skill. By the end, you'll have a personal AI assistant running in
+Telegram that can answer real-time questions — from live stock prices and sports scores
+to breaking news and weather — all powered by Dappier's verified data APIs.
+
+In this guide, you'll work with:
+
+- **OpenClaw**: A local-first, open-source AI agent framework that connects to
+  messaging platforms like Telegram, WhatsApp, Slack, and Discord. It runs on your
+  own machine and acts as a persistent, autonomous AI assistant.
+
+- **Dappier**: A platform that connects LLMs and agentic AI agents to real-time,
+  rights-cleared data from trusted sources. It delivers verified, prompt-ready
+  information across domains like web search, finance, news, sports, and more.
+
+- **Telegram Bot API**: Telegram's official interface for building bots. OpenClaw
+  connects to it automatically during setup — no server or webhook configuration required.
+
+---
+
+## Live Demo
+
+Before building your own, try the finished result. Chat with
+[@amaan_assistant_bot](https://t.me/amaan_assistant_bot) on Telegram to see exactly
+what you'll be building in this guide — powered by OpenClaw and Dappier.
+
+<div style={{ display: "flex", justifyContent: "center" }}>
+	<iframe
+		width="315"
+		height="560"
+		src="https://www.youtube.com/embed/ZUFOooiQHOc"
+		title="Dappier + OpenClaw Telegram Bot Demo"
+		frameborder="0"
+		allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+		allowfullscreen
+	/>
+</div>
+
+---
+
+## Step 1 — Create Your Telegram Bot with BotFather
+
+Before running the installer, you'll need a Telegram bot token. BotFather is Telegram's
+official tool for creating and managing bots.
+
+1. Open Telegram and search for **@BotFather** (verify the handle is exactly `@BotFather`).
+2. Send `/newbot` to start the creation flow.
+3. Enter a **display name** for your bot (e.g. `Dappier Assistant`).
+4. Enter a **username** — it must end with `_bot` (e.g. `dappier_assistant_bot`).
+5. BotFather will confirm creation and send you a **bot token** that looks like:
+
+```
+123456789:AABBccDDeeFFggHHiiJJkkLLmmNNoo
+```
+
+Save this token — the onboarding wizard will ask for it in the next step.
+
+> **Tip:** While in BotFather, optionally run `/setprivacy` → **Disable** if you plan
+> to add your bot to group chats. This allows the bot to see all group messages, not just
+> those that mention it directly.
+
+---
+
+## Step 2 — Run the OpenClaw Installer
+
+Run this single command in your terminal. It installs Node.js (if needed), installs
+OpenClaw globally, and immediately launches the interactive onboarding wizard:
+
+```bash
+curl -fsSL https://openclaw.ai/install.sh | bash
+```
+
+> **Windows users:** use the PowerShell equivalent:
+>
+> ```powershell
+> iwr -useb https://openclaw.ai/install.ps1 | iex
+> ```
+
+The installer handles the following automatically:
+
+- Detects your OS (macOS, Linux, or WSL)
+- Installs Homebrew on macOS if needed
+- Installs Node.js 22+ if not already present
+- Installs OpenClaw globally via npm
+- Launches `openclaw onboard` — the interactive setup wizard
+
+---
+
+## Step 3 — Complete the Onboarding Wizard
+
+Once the installer finishes, the `openclaw onboard` wizard launches automatically in
+your terminal. It guides you through three setup areas in sequence.
+
+### 3a — Choose your AI model
+
+The wizard will ask you to select an LLM provider and enter your API key. OpenClaw
+supports Anthropic Claude, OpenAI GPT, DeepSeek, and others.
+
+Select your preferred provider and paste your API key when prompted. For the best
+experience, Anthropic Claude Opus or Sonnet is recommended.
+
+### 3b — Connect your Telegram channel
+
+When the wizard asks which messaging channel to connect, select **Telegram (Bot API)**.
+
+Paste the bot token you received from BotFather in Step 1.
+
+The wizard will then ask how to handle incoming DMs:
+
+| Option      | Description                                                  |
+| ----------- | ------------------------------------------------------------ |
+| `pairing`   | New users must send a pairing code you approve (recommended) |
+| `allowlist` | Only specific user IDs you list can message the bot          |
+| `open`      | Anyone can message the bot — no restrictions                 |
+
+Select `pairing` for a personal assistant. The gateway will start automatically.
+
+### 3b.1 — Approve your pairing code
+
+Once the gateway is running, you need to authorize yourself as a trusted user. This
+is a one-time step.
+
+1. Open Telegram and search for your bot by its username (e.g. `@dappier_assistant_bot`).
+2. Send any message — for example `/start`.
+3. The bot will reply with a **pairing code** that looks like:
+
+```
+Your pairing code: ABCD1234
+```
+
+4. Back in your terminal, approve the code:
+
+```bash
+# See all pending pairing requests
+openclaw pairing list telegram
+
+# Approve your specific code
+openclaw pairing approve telegram ABCD1234
+```
+
+5. You will see a confirmation in your terminal and the bot will reply in Telegram
+   confirming access is granted. You can now chat with your bot freely.
+
+> **Note:** Pairing codes expire after 1 hour. If yours expired, simply send another
+> message to the bot to trigger a new code, then approve it again.
+
+**Want to skip pairing for future users?** Switch to allowlist mode in
+`~/.openclaw/openclaw.json` and add your numeric Telegram user ID:
+
+```json
+{
+	"channels": {
+		"telegram": {
+			"dmPolicy": "allowlist",
+			"allowFrom": ["YOUR_NUMERIC_TELEGRAM_USER_ID"]
+		}
+	}
+}
+```
+
+To find your numeric user ID, DM `@userinfobot` on Telegram — it will reply instantly
+with your ID. Then run `openclaw restart` for the change to take effect.
+
+### 3c — Install skills from ClawHub
+
+The wizard will prompt you to install skills from ClawHub. When it does, search for
+and install the Dappier skill:
+
+```
+dappier-search
+```
+
+Or install it at any time after onboarding using the ClawHub CLI:
+
+```bash
+clawhub install dappier-search
+```
+
+You can also browse and install it directly from the marketplace:
+
+👉 [clawhub.ai/amaan-ai20/dappier-search](https://clawhub.ai/amaan-ai20/dappier-search)
+
+---
+
+## Step 4 — Set Your Dappier API Key
+
+Generate a free API key from your [Dappier API dashboard](https://platform.dappier.com/profile/api-keys).
+
+You can provide it in one of two ways:
+
+**Option 1 — Export in your shell (current session only):**
+
+```bash
+export DAPPIER_API_KEY="YOUR_KEY_HERE"
+```
+
+**Option 2 — Add it permanently to your OpenClaw environment file:**
+
+Add the following line to `~/.openclaw/.env`:
+
+```bash
+DAPPIER_API_KEY="YOUR_KEY_HERE"
+```
+
+OpenClaw automatically loads environment variables from this file at startup, so your
+key will be available to all skills — including `dappier-search` — without needing to
+export it each session.
+
+---
+
+## Step 5 — Set the Tools Profile
+
+The Dappier skill executes Node.js scripts on your local machine. Ensure your tools
+profile is set to `full` in `~/.openclaw/openclaw.json` so all scripts run without restriction:
+
+```json
+{
+	"tools": {
+		"profile": "full"
+	}
+}
+```
+
+Then restart the gateway for the change to take effect:
+
+```bash
+openclaw restart
+```
+
+---
+
+## Step 6 — Test Your Bot in Telegram
+
+Open Telegram, find your bot by username, and send it a message. Try these examples
+to confirm each Dappier tool is working:
+
+**Real-time web search:**
+
+```
+What is the weather in Mumbai today?
+```
+
+**Stock market data:**
+
+```
+What is the current price of AAPL?
+```
+
+**Sports news:**
+
+```
+Latest NBA trade rumors
+```
+
+**Benzinga financial news:**
+
+```
+Latest news on NVDA
+```
+
+**Lifestyle news:**
+
+```
+Top wellness trends this week
+```
+
+**Research papers:**
+
+```
+Recent arXiv papers on large language models
+```
+
+**Solar & roof analysis:**
+
+```
+Solar potential for 1600 Amphitheatre Parkway, Mountain View, CA
+```
+
+Your bot will query the appropriate Dappier tool and reply with live, verified data
+directly inside your Telegram chat.
+
+---
+
+## Troubleshooting
+
+**Bot does not respond:**
+
+- Confirm the gateway is running: `openclaw gateway`
+- Check logs in real time: `openclaw logs --follow`
+- Verify your `botToken` is correct in `~/.openclaw/openclaw.json`
+
+**`access not configured` message:**
+
+Your Telegram account is not yet authorized. During onboarding, the wizard walks you
+through approving your own pairing code. If you missed this step, run:
+
+```bash
+openclaw pairing list telegram
+openclaw pairing approve telegram <CODE>
+```
+
+> Pairing codes expire after 1 hour. Re-send a message to your bot to trigger a new code.
+
+**Dappier skill not found or not running:**
+
+- Confirm installation: `clawhub list`
+- Reinstall: `clawhub install dappier-search`
+- Confirm `DAPPIER_API_KEY` is set: `echo $DAPPIER_API_KEY`
+
+**`setMyCommands failed` error:**
+
+Outbound DNS or HTTPS to `api.telegram.org` is blocked. Check your firewall or network
+settings. On VPS hosts, you may need to route Telegram API calls through a proxy:
+
+```json
+{
+	"channels": {
+		"telegram": {
+			"proxy": "socks5://user:pass@proxy-host:1080"
+		}
+	}
+}
+```
+
+**Bot not seeing group messages:**
+
+Run `/setprivacy` in BotFather and select **Disable**, then remove and re-add the bot
+to the group. This is required for the bot to receive messages it is not directly
+mentioned in.
+
+---
+
+## Conclusion
+
+You now have a fully working Telegram AI bot powered by OpenClaw and Dappier — set up
+with a single command and a guided onboarding wizard. Your bot can answer real-time
+questions across finance, sports, news, academia, and more directly inside Telegram,
+grounded in live, verified data.
+
+From here you can:
+
+- **Add more skills** from [ClawHub](https://clawhub.ai) to extend your bot's capabilities
+- **Add your bot to group chats** by adding it to a Telegram group and configuring
+  `channels.telegram.groups` in `~/.openclaw/openclaw.json`
+- **Enable streaming replies** with `channels.telegram.streaming: "partial"` for a
+  live, typing-style response experience in chat
+
+**Install the Dappier skill:**
+
+```bash
+clawhub install dappier-search
+```
+
+**Dappier skill on ClawHub:**
+
+👉 [clawhub.ai/amaan-ai20/dappier-search](https://clawhub.ai/amaan-ai20/dappier-search)
+
+**Official OpenClaw Telegram docs:**
+
+👉 [docs.openclaw.ai/channels/telegram](https://docs.openclaw.ai/channels/telegram)
