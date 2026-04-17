@@ -34,6 +34,10 @@
 						]
 					},
 					{
+						"group": "Advertisers",
+						"pages": ["sales-agent-mcp"]
+					},
+					{
 						"group": "Publishers",
 						"pages": [
 							"publish-and-monetize",
