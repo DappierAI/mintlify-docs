@@ -13,17 +13,15 @@ The server is hosted at **[sales-agent.dappier.com](https://sales-agent.dappier.
 
 If you've never seen MCP before, here's the mental model:
 
-```
-┌────────────────────────┐       JSON-RPC / HTTP      ┌────────────────────────────┐
-│  Your AI client / LLM  │  ────────────────────────► │  Dappier Sales Agent MCP   │
-│  (Claude, Cursor,      │                            │  (this server, hosted)     │
-│  your own app, etc.)   │  ◄────────────────────────  │                            │
-└────────────────────────┘        tool results         └────────────────────────────┘
-                                                               │
-                                                               ▼
-                                                        Dappier REST API
-                                                      (campaigns, prompts,
-                                                       brand agents, etc.)
+```mermaid
+flowchart LR
+    A["<b>Your AI client / LLM</b><br/>Claude, Cursor,<br/>your own app, etc."]
+    B["<b>Dappier Sales Agent MCP</b><br/>sales-agent.dappier.com"]
+    C["<b>Dappier REST API</b><br/>campaigns, prompts,<br/>brand agents, etc."]
+
+    A -- "JSON-RPC / HTTP" --> B
+    B -- "tool results" --> A
+    B --> C
 ```
 
 - The **server** advertises tools (name + JSON schema + description).
