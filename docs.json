@@ -63,6 +63,10 @@
 					{
 						"group": "Publisher APIs",
 						"pages": ["api-reference/endpoint/ai-recommendations"]
+					},
+					{
+						"group": "Analytics APIs",
+						"pages": ["api-reference/endpoint/ask-ai-analytics"]
 					}
 				]
 			},

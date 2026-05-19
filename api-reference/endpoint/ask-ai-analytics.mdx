@@ -1,0 +1,12 @@
+---
+title: 'Ask AI Analytics'
+openapi: "get /v1/analytics/ask-ai"
+---
+
+<Info>
+  Data is sourced from BigQuery — expect a **5–15 minute lag** for the most recent events. All dates and timestamps are **UTC**. Responses are tenant-scoped to the API key and are rate limited (default **60 requests/minute** per key; `X-RateLimit-*` headers are returned, `429` with `Retry-After` when exceeded) and cached server-side for up to **30 minutes** (send `Cache-Control: no-cache` to skip the cache read; the `X-Cache` response header reports `HIT`, `MISS`, `BYPASS`, or `DISABLED`).
+</Info>
+
+<Warning>
+  `creative_id` / `line_item_id` / `publisher_id` match the publisher-supplied values the widget was loaded with. Once a session enters a sponsored conversation these fields are overridden with the matched DSP ad-render IDs, so filtering by your own publisher macros excludes most sponsored-conversation events. For sponsored conversion data use the Sponsored Conversations Analytics endpoint instead.
+</Warning>
