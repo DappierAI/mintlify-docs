@@ -1,0 +1,12 @@
+---
+title: 'Ask AI Logs'
+openapi: "get /v1/analytics/ask-ai/logs"
+---
+
+<Info>
+  Data is sourced from BigQuery — expect a **5–15 minute lag** for the most recent events. All dates and timestamps are **UTC**. Responses are tenant-scoped to the API key and are rate limited (default **60 requests/minute** per key; `X-RateLimit-*` headers are returned, `429` with `Retry-After` when exceeded) and cached server-side for up to **30 minutes** (send `Cache-Control: no-cache` to skip the cache read; the `X-Cache` response header reports `HIT`, `MISS`, `BYPASS`, or `DISABLED`).
+</Info>
+
+<Note>
+  This is a record-level endpoint for inspecting individual conversations. For aggregate KPIs and time-series use [Ask AI Analytics](/api-reference/endpoint/ask-ai-analytics) instead.
+</Note>

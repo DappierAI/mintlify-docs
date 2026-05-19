@@ -22,7 +22,7 @@
             "name": "ai_model_id",
             "in": "path",
             "required": true,
-            "description": "The ID of the AI model to query (e.g., am_01j06ytn18ejftedz6dyhz2b15).",
+            "description": "The ID of the AI model to query (e.g., am_01j06ytn18ejftedz6dyhz2b15). Browse and find AI models in the [Dappier Marketplace](https://platform.dappier.com/marketplace).",
             "schema": {
               "type": "string"
             }
@@ -67,7 +67,7 @@
             "name": "data_model_id",
             "in": "query",
             "required": true,
-            "description": "Data model ID, starting with `dm_`.",
+            "description": "Data model ID, starting with `dm_`. Browse and find data models in the [Dappier Marketplace](https://platform.dappier.com/marketplace).",
             "schema": {
               "type": "string"
             }
@@ -217,6 +217,376 @@
           }
         ]
       }
+    },
+
+    "/v1/analytics/ask-ai": {
+      "get": {
+        "summary": "Get Ask AI Analytics",
+        "description": "Publisher-facing Ask AI engagement rollup: summary KPIs plus a daily time-series. Numbers match the Dappier platform analytics dashboard for the same filters.",
+        "operationId": "get_AskAi_analytics",
+        "parameters": [
+          {
+            "name": "start_date",
+            "in": "query",
+            "required": true,
+            "description": "Inclusive start of the reporting window, formatted `YYYY-MM-DD` (UTC).",
+            "schema": { "type": "string", "format": "date", "example": "2026-04-01" }
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "required": true,
+            "description": "Inclusive end of the reporting window, formatted `YYYY-MM-DD` (UTC). Must be on or after `start_date`; the total range must be ≤ 365 days.",
+            "schema": { "type": "string", "format": "date", "example": "2026-04-30" }
+          },
+          {
+            "name": "widget_id",
+            "in": "query",
+            "required": false,
+            "description": "External widget id (e.g. `wd_...`). Validated against the key's tenant — an unknown or other-tenant id returns `400 widget_id not found`. Scopes results to that widget's AI agent. Omit for all of the tenant's widgets.",
+            "schema": { "type": "string", "example": "wd_92831" }
+          },
+          {
+            "name": "placement_id",
+            "in": "query",
+            "required": false,
+            "description": "External placement id.",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "deployment_type",
+            "in": "query",
+            "required": false,
+            "description": "Deployment type, e.g. `brand_agent`, `sponsored_conversation`, `embed`. Omit for all.",
+            "schema": { "type": "string", "example": "brand_agent" }
+          },
+          {
+            "name": "creative_id",
+            "in": "query",
+            "required": false,
+            "description": "Publisher-supplied ad-tracking macro filter (HTML attribute on `<dappier-ask-ai-widget>`).",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "line_item_id",
+            "in": "query",
+            "required": false,
+            "description": "Publisher-supplied ad-tracking macro filter.",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "publisher_id",
+            "in": "query",
+            "required": false,
+            "description": "Publisher-supplied ad-tracking macro filter.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Engagement rollup for the requested window and filters.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AskAiAnalyticsResponse" }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing or invalid dates, range greater than 365 days, or unknown `widget_id`.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AnalyticsError" }
+              }
+            }
+          },
+          "401": {
+            "description": "`Authorization` header missing, or token does not start with `ak_`.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AnalyticsError" }
+              }
+            }
+          },
+          "403": {
+            "description": "API key not found, or key is inactive.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AnalyticsError" }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded. A `Retry-After` header (seconds) is returned.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string", "example": "rate limit exceeded" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal or BigQuery failure (empty body)."
+          }
+        },
+        "security": [
+          {
+            "ApiKeyBearer": []
+          }
+        ]
+      }
+    },
+
+    "/v1/analytics/ask-ai/logs": {
+      "get": {
+        "summary": "Get Ask AI Logs",
+        "description": "Raw, paginated Ask AI conversation log rows — the same data the internal Logs → Ask AI dashboard table serves. Use this for record-level inspection; use Ask AI Analytics for aggregate reporting. Results are sorted newest-first by `timestamp`.",
+        "operationId": "get_AskAi_logs",
+        "parameters": [
+          {
+            "name": "start_date",
+            "in": "query",
+            "required": false,
+            "description": "Inclusive start of the window, formatted `YYYY-MM-DD` (UTC).",
+            "schema": { "type": "string", "format": "date", "example": "2026-05-01" }
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "required": false,
+            "description": "Inclusive end of the window, formatted `YYYY-MM-DD` (UTC).",
+            "schema": { "type": "string", "format": "date", "example": "2026-05-18" }
+          },
+          {
+            "name": "widget_id",
+            "in": "query",
+            "required": false,
+            "description": "Filter to one widget. Omit for all widgets the account owns.",
+            "schema": { "type": "string", "example": "wd_92831" }
+          },
+          {
+            "name": "placement_id",
+            "in": "query",
+            "required": false,
+            "description": "Filter to one placement.",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "deployment_type",
+            "in": "query",
+            "required": false,
+            "description": "Filter by deployment type (exact match).",
+            "schema": { "type": "string", "example": "brand_agent" }
+          },
+          {
+            "name": "interaction_type",
+            "in": "query",
+            "required": false,
+            "description": "Single value. When omitted, the service defaults to `free_form`, `automated_followup`, and `search`.",
+            "schema": { "type": "string", "example": "free_form" }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "description": "1-based page number. Must be ≥ 1.",
+            "schema": { "type": "integer", "default": 1, "minimum": 1, "example": 1 }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Page size. Hard max 500 — larger values are clamped down.",
+            "schema": { "type": "integer", "default": 50, "maximum": 500, "example": 100 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A page of conversation log rows, newest-first.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AskAiLogsResponse" }
+              }
+            }
+          },
+          "400": {
+            "description": "`page` not a positive integer, or `limit` not a positive integer.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AnalyticsError" }
+              }
+            }
+          },
+          "401": {
+            "description": "`Authorization` header missing, or token does not start with `ak_`.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AnalyticsError" }
+              }
+            }
+          },
+          "403": {
+            "description": "API key not found, or key is inactive.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AnalyticsError" }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded. A `Retry-After` header (seconds) is returned.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string", "example": "rate limit exceeded" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal or BigQuery failure (empty body)."
+          }
+        },
+        "security": [
+          {
+            "ApiKeyBearer": []
+          }
+        ]
+      }
+    },
+
+    "/v1/analytics/sponsored-conversations": {
+      "get": {
+        "summary": "Get Sponsored Conversations Analytics",
+        "description": "Advertiser-facing rollup for the campaigns the API key's tenant owns: summary KPIs, daily timeline, plus per-campaign, per-prompt, and click-type breakdowns. Numbers match the Dappier platform dashboard for the same filters.",
+        "operationId": "get_SponsoredConversations_analytics",
+        "parameters": [
+          {
+            "name": "start_date",
+            "in": "query",
+            "required": true,
+            "description": "Inclusive start of the window, formatted `YYYY-MM-DD` (UTC).",
+            "schema": { "type": "string", "format": "date", "example": "2026-04-01" }
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "required": true,
+            "description": "Inclusive end of the window, formatted `YYYY-MM-DD` (UTC). Range must be ≤ 365 days.",
+            "schema": { "type": "string", "format": "date", "example": "2026-04-30" }
+          },
+          {
+            "name": "campaign_id",
+            "in": "query",
+            "required": false,
+            "description": "External campaign id (e.g. `cp_...`).",
+            "schema": { "type": "string", "example": "cp_xxx" }
+          },
+          {
+            "name": "agent_id",
+            "in": "query",
+            "required": false,
+            "description": "AI model external id (e.g. `am_...`). Validated against the tenant — an unknown or other-tenant id returns `400 agent_id not found`.",
+            "schema": { "type": "string", "example": "am_01j06ytn18ejftedz6dyhz2b15" }
+          },
+          {
+            "name": "placement_id",
+            "in": "query",
+            "required": false,
+            "description": "External placement id.",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "prompt_id",
+            "in": "query",
+            "required": false,
+            "description": "External prompt id (e.g. `pm_...`).",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "creative_id",
+            "in": "query",
+            "required": false,
+            "description": "DSP-served ad creative id (GAM/Dianomi) that triggered the sponsored conversation.",
+            "schema": { "type": "string", "example": "391487" }
+          },
+          {
+            "name": "line_item_id",
+            "in": "query",
+            "required": false,
+            "description": "DSP-served line item id.",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "publisher_id",
+            "in": "query",
+            "required": false,
+            "description": "Publisher id. Present on Dianomi-served events only — filtering by this scopes results to Dianomi-derived traffic.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sponsored-conversation rollup for the requested window and filters.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SponsoredConversationsResponse" }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing or invalid dates, range greater than 365 days, or unknown `agent_id`.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AnalyticsError" }
+              }
+            }
+          },
+          "401": {
+            "description": "`Authorization` header missing, or token does not start with `ak_`.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AnalyticsError" }
+              }
+            }
+          },
+          "403": {
+            "description": "API key not found, or key is inactive.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AnalyticsError" }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded. A `Retry-After` header (seconds) is returned.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string", "example": "rate limit exceeded" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal or BigQuery failure (empty body)."
+          }
+        },
+        "security": [
+          {
+            "ApiKeyBearer": []
+          }
+        ]
+      }
     }
   },
   "components": {
@@ -244,12 +614,222 @@
         "type": "object",
         "required": ["message"],
         "title": "QueryResponse"
+      },
+      "AnalyticsError": {
+        "type": "object",
+        "title": "AnalyticsError",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Human-readable error description.",
+            "example": "end_date must be on or after start_date"
+          }
+        }
+      },
+      "AskAiAnalyticsResponse": {
+        "type": "object",
+        "title": "AskAiAnalyticsResponse",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Always `true` for a 200 response.",
+            "example": true
+          },
+          "filters": {
+            "type": "object",
+            "description": "Echoes back only the filters you supplied in the request.",
+            "properties": {
+              "start_date": { "type": "string", "format": "date", "example": "2026-04-01" },
+              "end_date": { "type": "string", "format": "date", "example": "2026-04-30" },
+              "deployment_type": { "type": "string", "example": "brand_agent" },
+              "widget_id": { "type": "string", "example": "wd_92831" },
+              "placement_id": { "type": "string" },
+              "creative_id": { "type": "string", "example": "cr_123" },
+              "line_item_id": { "type": "string" },
+              "publisher_id": { "type": "string" }
+            }
+          },
+          "summary": {
+            "type": "object",
+            "description": "Full 13-metric rollup for the window. The block is internally self-consistent; all percentages are rounded to 2 decimals.",
+            "properties": {
+              "widget_loads": { "type": "integer", "description": "Times the widget script initialized on a page.", "example": 124550 },
+              "viewable_sessions": { "type": "integer", "description": "Sessions where the widget entered the viewport.", "example": 38122 },
+              "viewability_rate": { "type": "number", "description": "`viewable_sessions / widget_loads * 100`.", "example": 30.6 },
+              "engagement_queries": { "type": "integer", "description": "All user-originated queries — free-form, brand-agent, search, click-to-brand-agent, sponsored, automated follow-ups.", "example": 6421 },
+              "engagement_rate": { "type": "number", "description": "`engagement_queries / viewable_sessions * 100`.", "example": 16.8 },
+              "total_clicks": { "type": "integer", "description": "Article-body + ad + amplify + brand-agent answer + brand-agent CTA clicks.", "example": 2310 },
+              "article_clicks": { "type": "integer", "description": "Subset of `total_clicks` on a URL inside the AI answer body.", "example": 1240 },
+              "cta_clicks": { "type": "integer", "description": "Subset of `total_clicks` on a brand-agent CTA button.", "example": 1070 },
+              "sessions": { "type": "integer", "description": "Unique sessions with ≥1 engagement query.", "example": 5120 },
+              "avg_session_duration_seconds": { "type": "integer", "description": "Mean active time per engaged session (5s beacon resolution).", "example": 142 },
+              "engagement_session_rate": { "type": "number", "description": "`sessions / viewable_sessions * 100`.", "example": 13.4 },
+              "total_session_time_seconds": { "type": "integer", "description": "Sum of active time across engaged sessions.", "example": 727040 },
+              "query_to_click_rate": { "type": "number", "description": "`total_clicks / engagement_queries * 100`.", "example": 36.0 }
+            }
+          },
+          "daily_breakdown": {
+            "type": "array",
+            "description": "Per-day subset for charting, ascending by date.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "date": { "type": "string", "format": "date", "example": "2026-04-28" },
+                "widget_loads": { "type": "integer", "example": 4211 },
+                "viewable_sessions": { "type": "integer", "example": 1312 },
+                "engagement_queries": { "type": "integer", "example": 248 },
+                "total_clicks": { "type": "integer", "example": 94 },
+                "sessions": { "type": "integer", "example": 201 }
+              }
+            }
+          },
+          "meta": {
+            "type": "object",
+            "properties": {
+              "timezone": { "type": "string", "example": "UTC" },
+              "generated_at": { "type": "string", "format": "date-time", "example": "2026-05-11T18:45:00Z" }
+            }
+          }
+        }
+      },
+      "AskAiLogsResponse": {
+        "type": "object",
+        "title": "AskAiLogsResponse",
+        "properties": {
+          "data": {
+            "type": "array",
+            "description": "Conversation log rows, newest-first by `timestamp`.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "timestamp": { "type": "string", "format": "date-time", "description": "Event time (UTC).", "example": "2026-05-18T09:14:22Z" },
+                "widget_id": { "type": "string", "description": "Literal BigQuery column value.", "example": "wd_92831" },
+                "placement_id": { "type": "string", "description": "Literal BigQuery column value.", "example": "pl_abc" },
+                "deployment_type": { "type": "string", "description": "Literal BigQuery column value.", "example": "brand_agent" },
+                "ai_agent": { "type": "string", "description": "AI model display name (falls back to the raw model id if the name can't be resolved).", "example": "Acme Support Agent" },
+                "referring_url": { "type": "string", "description": "Page the widget was loaded on.", "example": "https://example.com/pricing" },
+                "interaction_type": { "type": "string", "description": "e.g. `free_form`, `automated_followup`, `search`.", "example": "free_form" },
+                "prompt": { "type": "string", "description": "Full user prompt (not truncated).", "example": "Do you offer annual billing?" },
+                "response": { "type": "string", "description": "Full AI response (not truncated).", "example": "Yes — annual plans include a 20% discount..." }
+              }
+            }
+          },
+          "total_pages": { "type": "integer", "description": "Total pages for the current `limit`.", "example": 12 },
+          "count": { "type": "integer", "description": "Total matching rows across all pages.", "example": 573 },
+          "meta": {
+            "type": "object",
+            "properties": {
+              "timezone": { "type": "string", "example": "UTC" },
+              "generated_at": { "type": "string", "format": "date-time", "example": "2026-05-18T09:20:00Z" }
+            }
+          }
+        }
+      },
+      "SponsoredConversationsResponse": {
+        "type": "object",
+        "title": "SponsoredConversationsResponse",
+        "properties": {
+          "success": { "type": "boolean", "description": "Always `true` for a 200 response.", "example": true },
+          "filters": {
+            "type": "object",
+            "description": "Echoes back only the filters you supplied in the request.",
+            "properties": {
+              "start_date": { "type": "string", "format": "date", "example": "2026-04-01" },
+              "end_date": { "type": "string", "format": "date", "example": "2026-04-30" },
+              "campaign_id": { "type": "string", "example": "cp_xxx" },
+              "agent_id": { "type": "string" },
+              "placement_id": { "type": "string" },
+              "prompt_id": { "type": "string" },
+              "creative_id": { "type": "string" },
+              "line_item_id": { "type": "string" },
+              "publisher_id": { "type": "string" }
+            }
+          },
+          "summary": {
+            "type": "object",
+            "description": "Rollup for the window. Internally self-consistent; percentages rounded to 2 decimals.",
+            "properties": {
+              "impressions": { "type": "integer", "description": "Times a sponsored prompt was rendered and visible inside a publisher's widget.", "example": 36470 },
+              "queries": { "type": "integer", "description": "User queries inside the sponsored conversation (`deployment_type='sponsored_conversation'`).", "example": 7900 },
+              "sessions": { "type": "integer", "description": "Distinct sessions with ≥1 sponsored-conversation query.", "example": 2820 },
+              "engagement_rate": { "type": "number", "description": "`queries / sessions × 100`. Can exceed 100% (multiple queries per session).", "example": 280.14 },
+              "avg_session_duration_seconds": { "type": "integer", "description": "Mean active time per engaged SC session (5s beacon resolution).", "example": 182 },
+              "total_clicks": { "type": "integer", "description": "All SC clicks (`sponsored_cta_click` + `sponsored_answer_click`).", "example": 1282 },
+              "article_clicks": { "type": "integer", "description": "Subset on a URL inside the AI answer body (`sponsored_answer_click`).", "example": 312 },
+              "cta_clicks": { "type": "integer", "description": "Subset on the brand-agent CTA button (`sponsored_cta_click`).", "example": 970 },
+              "conversion_rate": { "type": "number", "description": "`total_clicks / sessions × 100`.", "example": 45.46 },
+              "avg_queries_per_session": { "type": "number", "description": "`queries / sessions`.", "example": 2.80 }
+            }
+          },
+          "daily_breakdown": {
+            "type": "array",
+            "description": "Mirrors the dashboard \"Performance Timeline\".",
+            "items": {
+              "type": "object",
+              "properties": {
+                "date": { "type": "string", "format": "date", "example": "2026-04-29" },
+                "queries": { "type": "integer", "example": 248 },
+                "engagement_rate": { "type": "number", "example": 21.40 },
+                "total_clicks": { "type": "integer", "example": 31 }
+              }
+            }
+          },
+          "campaign_breakdown": {
+            "type": "array",
+            "description": "Per-campaign rollup, sorted by impressions desc. `creative_ids` is the list of DSP creative IDs configured on the campaign (from campaign setup, not per-event data) — use it to cross-reference your DSP/ad-server reports.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "campaign_id": { "type": "string", "example": "cp_xxx" },
+                "campaign_name": { "type": "string", "example": "StateFarm Q2" },
+                "creative_ids": { "type": "array", "items": { "type": "string" }, "example": ["391487", "391840"] },
+                "impressions": { "type": "integer", "example": 12000 },
+                "queries": { "type": "integer", "example": 2500 },
+                "total_clicks": { "type": "integer", "example": 320 },
+                "engagement_rate": { "type": "number", "example": 20.80 }
+              }
+            }
+          },
+          "prompt_breakdown": {
+            "type": "array",
+            "description": "Top rows by engagement, grouped by prompt text (not prompt id). Configured sponsored prompts appear with `impressions > 0`; user-typed follow-ups inside the SC appear with `impressions == 0` and `queries > 0`. `prompt_id` is currently always `\"\"` (reserved for a future release).",
+            "items": {
+              "type": "object",
+              "properties": {
+                "prompt_id": { "type": "string", "example": "" },
+                "prompt_text": { "type": "string", "example": "Tell me more about coverage" },
+                "impressions": { "type": "integer", "example": 8200 },
+                "queries": { "type": "integer", "example": 1900 },
+                "engagement_rate": { "type": "number", "example": 23.20 }
+              }
+            }
+          },
+          "click_type_breakdown": {
+            "type": "array",
+            "description": "One entry per click type present.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": { "type": "string", "example": "sponsored_cta_click" },
+                "count": { "type": "integer", "example": 970 }
+              }
+            }
+          },
+          "meta": {
+            "type": "object",
+            "properties": {
+              "timezone": { "type": "string", "example": "UTC" },
+              "generated_at": { "type": "string", "format": "date-time", "example": "2026-05-11T18:45:00Z" }
+            }
+          }
+        }
       }
     },
     "securitySchemes": {
       "ApiKeyBearer": {
         "type": "http",
-        "scheme": "bearer"
+        "scheme": "bearer",
+        "description": "Bearer token authentication using your Dappier API key. Get your API key at https://platform.dappier.com/profile/api-keys."
       }
     }
   }

@@ -1,0 +1,12 @@
+---
+title: 'Sponsored Conversations Analytics'
+openapi: "get /v1/analytics/sponsored-conversations"
+---
+
+<Info>
+  Data is sourced from BigQuery — expect a **5–15 minute lag** for the most recent events. All dates and timestamps are **UTC**. Responses are tenant-scoped to the API key and are rate limited (default **60 requests/minute** per key; `X-RateLimit-*` headers are returned, `429` with `Retry-After` when exceeded) and cached server-side for up to **30 minutes** (send `Cache-Control: no-cache` to skip the cache read; the `X-Cache` response header reports `HIT`, `MISS`, `BYPASS`, or `DISABLED`).
+</Info>
+
+<Warning>
+  `creative_id` / `line_item_id` / `publisher_id` reflect **DSP ad-render values** (the creative that matched the campaign and triggered the SC), snapshotted at SC entry and frozen for the SC lifetime. `publisher_id` is **absent on GAM-derived events** (GAM has no per-impression publisher id) — only Dianomi-served events carry it, so filtering by `publisher_id` scopes to Dianomi-derived traffic only. `prompt_breakdown` is grouped by prompt text and includes user-typed follow-ups (`impressions == 0`, `queries > 0`); filter client-side to `impressions > 0` for configured prompts only.
+</Warning>
