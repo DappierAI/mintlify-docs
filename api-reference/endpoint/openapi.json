@@ -22,7 +22,7 @@
             "name": "ai_model_id",
             "in": "path",
             "required": true,
-            "description": "The ID of the AI model to query (e.g., am_01j06ytn18ejftedz6dyhz2b15).",
+            "description": "The ID of the AI model to query (e.g., am_01j06ytn18ejftedz6dyhz2b15). Browse and find AI models in the [Dappier Marketplace](https://platform.dappier.com/marketplace).",
             "schema": {
               "type": "string"
             }
@@ -67,7 +67,7 @@
             "name": "data_model_id",
             "in": "query",
             "required": true,
-            "description": "Data model ID, starting with `dm_`.",
+            "description": "Data model ID, starting with `dm_`. Browse and find data models in the [Dappier Marketplace](https://platform.dappier.com/marketplace).",
             "schema": {
               "type": "string"
             }
@@ -249,7 +249,8 @@
     "securitySchemes": {
       "ApiKeyBearer": {
         "type": "http",
-        "scheme": "bearer"
+        "scheme": "bearer",
+        "description": "Bearer token authentication using your Dappier API key. Get your API key at https://platform.dappier.com/profile/api-keys."
       }
     }
   }
