@@ -66,7 +66,11 @@
 					},
 					{
 						"group": "Analytics APIs",
-						"pages": ["api-reference/endpoint/ask-ai-analytics"]
+						"pages": [
+							"api-reference/endpoint/ask-ai-analytics",
+							"api-reference/endpoint/ask-ai-logs",
+							"api-reference/endpoint/sponsored-conversations-analytics"
+						]
 					}
 				]
 			},
