@@ -8,7 +8,7 @@ openapi: "get /v1/analytics/sponsored-conversations"
 </Info>
 
 <Warning>
-  Both `start_date` and `end_date` are **required**. The total range must be ≤ **365 days**. `agent_id` is validated against the key's tenant — an unknown or other-tenant id returns `400 agent_id not found`.
+  If either `start_date` or `end_date` is omitted, **both** default to the trailing 7-day window ending today UTC. Explicit ranges must be ≤ **365 days**. `agent_id` is validated against the key's tenant — an unknown or other-tenant id returns `400 agent_id not found`.
 </Warning>
 
 <Warning>

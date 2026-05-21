@@ -12,5 +12,5 @@ openapi: "get /v1/analytics/ask-ai/logs"
 </Note>
 
 <Warning>
-  `start_date` / `end_date` are optional — if either is omitted, the server applies its default window. `page` must be **≥ 1**; `limit` defaults to **50** and is clamped to a hard max of **500** (larger values are silently reduced). When `interaction_type` is omitted the service defaults to `free_form`, `automated_followup`, and `search`.
+  If either `start_date` or `end_date` is omitted, **both** default to the trailing 7-day window ending today UTC. `page` must be **≥ 1**; `limit` defaults to **50** and is clamped to a hard max of **500** (larger values are silently reduced). When `interaction_type` is omitted the service defaults to `free_form`, `automated_followup`, and `search`.
 </Warning>
