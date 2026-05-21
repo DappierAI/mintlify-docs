@@ -10,3 +10,7 @@ openapi: "get /v1/analytics/ask-ai/logs"
 <Note>
   This is a record-level endpoint for inspecting individual conversations. For aggregate KPIs and time-series use [Ask AI Analytics](/api-reference/endpoint/ask-ai-analytics) instead.
 </Note>
+
+<Warning>
+  `start_date` / `end_date` are optional — if either is omitted, the server applies its default window. `page` must be **≥ 1**; `limit` defaults to **50** and is clamped to a hard max of **500** (larger values are silently reduced). When `interaction_type` is omitted the service defaults to `free_form`, `automated_followup`, and `search`.
+</Warning>

@@ -8,5 +8,9 @@ openapi: "get /v1/analytics/ask-ai"
 </Info>
 
 <Warning>
+  Both `start_date` and `end_date` are **required**. The total range must be ≤ **365 days**. `widget_id` is validated against the key's tenant — an unknown or other-tenant id returns `400 widget_id not found`.
+</Warning>
+
+<Warning>
   `creative_id` / `line_item_id` / `publisher_id` match the publisher-supplied values the widget was loaded with. Once a session enters a sponsored conversation these fields are overridden with the matched DSP ad-render IDs, so filtering by your own publisher macros excludes most sponsored-conversation events. For sponsored conversion data use the Sponsored Conversations Analytics endpoint instead.
 </Warning>
