@@ -599,14 +599,14 @@
             "name": "start_date",
             "in": "query",
             "required": false,
-            "description": "Inclusive start of the analytics window, formatted `YYYY-MM-DD` (UTC). Defaults to `today_UTC - 6` when omitted (along with `end_date`).",
+            "description": "Inclusive start of the analytics window, formatted `YYYY-MM-DD` (UTC). If either `start_date` or `end_date` is omitted, both default to the trailing 7-day window ending `today_UTC` (i.e., `start_date = today_UTC - 6`).",
             "schema": { "type": "string", "format": "date", "example": "2026-05-15" }
           },
           {
             "name": "end_date",
             "in": "query",
             "required": false,
-            "description": "Inclusive end of the analytics window, formatted `YYYY-MM-DD` (UTC). Defaults to `today_UTC` when omitted. Must be on or after `start_date`; the total range must be ≤ 365 days.",
+            "description": "Inclusive end of the analytics window, formatted `YYYY-MM-DD` (UTC). If either `start_date` or `end_date` is omitted, both default to the trailing 7-day window ending `today_UTC`. Must be on or after `start_date`; the total range must be ≤ 365 days.",
             "schema": { "type": "string", "format": "date", "example": "2026-05-21" }
           },
           {
