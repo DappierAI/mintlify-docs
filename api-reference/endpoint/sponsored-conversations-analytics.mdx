@@ -8,5 +8,9 @@ openapi: "get /v1/analytics/sponsored-conversations"
 </Info>
 
 <Warning>
+  If either `start_date` or `end_date` is omitted, **both** default to the trailing 7-day window ending today UTC. Explicit ranges must be ≤ **365 days**. `agent_id` is validated against the key's tenant — an unknown or other-tenant id returns `400 agent_id not found`.
+</Warning>
+
+<Warning>
   `creative_id` / `line_item_id` / `publisher_id` reflect **DSP ad-render values** (the creative that matched the campaign and triggered the SC), snapshotted at SC entry and frozen for the SC lifetime. `publisher_id` is **absent on GAM-derived events** (GAM has no per-impression publisher id) — only Dianomi-served events carry it, so filtering by `publisher_id` scopes to Dianomi-derived traffic only. `prompt_breakdown` is grouped by prompt text and includes user-typed follow-ups (`impressions == 0`, `queries > 0`); filter client-side to `impressions > 0` for configured prompts only.
 </Warning>
