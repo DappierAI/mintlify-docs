@@ -587,6 +587,127 @@
           }
         ]
       }
+    },
+
+    "/v1/analytics/session-intelligence": {
+      "get": {
+        "summary": "Get Session Intelligence",
+        "description": "Single aggregated payload describing how end users interact with a publisher's Ask AI widgets — summary KPIs, engagement time, intent breakdown, top queried topics, content-category mix, and session-engagement (query-depth) distribution. Powers the marketplace Session Intelligence dashboard in one request. Numbers match the Dappier platform dashboard for the same filters.",
+        "operationId": "get_SessionIntelligence_analytics",
+        "parameters": [
+          {
+            "name": "start_date",
+            "in": "query",
+            "required": false,
+            "description": "Inclusive start of the analytics window, formatted `YYYY-MM-DD` (UTC). Defaults to `today_UTC - 6` when omitted (along with `end_date`).",
+            "schema": { "type": "string", "format": "date", "example": "2026-05-15" }
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "required": false,
+            "description": "Inclusive end of the analytics window, formatted `YYYY-MM-DD` (UTC). Defaults to `today_UTC` when omitted. Must be on or after `start_date`; the total range must be ≤ 365 days.",
+            "schema": { "type": "string", "format": "date", "example": "2026-05-21" }
+          },
+          {
+            "name": "widget_id",
+            "in": "query",
+            "required": false,
+            "description": "External widget id (e.g. `wd_...`). Validated against the key's tenant — an unknown or other-tenant id returns `400 widget_id not found`. Scopes results to that widget's AI agent. Omit for all of the tenant's widgets.",
+            "schema": { "type": "string", "example": "wd_abc123" }
+          },
+          {
+            "name": "placement_id",
+            "in": "query",
+            "required": false,
+            "description": "External placement id.",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "deployment_type",
+            "in": "query",
+            "required": false,
+            "description": "Deployment type, e.g. `brand_agent`, `widget`. Omit for all.",
+            "schema": { "type": "string", "example": "brand_agent" }
+          },
+          {
+            "name": "creative_id",
+            "in": "query",
+            "required": false,
+            "description": "AdCP creative id filter.",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "line_item_id",
+            "in": "query",
+            "required": false,
+            "description": "AdCP line item id filter.",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "publisher_id",
+            "in": "query",
+            "required": false,
+            "description": "AdCP publisher id filter.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Session intelligence rollup for the requested window and filters.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SessionIntelligenceResponse" }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed `start_date` / `end_date`, inverted range, range greater than 365 days, or unknown `widget_id`.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AnalyticsError" }
+              }
+            }
+          },
+          "401": {
+            "description": "`Authorization` header missing, or token does not start with `ak_`.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AnalyticsError" }
+              }
+            }
+          },
+          "403": {
+            "description": "API key not found, or key is inactive.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AnalyticsError" }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded. A `Retry-After` header (seconds) is returned.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string", "example": "rate limit exceeded" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal or BigQuery failure (empty body)."
+          }
+        },
+        "security": [
+          {
+            "ApiKeyBearer": []
+          }
+        ]
+      }
     }
   },
   "components": {
@@ -820,6 +941,91 @@
             "properties": {
               "timezone": { "type": "string", "example": "UTC" },
               "generated_at": { "type": "string", "format": "date-time", "example": "2026-05-11T18:45:00Z" }
+            }
+          }
+        }
+      },
+      "SessionIntelligenceResponse": {
+        "type": "object",
+        "title": "SessionIntelligenceResponse",
+        "properties": {
+          "session_intelligence": {
+            "type": "object",
+            "description": "Single aggregated payload combining six marketplace dashboard reports.",
+            "properties": {
+              "summary": {
+                "type": "object",
+                "description": "High-level rollup over the session-engagement events in the window.",
+                "properties": {
+                  "total_engaged_sessions": { "type": "integer", "description": "Distinct sessions that produced ≥ 1 engagement-class interaction.", "example": 110 },
+                  "total_queries": { "type": "integer", "description": "Total engagement-class interactions across those sessions.", "example": 187 },
+                  "average_queries_per_session": { "type": "number", "description": "`total_queries / total_engaged_sessions`, rounded to 1 decimal. `0` when there are no sessions.", "example": 1.7 },
+                  "sessions_with_2_plus_queries": { "type": "integer", "description": "Sessions with ≥ 2 engagement queries.", "example": 40 },
+                  "sessions_with_2_plus_queries_percentage": { "type": "integer", "description": "`sessions_with_2_plus_queries / total_engaged_sessions × 100`, rounded.", "example": 36 },
+                  "single_query_sessions": { "type": "integer", "description": "Sessions with exactly 1 engagement query.", "example": 70 },
+                  "single_query_sessions_percentage": { "type": "integer", "description": "`single_query_sessions / total_engaged_sessions × 100`, rounded.", "example": 64 },
+                  "max_queries_in_session": { "type": "integer", "description": "The most engagement queries observed in any single session in the window.", "example": 4 }
+                }
+              },
+              "engagement_time": {
+                "type": "object",
+                "description": "Time-on-widget metrics derived from engagement beacon events (5s beacon interval).",
+                "properties": {
+                  "total_session_time_seconds": { "type": "integer", "description": "Sum of all session engagement time (`beacon_count × 5s`) across sessions with ≥ 1 beacon.", "example": 3170 },
+                  "average_engagement_time_per_session_seconds": { "type": "integer", "description": "Mean engagement time per engaged session, rounded to the nearest second.", "example": 288 },
+                  "median_engagement_time_per_session_seconds": { "type": "integer", "description": "Median engagement time per engaged session. Computed via `APPROX_QUANTILES(…, 2)[OFFSET(1)]`.", "example": 164 },
+                  "sessions_with_engagement": { "type": "integer", "description": "Count of sessions that produced at least one `engagement_beacon` event in the window.", "example": 11 }
+                }
+              },
+              "intent_breakdown": {
+                "type": "array",
+                "description": "Distribution of distinct sessions across detected user intents. A session contributes once per distinct intent it expressed.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "intent_type": { "type": "string", "description": "Normalized intent key (lowercased, trimmed).", "example": "informational" },
+                    "label": { "type": "string", "description": "Human-friendly label (Title-cased).", "example": "Informational" },
+                    "sessions": { "type": "integer", "description": "Distinct sessions that surfaced this intent.", "example": 98 },
+                    "percentage": { "type": "integer", "description": "Share of total intent-tagged sessions, rounded.", "example": 89 }
+                  }
+                }
+              },
+              "top_queried_topics": {
+                "type": "array",
+                "description": "Top 10 unique prompts (by count) over the window, normalized for case and whitespace.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "query": { "type": "string", "description": "The lowercased, trimmed prompt text.", "example": "the iht loophole the wealthy don't talk about" },
+                    "category": { "type": "string", "description": "First topic label associated with the prompt (`topic_labels[OFFSET(0)]`). Empty string when none exists.", "example": "Business and Finance" },
+                    "count": { "type": "integer", "description": "Number of times this normalized prompt was issued.", "example": 4 }
+                  }
+                }
+              },
+              "category_distribution": {
+                "type": "array",
+                "description": "Distribution of engagement queries across IAB content categories. A single query that touches multiple categories contributes to each (via `UNNEST(iabcontent_names)`).",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "category": { "type": "string", "description": "IAB category label, Title-cased.", "example": "Personal Finance" },
+                    "count": { "type": "integer", "description": "Number of engagement queries tagged with the category.", "example": 42 },
+                    "percentage": { "type": "integer", "description": "Share of total tagged queries, rounded.", "example": 27 }
+                  }
+                }
+              },
+              "session_engagement_distribution": {
+                "type": "array",
+                "description": "Fixed, ordered list of seven query-depth buckets. Always returned in this exact order: `\"1\"`, `\"2\"`, `\"3\"`, `\"4\"`, `\"5\"`, `\"6-10\"`, `\"10+\"`.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "query_depth": { "type": "string", "description": "Bucket label.", "example": "1" },
+                    "sessions": { "type": "integer", "description": "Sessions whose total query count falls in this bucket.", "example": 70 },
+                    "percentage": { "type": "integer", "description": "Share of `total_engaged_sessions` that fall in this bucket, rounded.", "example": 64 }
+                  }
+                }
+              }
             }
           }
         }
