@@ -973,8 +973,7 @@
                 "properties": {
                   "total_session_time_seconds": { "type": "integer", "description": "Sum of all session engagement time (`beacon_count × 5s`) across sessions with ≥ 1 beacon.", "example": 3170 },
                   "average_engagement_time_per_session_seconds": { "type": "integer", "description": "Mean engagement time per engaged session, rounded to the nearest second.", "example": 288 },
-                  "median_engagement_time_per_session_seconds": { "type": "integer", "description": "Median engagement time per engaged session. Computed via `APPROX_QUANTILES(…, 2)[OFFSET(1)]`.", "example": 164 },
-                  "sessions_with_engagement": { "type": "integer", "description": "Count of sessions that produced at least one `engagement_beacon` event in the window.", "example": 11 }
+                  "median_engagement_time_per_session_seconds": { "type": "integer", "description": "Median engagement time per engaged session. Computed via `APPROX_QUANTILES(…, 2)[OFFSET(1)]`.", "example": 164 }
                 }
               },
               "intent_breakdown": {
