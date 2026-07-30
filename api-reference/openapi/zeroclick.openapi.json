@@ -1,0 +1,521 @@
+{
+	"openapi": "3.1.0",
+	"info": {
+		"title": "Dappier API — ZeroClick endpoints",
+		"version": "1.0.0",
+		"description": "OpenAPI specification for the ZeroClick-authenticated Dappier endpoints\n(`/zeroclick/*`).\n\nZeroClick sits in front of the Dappier API as the agent-payment layer. A\nbuying agent calls ZeroClick's hosted pay URL; ZeroClick then proxies the\nrequest to these endpoints, signing the raw request bytes with an HMAC in the\n`zc-signature` header. From this API's perspective, a request is authenticated\n**only** by a valid `zc-signature` — there is no Dappier API key on these\nroutes.\n\nThese endpoints mirror the standard `/app/aimodel/{ai_model_id}` and\n`/app/v2/search` endpoints (same request/response bodies, same routing),\ndiffering only in:\n  * **Authentication** — the `zc-signature` HMAC is verified over the raw\n    request bytes instead of a Dappier API key.\n  * **Authorization** — a ZeroClick allowance check runs before any billable\n    work. It fails *open* on a transient ZeroClick outage (the signature has\n    already verified), but never for a missing/invalid signature.\n  * **Scope** — ZeroClick traffic has no Dappier tenant, so only\n    marketplace-enabled models are reachable. Anything else returns `404`.\n  * **Metering** — usage is reported back to ZeroClick via the `zc-usage`\n    response header on success. Dappier platform charging is intentionally\n    bypassed; ZeroClick is the sole biller.\n"
+	},
+	"servers": [
+		{
+			"url": "https://api.dappier.com",
+			"description": "Production"
+		}
+	],
+	"tags": [
+		{
+			"name": "ZeroClick",
+			"description": "ZeroClick agent-payment authenticated endpoints."
+		}
+	],
+	"paths": {
+		"/zeroclick/aimodel/{aimodel_external_id}": {
+			"post": {
+				"tags": ["ZeroClick"],
+				"operationId": "zeroclickQueryAiModel",
+				"summary": "Query Real-Time Search (ZeroClick-authenticated)",
+				"description": "Real-time search against a Dappier AI model, authenticated by verifying the\n`zc-signature` HMAC over the raw request bytes. The same orchestration as\n`POST /app/aimodel/{ai_model_id}` runs behind it.\n\nOnly marketplace-enabled models are reachable — ZeroClick traffic carries no\nDappier tenant, so a private model resolves to `404`.\n\nOn success, usage is settled with ZeroClick and reported via the `zc-usage`\nresponse header. The request is not charged on the Dappier platform.\n",
+				"security": [
+					{
+						"ZeroClickSignature": []
+					}
+				],
+				"parameters": [
+					{
+						"name": "aimodel_external_id",
+						"in": "path",
+						"required": true,
+						"description": "The ID of the AI model to query (e.g., am_01j06ytn18ejftedz6dyhz2b15). Must start with `am_`. Browse and find AI models in the [Dappier Marketplace](https://platform.dappier.com/marketplace).",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"$ref": "#/components/parameters/ZcRequestId"
+					},
+					{
+						"$ref": "#/components/parameters/ZcAgentId"
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/QueryRequest"
+							},
+							"examples": {
+								"basic": {
+									"summary": "Real-time search query",
+									"value": {
+										"query": "What is the latest news on AI regulation?"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "The AI model response. Includes the `zc-usage` header settling usage with ZeroClick.",
+						"headers": {
+							"zc-usage": {
+								"$ref": "#/components/headers/ZcUsage"
+							}
+						},
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/QueryResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/ZeroClickUnauthorized"
+					},
+					"402": {
+						"$ref": "#/components/responses/PaymentRequired"
+					},
+					"404": {
+						"$ref": "#/components/responses/NotFound"
+					},
+					"422": {
+						"$ref": "#/components/responses/UnprocessableEntity"
+					},
+					"500": {
+						"$ref": "#/components/responses/InternalError"
+					}
+				}
+			}
+		},
+		"/zeroclick/v2/search": {
+			"post": {
+				"tags": ["ZeroClick"],
+				"operationId": "zeroclickSearch",
+				"summary": "Get AI Article Recommendations (ZeroClick-authenticated)",
+				"description": "Semantic article search against a Dappier data model, authenticated by\nverifying the `zc-signature` HMAC over the raw request bytes. The same\norchestration as `POST /app/v2/search` runs behind it.\n\nOnly marketplace-enabled data models are reachable — ZeroClick traffic\ncarries no Dappier tenant, so a private data model resolves to `404`.\n\nOn success, usage is settled with ZeroClick and reported via the `zc-usage`\nresponse header. The request is not charged on the Dappier platform.\n",
+				"security": [
+					{
+						"ZeroClickSignature": []
+					}
+				],
+				"parameters": [
+					{
+						"name": "data_model_id",
+						"in": "query",
+						"required": true,
+						"description": "Data model ID, starting with `dm_`. Browse and find data models in the [Dappier Marketplace](https://platform.dappier.com/marketplace).",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "search_version",
+						"in": "query",
+						"required": false,
+						"description": "Optional search version override, forwarded to the retrieval pipeline.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"$ref": "#/components/parameters/ZcRequestId"
+					},
+					{
+						"$ref": "#/components/parameters/ZcAgentId"
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SearchRequest"
+							},
+							"examples": {
+								"basic": {
+									"summary": "Semantic recommendations",
+									"value": {
+										"query": "latest developments in electric vehicles",
+										"similarity_top_k": 9,
+										"search_algorithm": "semantic"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Article recommendations. Includes the `zc-usage` header settling usage with ZeroClick.",
+						"headers": {
+							"zc-usage": {
+								"$ref": "#/components/headers/ZcUsage"
+							}
+						},
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SearchResponse"
+								}
+							}
+						}
+					},
+					"400": {
+						"$ref": "#/components/responses/BadRequest"
+					},
+					"401": {
+						"$ref": "#/components/responses/ZeroClickUnauthorized"
+					},
+					"402": {
+						"$ref": "#/components/responses/PaymentRequired"
+					},
+					"404": {
+						"$ref": "#/components/responses/NotFound"
+					},
+					"422": {
+						"$ref": "#/components/responses/UnprocessableEntity"
+					},
+					"500": {
+						"$ref": "#/components/responses/InternalError"
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"securitySchemes": {
+			"ZeroClickSignature": {
+				"type": "apiKey",
+				"in": "header",
+				"name": "zc-signature",
+				"description": "HMAC signature minted by ZeroClick over the raw request bytes, of the form\n`t=<unix-seconds>,kid=<key-id>,v1=<hex-hmac>`. The canonical string signed is\n`t \\n METHOD \\n path+query \\n sha256hex(body) \\n zc-request-id \\n zc-agent-id`,\nand `v1 = hex(HMAC_SHA256(secret, canonical))`. Verified against the seller's\nsigning secret keyed by `kid`, with a ±300s timestamp skew bound.\n\nA missing or invalid signature is rejected with `401`\n`invalid_zeroclick_signature`; this is never failed open.\n"
+			}
+		},
+		"parameters": {
+			"ZcRequestId": {
+				"name": "zc-request-id",
+				"in": "header",
+				"required": true,
+				"description": "ZeroClick request id, set by ZeroClick when it proxies the request. It is part of the signed canonical string, so a request without it cannot verify.",
+				"schema": {
+					"type": "string",
+					"example": "zcreq_1"
+				}
+			},
+			"ZcAgentId": {
+				"name": "zc-agent-id",
+				"in": "header",
+				"required": false,
+				"description": "Identifier of the buying agent. Used to partition logs/analytics by agent; becomes the synthesized caller identity (`zeroclick:<agent-id>`). Treated as an empty string when absent, which the signer must match.",
+				"schema": {
+					"type": "string",
+					"example": "agt_1"
+				}
+			}
+		},
+		"headers": {
+			"ZcUsage": {
+				"description": "Usage report settled with ZeroClick, present on `200` responses. Dappier\npricing is per request rather than token-based, so this is a flat quantity of\n`1` against the `query` meter for the request's ZeroClick service slug.\n",
+				"schema": {
+					"type": "string"
+				},
+				"example": "[{\"serviceSlug\":\"real-time-search\",\"meterSlug\":\"query\",\"quantity\":1}]"
+			}
+		},
+		"responses": {
+			"ZeroClickUnauthorized": {
+				"description": "The `zc-signature` was missing or invalid, or ZeroClick is not configured for\nthis environment. Unsigned/unverifiable traffic is treated as unauthenticated.\nThe body never says why verification failed.\n",
+				"content": {
+					"application/json": {
+						"schema": {
+							"$ref": "#/components/schemas/ZeroClickSignatureError"
+						},
+						"example": {
+							"error": "invalid_zeroclick_signature"
+						}
+					}
+				}
+			},
+			"PaymentRequired": {
+				"description": "The ZeroClick allowance check denied the request (e.g. service not found or\nusage exhausted). No plan slug is returned, so ZeroClick prices against the\nlowest pay-as-you-go plan.\n",
+				"content": {
+					"application/json": {
+						"schema": {
+							"$ref": "#/components/schemas/PaymentRequiredError"
+						},
+						"example": {
+							"error": "payment_required",
+							"serviceSlug": "real-time-search",
+							"usage": [
+								{
+									"meterSlug": "query",
+									"quantity": 1
+								}
+							]
+						}
+					}
+				}
+			},
+			"BadRequest": {
+				"description": "A required query parameter is missing — for example `data_model_id`.",
+				"content": {
+					"text/plain": {
+						"schema": {
+							"type": "string"
+						},
+						"example": "data_model_id is required"
+					}
+				}
+			},
+			"NotFound": {
+				"description": "The model could not be resolved, or it is not marketplace-enabled and is\ntherefore unreachable from ZeroClick traffic.\n"
+			},
+			"UnprocessableEntity": {
+				"description": "The request body could not be read or decoded, `query` was empty, or the model id was not in the expected format.",
+				"content": {
+					"application/json": {
+						"schema": {
+							"$ref": "#/components/schemas/Error"
+						},
+						"examples": {
+							"emptyQuery": {
+								"value": {
+									"message": "query cannot be empty"
+								}
+							},
+							"badModelId": {
+								"value": {
+									"message": "aimodelExternalId is not in the correct format"
+								}
+							}
+						}
+					}
+				}
+			},
+			"InternalError": {
+				"description": "Unexpected server error while resolving the model or dispatching the request."
+			}
+		},
+		"schemas": {
+			"QueryRequest": {
+				"type": "object",
+				"title": "QueryRequest",
+				"required": ["query"],
+				"properties": {
+					"query": {
+						"type": "string",
+						"title": "Query message",
+						"description": "The query text to be passed to the AI model. Cannot be empty."
+					}
+				}
+			},
+			"QueryResponse": {
+				"type": "object",
+				"title": "QueryResponse",
+				"description": "The AI model response. Models that return a structured payload rather than a message emit that payload directly in place of this envelope.",
+				"required": ["message"],
+				"properties": {
+					"message": {
+						"type": "string",
+						"title": "Query message",
+						"description": "The response of the query sent, generated by the AI model."
+					}
+				}
+			},
+			"SearchRequest": {
+				"type": "object",
+				"required": ["query"],
+				"properties": {
+					"query": {
+						"type": "string",
+						"description": "Natural language query, keyword, or URL. If a URL is specified, our AI analyzes the page context, summarizes it, and provides semantic recommendations based on the content."
+					},
+					"similarity_top_k": {
+						"type": "integer",
+						"default": 9,
+						"description": "The number of articles to return."
+					},
+					"ref": {
+						"type": "string",
+						"description": "The site domain where AI recommendations are being displayed. Example format: dappier.com."
+					},
+					"num_articles_ref": {
+						"type": "integer",
+						"default": 0,
+						"description": "The minimum number of articles from the `ref` domain specified above. The rest of the articles will come from other sites within the RAG model."
+					},
+					"search_type": {
+						"type": "string",
+						"description": "Optional search type forwarded to the retrieval pipeline."
+					},
+					"search_algorithm": {
+						"type": "string",
+						"enum": [
+							"most_recent",
+							"semantic",
+							"most_recent_semantic",
+							"trending"
+						],
+						"description": "The search algorithm for retrieving articles.\n `most_recent`: Retrieves the most recent articles by publication date. `semantic` (default): Retrieves contextually relevant articles based on the query or the page content from the provided URL. `most_recent_semantic`: Performs semantic search and retrieves the most recent articles by publication date. `trending`: Performs a trending search and retrieves the most relevant articles to trending keywords in the past 24 hours."
+					},
+					"page": {
+						"type": "integer",
+						"default": 1,
+						"description": "Page number for pagination."
+					},
+					"num_results": {
+						"type": "integer",
+						"default": 10,
+						"description": "Number of results per page."
+					}
+				}
+			},
+			"SearchResponse": {
+				"type": "object",
+				"properties": {
+					"status": {
+						"type": "string",
+						"description": "The status of the API response."
+					},
+					"response": {
+						"type": "object",
+						"properties": {
+							"query": {
+								"type": "string",
+								"description": "The query string used for the recommendations."
+							},
+							"results": {
+								"type": "array",
+								"items": {
+									"$ref": "#/components/schemas/SearchResult"
+								}
+							},
+							"message": {
+								"type": "string",
+								"description": "Additional message or information."
+							}
+						}
+					}
+				}
+			},
+			"SearchResult": {
+				"type": "object",
+				"properties": {
+					"author": {
+						"type": "string",
+						"description": "The author of the article."
+					},
+					"image_url": {
+						"type": "string",
+						"description": "The image URL for the article. You can add &w=400&h=200 to the end of the URL with your desired size values to automatically resize and optimize delivery of the image."
+					},
+					"preview_content": {
+						"type": "string",
+						"description": "A short preview of the article content."
+					},
+					"pubdate": {
+						"type": "string",
+						"description": "The publication date of the article."
+					},
+					"pubdate_unix": {
+						"type": "integer",
+						"description": "The publication date in UNIX timestamp."
+					},
+					"score": {
+						"type": "number",
+						"description": "The relevance score of the article."
+					},
+					"site": {
+						"type": "string",
+						"description": "The source site of the article."
+					},
+					"site_domain": {
+						"type": "string",
+						"description": "The domain of the site."
+					},
+					"source_url": {
+						"type": "string",
+						"description": "The tracking URL for the article."
+					},
+					"summary": {
+						"type": "string",
+						"description": "A summary of the article content."
+					},
+					"title": {
+						"type": "string",
+						"description": "The title of the article."
+					},
+					"url": {
+						"type": "string",
+						"description": "The URL for the article."
+					}
+				}
+			},
+			"Error": {
+				"type": "object",
+				"required": ["message"],
+				"properties": {
+					"message": {
+						"type": "string"
+					},
+					"code": {
+						"type": "string"
+					}
+				}
+			},
+			"ZeroClickSignatureError": {
+				"type": "object",
+				"required": ["error"],
+				"description": "Returned when the `zc-signature` is missing/invalid or ZeroClick is unconfigured.",
+				"properties": {
+					"error": {
+						"type": "string",
+						"const": "invalid_zeroclick_signature"
+					}
+				}
+			},
+			"PaymentRequiredError": {
+				"type": "object",
+				"required": ["error", "serviceSlug", "usage"],
+				"description": "ZeroClick `payment_required` denial body.",
+				"properties": {
+					"error": {
+						"type": "string",
+						"const": "payment_required"
+					},
+					"serviceSlug": {
+						"type": "string",
+						"description": "The ZeroClick service slug the request was priced against. Resolved from the data model's MCP tool name, falling back to a slug derived from the model name, then the external id."
+					},
+					"usage": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"meterSlug": {
+									"type": "string",
+									"const": "query"
+								},
+								"quantity": {
+									"type": "integer",
+									"example": 1
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
