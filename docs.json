@@ -65,6 +65,13 @@
 						"pages": ["api-reference/endpoint/ai-recommendations"]
 					},
 					{
+						"group": "ZeroClick APIs",
+						"pages": [
+							"api-reference/endpoint/zeroclick-real-time-search",
+							"api-reference/endpoint/zeroclick-ai-recommendations"
+						]
+					},
+					{
 						"group": "Analytics APIs",
 						"pages": [
 							"api-reference/endpoint/ask-ai-analytics",
