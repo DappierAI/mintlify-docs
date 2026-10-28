@@ -2,7 +2,7 @@
 	"openapi": "3.1.0",
 	"info": {
 		"title": "Dappier API — ZeroClick endpoints",
-		"version": "1.0.0",
+		"version": "1.1.0",
 		"description": "OpenAPI specification for the ZeroClick-authenticated Dappier endpoints\n(`/zeroclick/*`).\n\nZeroClick sits in front of the Dappier API as the agent-payment layer. A\nbuying agent calls ZeroClick's hosted pay URL; ZeroClick then proxies the\nrequest to these endpoints, signing the raw request bytes with an HMAC in the\n`zc-signature` header. From this API's perspective, a request is authenticated\n**only** by a valid `zc-signature` — there is no Dappier API key on these\nroutes.\n\nThese endpoints mirror the standard `/app/aimodel/{ai_model_id}` and\n`/app/v2/search` endpoints (same request/response bodies, same routing),\ndiffering only in:\n  * **Authentication** — the `zc-signature` HMAC is verified over the raw\n    request bytes instead of a Dappier API key.\n  * **Authorization** — a ZeroClick allowance check runs before any billable\n    work. It fails *open* on a transient ZeroClick outage (the signature has\n    already verified), but never for a missing/invalid signature.\n  * **Scope** — ZeroClick traffic has no Dappier tenant, so only\n    marketplace-enabled models are reachable. Anything else returns `404`.\n  * **Metering** — usage is reported back to ZeroClick via the `zc-usage`\n    response header on success. Dappier platform charging is intentionally\n    bypassed; ZeroClick is the sole biller.\n"
 	},
 	"servers": [
@@ -34,7 +34,7 @@
 						"name": "aimodel_external_id",
 						"in": "path",
 						"required": true,
-						"description": "The ID of the AI model to query (e.g., am_01j06ytn18ejftedz6dyhz2b15). Must start with `am_`. Browse and find AI models in the [Dappier Marketplace](https://platform.dappier.com/marketplace).",
+						"description": "The ID of the AI model to query (e.g., am_01j06ytn18ejftedz6dyhz2b15). Must start with `am_`. The live catalog is available without a login at [`https://api.dappier.com/app/mcp/tools`](https://api.dappier.com/app/mcp/tools); use an entry's `model_id` when it starts with `am_`.",
 						"schema": {
 							"type": "string"
 						}
@@ -114,9 +114,19 @@
 						"name": "data_model_id",
 						"in": "query",
 						"required": true,
-						"description": "Data model ID, starting with `dm_`. Browse and find data models in the [Dappier Marketplace](https://platform.dappier.com/marketplace).",
+						"description": "Data model to search. Must be one of the live data models below.\n\n* `dm_01jhtt138wf1b9j8jwswye99y5` — **9 and 10 News**: local news, weather, sports and community stories for Northern Michigan (Cadillac, Traverse City).\n* `dm_01jmxn1a9tem8bq1nzbzjck8c4` — **Benzinga**: real-time financial news, earnings reports and market trends from Benzinga.com.\n* `dm_01jketafckeh0vxacqv1s295j0` — **CafeMom Parenting**: parenting advice, family tips, self-care and life hacks from Mom.com, CafeMom, LittleThings and MamasLatinas.\n* `dm_01jh3jg18fe92v4az2h2163t8k` — **MethodShop**: tech guides, how-tos and digital lifestyle articles on gadgets, media and productivity from MethodShop.com.\n* `dm_01jagy9nqaeer9hxx8z1sk1jx6` — **WISH-TV AI**: Indiana news, weather, sports scores, traffic and local events from WISH-TV.\n* `dm_01j1sza0h7ekhaecys2p3y0vmj` — **iHeartCats AI**: cat health, behavior, lifestyle, grooming and ownership articles from iheartcats.com.\n* `dm_01j1sz8t3qe6v9g8ad102kvmqn` — **iHeartDogs AI**: dog health, behavior, lifestyle, grooming and ownership articles from iheartdogs.com.\n\nThe live catalog is also available without a login at [`https://api.dappier.com/app/mcp/tools`](https://api.dappier.com/app/mcp/tools); use each entry's `data_model_external_id`. The `real-time-search` entry is served by `POST /zeroclick/aimodel/{aimodel_external_id}`, not by this endpoint.",
 						"schema": {
-							"type": "string"
+							"type": "string",
+							"enum": [
+								"dm_01jhtt138wf1b9j8jwswye99y5",
+								"dm_01jmxn1a9tem8bq1nzbzjck8c4",
+								"dm_01jketafckeh0vxacqv1s295j0",
+								"dm_01jh3jg18fe92v4az2h2163t8k",
+								"dm_01jagy9nqaeer9hxx8z1sk1jx6",
+								"dm_01j1sza0h7ekhaecys2p3y0vmj",
+								"dm_01j1sz8t3qe6v9g8ad102kvmqn"
+							],
+							"example": "dm_01jmxn1a9tem8bq1nzbzjck8c4"
 						}
 					},
 					{
