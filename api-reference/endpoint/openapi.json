@@ -461,11 +461,11 @@
       }
     },
 
-    "/v1/analytics/sponsored-conversations": {
+    "/v1/analytics/brand-agents": {
       "get": {
-        "summary": "Get Sponsored Conversations Analytics",
+        "summary": "Get Brand Agents Analytics",
         "description": "Advertiser-facing rollup for the campaigns the API key's tenant owns: summary KPIs, daily timeline, plus per-campaign, per-prompt, and click-type breakdowns. Numbers match the Dappier platform dashboard for the same filters.",
-        "operationId": "get_SponsoredConversations_analytics",
+        "operationId": "get_BrandAgents_analytics",
         "parameters": [
           {
             "name": "start_date",
@@ -513,7 +513,7 @@
             "name": "creative_id",
             "in": "query",
             "required": false,
-            "description": "DSP-served ad creative id (GAM/Dianomi) that triggered the sponsored conversation.",
+            "description": "DSP-served ad creative id (GAM/Dianomi) that triggered the Brand Agent conversation.",
             "schema": { "type": "string", "example": "391487" }
           },
           {
@@ -533,10 +533,10 @@
         ],
         "responses": {
           "200": {
-            "description": "Sponsored-conversation rollup for the requested window and filters.",
+            "description": "Brand Agent rollup for the requested window and filters.",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/SponsoredConversationsResponse" }
+                "schema": { "$ref": "#/components/schemas/BrandAgentsResponse" }
               }
             }
           },
@@ -846,9 +846,9 @@
           }
         }
       },
-      "SponsoredConversationsResponse": {
+      "BrandAgentsResponse": {
         "type": "object",
-        "title": "SponsoredConversationsResponse",
+        "title": "BrandAgentsResponse",
         "properties": {
           "success": { "type": "boolean", "description": "Always `true` for a 200 response.", "example": true },
           "filters": {
@@ -871,11 +871,11 @@
             "description": "Rollup for the window. Internally self-consistent; percentages rounded to 2 decimals.",
             "properties": {
               "impressions": { "type": "integer", "description": "Times a sponsored prompt was rendered and visible inside a publisher's widget.", "example": 36470 },
-              "queries": { "type": "integer", "description": "User queries inside the sponsored conversation (`deployment_type='sponsored_conversation'`).", "example": 7900 },
-              "sessions": { "type": "integer", "description": "Distinct sessions with ≥1 sponsored-conversation query.", "example": 2820 },
+              "queries": { "type": "integer", "description": "User queries inside the Brand Agent conversation (`deployment_type='sponsored_conversation'`).", "example": 7900 },
+              "sessions": { "type": "integer", "description": "Distinct sessions with ≥1 Brand Agent query.", "example": 2820 },
               "engagement_rate": { "type": "number", "description": "`queries / sessions × 100`. Can exceed 100% (multiple queries per session).", "example": 280.14 },
-              "avg_session_duration_seconds": { "type": "integer", "description": "Mean active time per engaged SC session (5s beacon resolution).", "example": 182 },
-              "total_clicks": { "type": "integer", "description": "All SC clicks (`sponsored_cta_click` + `sponsored_answer_click`).", "example": 1282 },
+              "avg_session_duration_seconds": { "type": "integer", "description": "Mean active time per engaged Brand Agent session (5s beacon resolution).", "example": 182 },
+              "total_clicks": { "type": "integer", "description": "All Brand Agent clicks (`sponsored_cta_click` + `sponsored_answer_click`).", "example": 1282 },
               "article_clicks": { "type": "integer", "description": "Subset on a URL inside the AI answer body (`sponsored_answer_click`).", "example": 312 },
               "cta_clicks": { "type": "integer", "description": "Subset on the brand-agent CTA button (`sponsored_cta_click`).", "example": 970 },
               "conversion_rate": { "type": "number", "description": "`total_clicks / sessions × 100`.", "example": 45.46 },
@@ -913,7 +913,7 @@
           },
           "prompt_breakdown": {
             "type": "array",
-            "description": "Top rows by engagement, grouped by prompt text (not prompt id). Configured sponsored prompts appear with `impressions > 0`; user-typed follow-ups inside the SC appear with `impressions == 0` and `queries > 0`. `prompt_id` is currently always `\"\"` (reserved for a future release).",
+            "description": "Top rows by engagement, grouped by prompt text (not prompt id). Configured sponsored prompts appear with `impressions > 0`; user-typed follow-ups inside the Brand Agent appear with `impressions == 0` and `queries > 0`. `prompt_id` is currently always `\"\"` (reserved for a future release).",
             "items": {
               "type": "object",
               "properties": {

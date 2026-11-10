@@ -1,6 +1,6 @@
 ---
-title: 'Sponsored Conversations Analytics'
-openapi: "get /v1/analytics/sponsored-conversations"
+title: 'Brand Agents Analytics'
+openapi: "get /v1/analytics/brand-agents"
 ---
 
 <Info>
@@ -12,5 +12,5 @@ openapi: "get /v1/analytics/sponsored-conversations"
 </Warning>
 
 <Warning>
-  `creative_id` / `line_item_id` / `publisher_id` reflect **DSP ad-render values** (the creative that matched the campaign and triggered the SC), snapshotted at SC entry and frozen for the SC lifetime. `publisher_id` is **absent on GAM-derived events** (GAM has no per-impression publisher id) — only Dianomi-served events carry it, so filtering by `publisher_id` scopes to Dianomi-derived traffic only. `prompt_breakdown` is grouped by prompt text and includes user-typed follow-ups (`impressions == 0`, `queries > 0`); filter client-side to `impressions > 0` for configured prompts only.
+  `creative_id` / `line_item_id` / `publisher_id` reflect **DSP ad-render values** (the creative that matched the campaign and triggered the Brand Agent conversation), snapshotted at Brand Agent entry and frozen for the lifetime of the conversation. `publisher_id` is **absent on GAM-derived events** (GAM has no per-impression publisher id) — only Dianomi-served events carry it, so filtering by `publisher_id` scopes to Dianomi-derived traffic only. `prompt_breakdown` is grouped by prompt text and includes user-typed follow-ups (`impressions == 0`, `queries > 0`); filter client-side to `impressions > 0` for configured prompts only.
 </Warning>

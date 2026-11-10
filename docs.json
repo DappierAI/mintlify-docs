@@ -76,7 +76,7 @@
 						"pages": [
 							"api-reference/endpoint/ask-ai-analytics",
 							"api-reference/endpoint/ask-ai-logs",
-							"api-reference/endpoint/sponsored-conversations-analytics",
+							"api-reference/endpoint/brand-agents-analytics",
 							"api-reference/endpoint/session-intelligence"
 						]
 					}
@@ -304,6 +304,12 @@
 			"href": "https://github.com/DappierAI"
 		}
 	},
+	"redirects": [
+		{
+			"source": "/api-reference/endpoint/sponsored-conversations-analytics",
+			"destination": "/api-reference/endpoint/brand-agents-analytics"
+		}
+	],
 	"footer": {
 		"socials": {
 			"instagram": "https://www.instagram.com/dappierai",
