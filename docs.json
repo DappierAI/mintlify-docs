@@ -62,8 +62,7 @@
             "pages": [
               "quickstart",
               "rag-marketplace",
-              "real-time-data-api",
-              "real-time-data-openai-schema"
+              "real-time-data-api"
             ]
           },
           {
@@ -98,7 +97,6 @@
               "integrations/open-ai-agents-integration",
               "integrations/open-ai-agents-dappier-mcp-integration",
               "integrations/open-ai-function-calling-integration",
-              "integrations/open-ai-gpt-integration",
               "integrations/ravenala-integration",
               "integrations/skyfire-integration",
               "integrations/replit-integration",
@@ -248,15 +246,7 @@
 							"cookbook/recipes/open-ai-function-calling-sports-summarizer"
 						]
 					},
-					{
-						"group": "OpenAI GPT",
-						"pages": [
-							"cookbook/recipes/open-ai-dappier-travel-concierge",
-							"cookbook/recipes/open-ai-dappier-stock-analyst",
-							"cookbook/recipes/open-ai-dappier-news-companion"
-						]
-					},
-					{
+          {
 						"group": "Replit",
 						"pages": [
 							"cookbook/recipes/replit-dynamic-travel-planner",
