@@ -17,30 +17,31 @@ Dappier powers conversational AI for the open web. Publishers use it to launch A
 
 <style>
   {`
-    .dp-mode-input { position: absolute; opacity: 0; pointer-events: none; }
-    .dp-mode-bar { display: flex; justify-content: flex-end; margin: 0 0 1.5rem; }
-    .dp-mode-pill { display: inline-flex; gap: 4px; padding: 4px; border-radius: 9999px; background: #0b1410; border: 1px solid #1f5a34; }
-    .dp-mode-pill label { cursor: pointer; padding: 6px 20px; border-radius: 9999px; font-weight: 600; font-size: 14px; line-height: 20px; color: #9aa5a0; user-select: none; }
-    #dp-mode-human:checked ~ .dp-mode-bar label[for="dp-mode-human"],
-    #dp-mode-agent:checked ~ .dp-mode-bar label[for="dp-mode-agent"] { background: #34c759; color: #062b14; }
-    #dp-mode-human:focus-visible ~ .dp-mode-bar label[for="dp-mode-human"],
-    #dp-mode-agent:focus-visible ~ .dp-mode-bar label[for="dp-mode-agent"] { outline: 2px solid #34c759; outline-offset: 2px; }
-    .dp-agent-view { display: none; }
-    #dp-mode-agent:checked ~ .dp-agent-view { display: block; }
-    #dp-mode-agent:checked ~ .dp-human-view { display: none; }
-    .dp-agent-view { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: #07100b; border: 1px solid #1f5a34; border-radius: 10px; padding: 20px 24px; font-size: 13px; line-height: 1.6; }
-    .dp-agent-view p, .dp-agent-view li, .dp-agent-view td, .dp-agent-view th, .dp-agent-view strong { color: #7dffa3 !important; font-family: inherit !important; }
-    .dp-agent-view h2, .dp-agent-view h3 { color: #34c759 !important; font-family: inherit !important; font-size: 13px !important; text-transform: uppercase; letter-spacing: 0.08em; margin: 1.75rem 0 0.5rem !important; border: 0 !important; }
-    .dp-agent-view h2::before { content: "## "; }
-    .dp-agent-view h3::before { content: "> "; }
-    .dp-agent-view a { color: #d6ffe4 !important; text-decoration: underline; font-family: inherit !important; }
-    .dp-agent-view table { width: 100%; font-size: 12px; }
-    .dp-agent-view th { text-transform: uppercase; letter-spacing: 0.06em; border-bottom: 1px solid #1f5a34 !important; text-align: left; }
-    .dp-agent-view td { border-bottom: 1px dashed #1f5a34 !important; vertical-align: top; }
+      .dp-mode-input { position: absolute; opacity: 0; pointer-events: none; }
+      .dp-mode-bar { display: flex; justify-content: flex-end; margin: 0 0 1.5rem; }
+      .dp-mode-pill { display: inline-flex; gap: 4px; padding: 4px; border-radius: 9999px; background: #0b1410; border: 1px solid #1f5a34; }
+      .dp-mode-pill label { cursor: pointer; padding: 6px 20px; border-radius: 9999px; font-weight: 600; font-size: 14px; line-height: 20px; color: #9aa5a0; user-select: none; }
+      #dp-mode-human:checked ~ .dp-mode-bar label[for="dp-mode-human"],
+      #dp-mode-agent:checked ~ .dp-mode-bar label[for="dp-mode-agent"] { background: #34c759; color: #062b14; }
+      #dp-mode-human:focus-visible ~ .dp-mode-bar label[for="dp-mode-human"],
+      #dp-mode-agent:focus-visible ~ .dp-mode-bar label[for="dp-mode-agent"] { outline: 2px solid #34c759; outline-offset: 2px; }
+      .dp-agent-view { display: none; }
+      #dp-mode-agent:checked ~ .dp-agent-view { display: block; }
+      #dp-mode-agent:checked ~ .dp-human-view { display: none; }
+      .dp-agent-view { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: #07100b; border: 1px solid #1f5a34; border-radius: 10px; padding: 20px 24px; font-size: 13px; line-height: 1.6; }
+      .dp-agent-view p, .dp-agent-view li, .dp-agent-view td, .dp-agent-view th, .dp-agent-view strong { color: #7dffa3 !important; font-family: inherit !important; }
+      .dp-agent-view h2, .dp-agent-view h3 { color: #34c759 !important; font-family: inherit !important; font-size: 13px !important; text-transform: uppercase; letter-spacing: 0.08em; margin: 1.75rem 0 0.5rem !important; border: 0 !important; }
+      .dp-agent-view h2::before { content: "## "; }
+      .dp-agent-view h3::before { content: "> "; }
+      .dp-agent-view a { color: #d6ffe4 !important; text-decoration: underline; font-family: inherit !important; }
+      .dp-agent-view table { width: 100%; font-size: 12px; }
+      .dp-agent-view th { text-transform: uppercase; letter-spacing: 0.06em; border-bottom: 1px solid #1f5a34 !important; text-align: left; }
+      .dp-agent-view td { border-bottom: 1px dashed #1f5a34 !important; vertical-align: top; }
+      .dp-agent-view tr { border-color: #1f5a34 !important; }
     .dp-agent-view code { background: #0f2a1a !important; color: #d6ffe4 !important; border: 0 !important; }
-    .dp-agent-cursor { display: inline-block; width: 8px; height: 14px; background: #34c759; vertical-align: -2px; animation: page-blink 1s steps(1) infinite; }
-    @keyframes page-blink { 50% { opacity: 0; } }
-    `}
+      .dp-agent-cursor { display: inline-block; width: 8px; height: 14px; background: #34c759; vertical-align: -2px; animation: page-blink 1s steps(1) infinite; }
+      @keyframes page-blink { 50% { opacity: 0; } }
+      `}
 </style>
 
 <div className="dp-mode-root">
@@ -145,6 +146,7 @@ Dappier powers conversational AI for the open web. Publishers use it to launch A
     INDEX     /llms.txt
     FULLTEXT  /llms-full.txt
     MARKDOWN  append .md to any page URL
+    STOREFRONT https://agents.dappier.com/llms.txt
     ```
 
     ## Read these docs as Markdown
