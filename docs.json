@@ -24,7 +24,8 @@
 					{
 						"group": "Get Started",
             "pages": [
-              "introduction"
+              "introduction",
+              "ask-ai"
             ]
           }
         ]
