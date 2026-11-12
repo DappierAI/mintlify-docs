@@ -351,6 +351,16 @@
       "source": "/dockable-ask-ai-widget",
       "destination": "/publishers/customize-ask-ai",
       "permanent": true
+    },
+    {
+      "source": "/embed-widgets",
+      "destination": "/publishers/deploy-ask-ai",
+      "permanent": true
+    },
+    {
+      "source": "/publish-and-monetize",
+      "destination": "/rag-marketplace",
+      "permanent": true
     }
 	],
 	"footer": {
