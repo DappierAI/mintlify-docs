@@ -35,6 +35,7 @@
           {
             "group": "Launch Ask AI",
             "pages": [
+              "publishers/create-agent",
               "launch-your-ai-mode",
               "configure-ai-agent",
               "configure-ask-ai",
