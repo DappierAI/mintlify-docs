@@ -331,7 +331,27 @@
 		{
 			"source": "/api-reference/endpoint/sponsored-conversations-analytics",
 			"destination": "/api-reference/endpoint/brand-agents-analytics"
-		}
+    },
+    {
+      "source": "/launch-your-ai-mode",
+      "destination": "/publishers/deploy-ask-ai",
+      "permanent": true
+    },
+    {
+      "source": "/configure-ai-agent",
+      "destination": "/publishers/create-agent",
+      "permanent": true
+    },
+    {
+      "source": "/configure-ask-ai",
+      "destination": "/publishers/customize-ask-ai",
+      "permanent": true
+    },
+    {
+      "source": "/dockable-ask-ai-widget",
+      "destination": "/publishers/customize-ask-ai",
+      "permanent": true
+    }
 	],
 	"footer": {
 		"socials": {
