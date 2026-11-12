@@ -37,14 +37,7 @@
             "pages": [
               "publishers/create-agent",
               "publishers/customize-ask-ai",
-              "publishers/deploy-ask-ai",
-              "wordpress"
-            ]
-          },
-          {
-            "group": "Content protection",
-            "pages": [
-              "bot-deterrence"
+              "publishers/deploy-ask-ai"
             ]
           }
         ]
@@ -362,6 +355,16 @@
     {
       "source": "/publish-and-monetize",
       "destination": "/rag-marketplace",
+      "permanent": true
+    },
+    {
+      "source": "/wordpress",
+      "destination": "/publishers/deploy-ask-ai",
+      "permanent": true
+    },
+    {
+      "source": "/bot-deterrence",
+      "destination": "/introduction",
       "permanent": true
     }
 	],
