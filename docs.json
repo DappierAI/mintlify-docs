@@ -23,36 +23,100 @@
 				"groups": [
 					{
 						"group": "Get Started",
-						"pages": ["quickstart"]
-					},
-					{
-						"group": "Developers",
-						"pages": [
-							"rag-marketplace",
-							"real-time-data-api",
-							"real-time-data-openai-schema"
-						]
-					},
-					{
-						"group": "Advertisers",
-						"pages": ["sales-agent-mcp"]
-					},
-					{
-						"group": "Publishers",
-						"pages": [
-							"publish-and-monetize",
-							"wordpress",
-							"configure-ask-ai",
-							"dockable-ask-ai-widget",
-							"configure-ai-agent",
-							"ai_recommendations_api",
-							"embed-widgets",
-							"bot-deterrence",
-							"launch-your-ai-mode"
-						]
-					}
-				]
-			},
+            "pages": [
+              "introduction"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Publishers",
+        "groups": [
+          {
+            "group": "Launch Ask AI",
+            "pages": [
+              "launch-your-ai-mode",
+              "configure-ai-agent",
+              "configure-ask-ai",
+              "dockable-ask-ai-widget",
+              "embed-widgets",
+              "wordpress"
+            ]
+          },
+          {
+            "group": "Monetize and grow",
+            "pages": [
+              "publish-and-monetize",
+              "ai_recommendations_api",
+              "bot-deterrence"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Advertisers",
+        "groups": [
+          {
+            "group": "Brand Agents",
+            "pages": [
+              "sales-agent-mcp"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Developers",
+        "groups": [
+          {
+            "group": "Get started",
+            "pages": [
+              "quickstart",
+              "rag-marketplace",
+              "real-time-data-api",
+              "real-time-data-openai-schema"
+            ]
+          },
+          {
+            "group": "Integrations",
+            "pages": [
+              "integrations/introduction-integration"
+            ]
+          },
+          {
+            "group": "SDKs",
+            "pages": [
+              "integrations/python-sdk",
+              "integrations/go-sdk"
+            ]
+          },
+          {
+            "group": "Platform Integrations",
+            "pages": [
+              "integrations/activepieces-integration",
+              "integrations/agent-ai-integration",
+              "integrations/agentstack-integration",
+              "integrations/bolt-integration",
+              "integrations/camel-integration",
+              "integrations/claude-dappier-mcp-server-integration",
+              "integrations/clawhub-integration",
+              "integrations/cursor-dappier-mcp-integration",
+              "integrations/dappier-mcp-server-integration",
+              "integrations/google-adk-integration",
+              "integrations/langchain-integration",
+              "integrations/llama-index-integration",
+              "integrations/mcp-use-integration",
+              "integrations/open-ai-agents-integration",
+              "integrations/open-ai-agents-dappier-mcp-integration",
+              "integrations/open-ai-function-calling-integration",
+              "integrations/open-ai-gpt-integration",
+              "integrations/ravenala-integration",
+              "integrations/skyfire-integration",
+              "integrations/replit-integration",
+              "integrations/zapier-integration"
+            ]
+          }
+        ]
+      },
 			{
 				"tab": "API Reference",
 				"groups": [
@@ -82,46 +146,7 @@
 					}
 				]
 			},
-			{
-				"tab": "Integrations",
-				"groups": [
-					{
-						"group": "Integrations",
-						"pages": ["integrations/introduction-integration"]
-					},
-					{
-						"group": "SDKs",
-						"pages": ["integrations/python-sdk", "integrations/go-sdk"]
-					},
-					{
-						"group": "Platform Integrations",
-						"pages": [
-							"integrations/activepieces-integration",
-							"integrations/agent-ai-integration",
-							"integrations/agentstack-integration",
-							"integrations/bolt-integration",
-							"integrations/camel-integration",
-							"integrations/claude-dappier-mcp-server-integration",
-							"integrations/clawhub-integration",
-							"integrations/cursor-dappier-mcp-integration",
-							"integrations/dappier-mcp-server-integration",
-							"integrations/google-adk-integration",
-							"integrations/langchain-integration",
-							"integrations/llama-index-integration",
-							"integrations/mcp-use-integration",
-							"integrations/open-ai-agents-integration",
-							"integrations/open-ai-agents-dappier-mcp-integration",
-							"integrations/open-ai-function-calling-integration",
-							"integrations/open-ai-gpt-integration",
-							"integrations/ravenala-integration",
-							"integrations/skyfire-integration",
-							"integrations/replit-integration",
-							"integrations/zapier-integration"
-						]
-					}
-				]
-			},
-			{
+      {
 				"tab": "Cookbook",
 				"groups": [
 					{
