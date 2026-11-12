@@ -38,18 +38,12 @@
               "publishers/create-agent",
               "publishers/customize-ask-ai",
               "publishers/deploy-ask-ai",
-              "launch-your-ai-mode",
-              "configure-ai-agent",
-              "configure-ask-ai",
-              "dockable-ask-ai-widget",
-              "embed-widgets",
               "wordpress"
             ]
           },
           {
-            "group": "Monetize and grow",
+            "group": "Engage and protect",
             "pages": [
-              "publish-and-monetize",
               "ai_recommendations_api",
               "bot-deterrence"
             ]
