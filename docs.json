@@ -366,5 +366,24 @@
 			"discord": "https://discord.com/invite/sSG77qEUSU",
 			"github": "https://github.com/DappierAI"
 		}
-	}
+  },
+  "description": "Dappier documentation: Ask AI 2.0 for publishers, Brand Agents for advertisers, and real-time data APIs and MCP servers for developers and AI agents.",
+  "contextual": {
+    "options": [
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "mcp",
+      "cursor",
+      "vscode"
+    ],
+    "display": "header"
+  },
+  "markdown": {
+    "instructions": [
+      "Dappier has three product areas. Publishers: Ask AI 2.0 (an AI agent trained on the publisher's own content, deployed as a hosted AI Mode page or an embed), the AI Recommendations API, and analytics APIs. Advertisers: Brand Agents (a conversational AI ad format), AI Brand Builder (creates a Brand Agent from a prompt), the Sales Agent MCP at https://sales-agent.dappier.com/mcp, and the Brand Agents Analytics API. Developers and AI agents: the Real Time Search API, marketplace data models, the Dappier MCP server, Python and Go SDKs, and framework integrations.",
+      "Start at /introduction for a map of every product. A full index of pages is at /llms.txt, and any page is available as Markdown by adding .md to its URL."
+    ]
+  }
 }
