@@ -1,0 +1,80 @@
+---
+title: "Create a Brand Agent by prompting"
+sidebarTitle: "AI Brand Builder"
+description: "Use AI Brand Builder to create a Brand Agent and campaign from a prompt, then distribute it across Dappier Ask AI and the open web."
+keywords: ["Brand Agent", "AI Brand Builder", "Sales Agent", "SmartSync", "campaign"]
+tag: "NEW"
+---
+
+AI Brand Builder creates a Brand Agent from a conversation. You tell the Dappier Sales Agent your brand name or website, and it sets up a brand agent and a campaign with you. There are no forms to fill in.
+
+<Note>
+  AI Brand Builder is in preview and can make mistakes. Check important details before you turn a campaign on.
+</Note>
+
+## Build a Brand Agent
+
+<Steps>
+  <Step title="Open AI Brand Builder">
+    Sign in to the [Dappier platform](https://platform.dappier.com) and select **AI Brand Builder** in the sidebar.
+  </Step>
+  <Step title="Describe your brand">
+    Type your brand name, or paste its website, and press Enter. Use Shift + Enter for a new line. For example:
+
+    ```text
+    My brand is miku baby monitor and my website is mikucare.com
+    ```
+  </Step>
+  <Step title="Work through the setup with the Sales Agent">
+    The Sales Agent sets up the brand agent with you in the chat.
+  </Step>
+  <Step title="Review what was created">
+    When it finishes, a **Created on Dappier** card shows your new brand agent. The brand agent and its campaign are both created, and the campaign starts paused.
+  </Step>
+</Steps>
+
+## Review and turn on the campaign
+
+The card and the top of the chat give you three actions. Each opens in a new tab.
+
+| Action | Use it to |
+| --- | --- |
+| Try the brand agent | Talk to the agent and check its answers. |
+| View agent | Change the agent, such as its knowledge sources or persona. |
+| View campaign | Change campaign settings such as the call to action, and turn the campaign on when you are ready. |
+
+The Sales Agent also lists notes about the agent it built, such as topics the knowledge sources do not cover. Read them before you launch.
+
+## Distribute your Brand Agent
+
+One Brand Agent runs in two distribution channels. The Sales Agent gives you the code for both in the chat.
+
+### Across Dappier Ask AI
+
+A sponsored prompt appears in a publisher's Ask AI experience. When a user engages with it, your Brand Agent opens inside Ask AI.
+
+This channel is activated with the **SmartSync pixel**. Add the JavaScript pixel to the companion creative or campaign configuration in your DSP, ad server, or buy-side platform. Dappier uses the External Campaign ID to map your programmatic campaign to its sponsored prompts.
+
+The SmartSync pixel activates the Brand Agent across Dappier Ask AI inventory only. It does not run the agent on the open web.
+
+### As a standalone Brand Agent on the open web
+
+A 300x600 programmatic impression renders the full interactive Brand Agent.
+
+Traffic the code as a JavaScript/HTML creative in a 300x600 slot. Paste the whole block: both the loader script tag and the widget element are required. The Widget ID and Placement ID are already filled in for your Brand Agent, so do not replace them.
+
+The creative ID, line item ID, publisher ID, and click tracker values are DSP or ad server macros. Map each one to the equivalent macro on the platform you are trafficking on. Any macro you leave unmapped is delivered as written.
+
+## Use the Sales Agent in your own AI tools
+
+Select **Connect MCP** to use the same Sales Agent from Claude, ChatGPT, Cursor, Windsurf, or a custom MCP client. The dialog shows the MCP server address, `https://sales-agent.dappier.com/mcp`, and a ready-made configuration for each client.
+
+<Warning>
+  The configuration includes your account key. Share it only with trusted applications.
+</Warning>
+
+For the tools the Sales Agent exposes, see [Dappier Sales Agent MCP](/sales-agent-mcp).
+
+## Pricing
+
+For pricing or questions, contact the Dappier sales team.

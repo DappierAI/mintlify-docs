@@ -36,6 +36,7 @@
             "group": "Launch Ask AI",
             "pages": [
               "publishers/create-agent",
+              "publishers/customize-ask-ai",
               "launch-your-ai-mode",
               "configure-ai-agent",
               "configure-ask-ai",
@@ -60,6 +61,7 @@
           {
             "group": "Brand Agents",
             "pages": [
+              "advertisers/ai-brand-builder",
               "sales-agent-mcp"
             ]
           }
