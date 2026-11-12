@@ -357,6 +357,21 @@
       "source": "/bot-deterrence",
       "destination": "/introduction",
       "permanent": true
+    },
+    {
+      "source": "/real-time-data-openai-schema",
+      "destination": "/quickstart",
+      "permanent": true
+    },
+    {
+      "source": "/integrations/open-ai-gpt-integration",
+      "destination": "/integrations/introduction-integration",
+      "permanent": true
+    },
+    {
+      "source": "/cookbook/recipes/open-ai-dappier-*",
+      "destination": "/cookbook/recipes/dappier-real-time-data",
+      "permanent": true
     }
 	],
 	"footer": {
