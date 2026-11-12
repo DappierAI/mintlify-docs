@@ -6,7 +6,7 @@ keywords: ["Brand Agent", "AI Brand Builder", "Sales Agent", "SmartSync", "campa
 tag: "NEW"
 ---
 
-AI Brand Builder creates a Brand Agent from a conversation. You tell the Dappier Sales Agent your brand name or website, and it sets up a brand agent and a campaign with you. There are no forms to fill in.
+AI Brand Builder uses the [Dappier Sales Agent MCP](/sales-agent-mcp) to build a Brand Agent for you from a prompt. You tell it your brand name or website, and it sets up the brand agent and a campaign, then generates the ad tags. You traffic those tags as a new AI ad format, either within Dappier or outside Dappier through your DSP or ad server.
 
 <Note>
   AI Brand Builder is in preview and can make mistakes. Check important details before you turn a campaign on.
@@ -47,9 +47,9 @@ The Sales Agent also lists notes about the agent it built, such as topics the kn
 
 ## Distribute your Brand Agent
 
-One Brand Agent runs in two distribution channels. The Sales Agent gives you the code for both in the chat.
+A Brand Agent is a new AI ad format that you traffic like any other creative. The Sales Agent generates a tag for each of two channels in the chat: one to run the Brand Agent within Dappier, and one to run it outside Dappier through a DSP or ad server. Each channel runs as its own campaign.
 
-### Across Dappier Ask AI
+### Within Dappier Ask AI
 
 A sponsored prompt appears in a publisher's Ask AI experience. When a user engages with it, your Brand Agent opens inside Ask AI.
 
@@ -57,9 +57,9 @@ This channel is activated with the **SmartSync pixel**. Add the JavaScript pixel
 
 The SmartSync pixel activates the Brand Agent across Dappier Ask AI inventory only. It does not run the agent on the open web.
 
-### As a standalone Brand Agent on the open web
+### Outside Dappier through a DSP or ad server
 
-A 300x600 programmatic impression renders the full interactive Brand Agent.
+Run the Brand Agent as a standalone creative on the open web, as a separate campaign in your DSP or ad server. A 300x600 programmatic impression renders the full interactive Brand Agent.
 
 Traffic the code as a JavaScript/HTML creative in a 300x600 slot. Paste the whole block: both the loader script tag and the widget element are required. The Widget ID and Placement ID are already filled in for your Brand Agent, so do not replace them.
 

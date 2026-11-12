@@ -1,15 +1,16 @@
 ---
 title: "AI Recommendations API"
+sidebarTitle: "AI Recommendations guide"
+description: "Power AI recommendations on your own content. Send a query or URL and get back recommended articles from your data model."
 ---
 
-Convert any data into a recommendation engine with Dappier's AI-powered Article Recommendations API. This API uses a RAG (Retrieval-Augmented Generation) model to return article recommendations based on the input query or URL.
+Use the AI Recommendations API to power AI recommendations on your own content. It uses a RAG (Retrieval-Augmented Generation) model to return article recommendations from your content based on the input query or URL.
 
 You'll need an API key to access this API. Visit [Dappier Platform](https://platform.dappier.com) to sign up and create an API key under Settings > Profile > API Keys.
 
 #### Using AI Recommendations API
 
-This section demonstrates retrieving recommendations based on natural language queries or URLs. You can get the data model id of the desired data model from the [Dappier Marketplace](https://marketplace.dappier.com). The data model id starts with `dm_`.
-Api reference for this endpoint can be found [here](https://docs.dappier.com/api-reference/endpoint/real-time-search).
+This section demonstrates retrieving recommendations based on natural language queries or URLs. The data model id for your own content is shown as **DataModel ID** on the **Configure** tab of your AI agent, and starts with `dm_`. See the [AI Recommendations endpoint reference](/api-reference/endpoint/ai-recommendations) for all parameters.
 
     <br/>
 
@@ -42,14 +43,14 @@ headers = {
 
     ```bash Go
     package main
-
+    
     import (
     "bytes"
     "fmt"
     "net/http"
     "io/ioutil"
     )
-
+    
     func main() {
     url := "https://api.dappier.com/app/datamodel/dm_01j0pb465keqmatq9k83dthx34"
     apiKey := "<YOUR_DAPPIER_API_KEY>"
@@ -62,31 +63,30 @@ headers = {
         "page": 1,
         "num_results" : 10
     }`
-
+    
     req, err := http.NewRequest("POST", url, bytes.NewBuffer([]byte(query)))
     if err != nil {
     fmt.Println("Error creating request:", err)
     return
-
-}
-
+    
+    }
+    
     req.Header.Set("Authorization", "Bearer "+apiKey)
     req.Header.Set("Content-Type", "application/json")
-
+    
     client := &http.Client{}
     resp, err := client.Do(req)
     if err != nil {
     fmt.Println("Error making request:", err)
     return
-
-}
-defer resp.Body.Close()
-
+    
+    }
+    defer resp.Body.Close()
+    
     body, _ := ioutil.ReadAll(resp.Body)
     fmt.Println(string(body))
-
-}
-
+    
+    }
     ```
 
     ```bash cURL

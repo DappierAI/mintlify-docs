@@ -33,7 +33,7 @@
         "tab": "Publishers",
         "groups": [
           {
-            "group": "Launch Ask AI",
+            "group": "Ask AI 2.0",
             "pages": [
               "publishers/create-agent",
               "publishers/customize-ask-ai",
@@ -42,9 +42,8 @@
             ]
           },
           {
-            "group": "Engage and protect",
+            "group": "Content protection",
             "pages": [
-              "ai_recommendations_api",
               "bot-deterrence"
             ]
           }
@@ -124,7 +123,10 @@
 					},
 					{
 						"group": "Publisher APIs",
-						"pages": ["api-reference/endpoint/ai-recommendations"]
+            "pages": [
+              "ai_recommendations_api",
+              "api-reference/endpoint/ai-recommendations"
+            ]
 					},
 					{
 						"group": "ZeroClick APIs",
