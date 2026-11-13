@@ -1,0 +1,138 @@
+---
+title: "Dappier: AI answers and monetization for the open web"
+sidebarTitle: "Introduction"
+description: "Dappier helps publishers launch and monetize Ask AI, lets advertisers run Brand Agents, and gives AI agents licensed real-time data."
+icon: "house"
+keywords:
+  - "Dappier"
+  - "Ask AI"
+  - "Brand Agents"
+  - "AI Brand Builder"
+  - "MCP"
+  - "real-time data"
+  - "llms.txt"
+---
+
+Dappier powers conversational AI for the open web. Publishers use it to launch Ask AI experiences trained on their own content and monetize them with advertising. Advertisers use it to run Brand Agents inside AI conversations. Developers and AI agents use it to access real-time, rights-cleared data through APIs and MCP.
+
+## Choose your path
+
+<Columns cols={3}>
+  <Card title="Publishers" icon="newspaper" href="/publishers/create-agent">
+    Launch Ask AI 2.0 on your site, monetize answers with ads, and syndicate your content to AI agents.
+  </Card>
+
+  <Card title="Advertisers" icon="bullhorn" href="/advertisers/ai-brand-builder">
+    Create Brand Agents and launch campaigns across publisher Ask AI inventory and the open internet.
+  </Card>
+
+  <Card title="Developers and agents" icon="code" href="/quickstart">
+    Call real-time data models from the marketplace through the API, SDKs, or the Dappier MCP server.
+  </Card>
+</Columns>
+
+## For publishers
+
+Ask AI is an AI agent trained on your articles, feeds, and files. It answers reader questions, cites and links to your pages, and recommends related content. You control its instructions, branding, and where it appears.
+
+<Steps>
+  <Step title="Create your AI agent">
+    Connect your content from RSS feeds, webpages, files, or a GraphQL endpoint, then set the agent's name, description, and persona. See [Create your AI agent](/publishers/create-agent).
+  </Step>
+  <Step title="Deploy Ask AI">
+    Brand the agent, then embed it in your pages or host a full AI Mode page on a Dappier URL or your own domain. See [Customize Ask AI](/publishers/customize-ask-ai) and [Deploy Ask AI](/publishers/deploy-ask-ai).
+  </Step>
+  <Step title="Monetize">
+    Turn on **Enable Ads** in your agent's behavior settings, and add the domains where your Ask AI widgets run in the agent's **Ad Settings** tab to join the Dappier Ads Program.
+  </Step>
+  <Step title="Measure">
+    Pull engagement, conversation logs, and session intelligence with the [Ask AI Analytics API](/api-reference/endpoint/ask-ai-analytics).
+  </Step>
+</Steps>
+
+## For advertisers
+
+Brand Agents are a conversational ad format. A Brand Agent is grounded in your approved brand content and talks with consumers inside publisher Ask AI conversations and in advertising placements on the open internet.
+
+<Columns cols={3}>
+  <Card title="AI Brand Builder" icon="wand-magic-sparkles" href="/advertisers/ai-brand-builder">
+    Build a Brand Agent from a prompt, get the ad tags, and traffic it within Dappier or through your DSP or ad server.
+  </Card>
+
+  <Card title="Sales Agent MCP" icon="robot" href="/sales-agent-mcp">
+    Let an AI agent discover inventory, create Brand Agents, launch and manage campaigns, and pull performance data.
+  </Card>
+
+  <Card title="Brand Agents Analytics API" icon="chart-line" href="/api-reference/endpoint/brand-agents-analytics">
+    Report on campaigns with summary KPIs, a daily timeline, and breakdowns by campaign, prompt, and click type.
+  </Card>
+</Columns>
+
+## For developers and AI agents
+
+The Dappier marketplace offers data models from publishers and data owners that you can query at inference time. Get an API key, pick a data model, and make your first call in the [developer quickstart](/quickstart).
+
+<Columns cols={2}>
+  <Card title="Marketplace" icon="store" href="/rag-marketplace">
+    Browse the data models available to your application.
+  </Card>
+
+  <Card title="Real-time data API" icon="bolt" href="/real-time-data-api">
+    Query live web search, news, and financial data.
+  </Card>
+
+  <Card title="MCP server" icon="plug" href="/integrations/dappier-mcp-server-integration">
+    Connect Dappier to Claude, Cursor, and other MCP clients.
+  </Card>
+
+  <Card title="Integrations" icon="link" href="/integrations/introduction-integration">
+    Use Dappier with LangChain, LlamaIndex, OpenAI Agents, Zapier, and more.
+  </Card>
+</Columns>
+
+## Read these docs as Markdown
+
+| Resource | Location |
+| --- | --- |
+| Index of every page with descriptions | [/llms.txt](/llms.txt) |
+| Full text of all pages in one file | [/llms-full.txt](/llms-full.txt) |
+| Any single page as Markdown | Add `.md` to the page URL, for example `/quickstart.md` |
+
+## Product map
+
+### Publishers
+
+| Product | What it is | Docs |
+| --- | --- | --- |
+| Ask AI 2.0 | An AI agent trained on the publisher's own content. It answers reader questions, cites and links to the publisher's pages, and shows related content. | [Create](/publishers/create-agent), [customize](/publishers/customize-ask-ai), [deploy](/publishers/deploy-ask-ai) |
+| AI Mode | A hosted answer page for an Ask AI agent, on a Dappier URL or the publisher's own domain. | [Deploy Ask AI](/publishers/deploy-ask-ai) |
+| Ask AI embed | The Ask AI widget placed inside the publisher's pages with a script tag and a widget tag. | [Deploy Ask AI](/publishers/deploy-ask-ai) |
+| AI Recommendations API | Returns article recommendations from the publisher's own content for a query or URL. | [Guide](/ai_recommendations_api), [endpoint](/api-reference/endpoint/ai-recommendations) |
+| Ask AI analytics APIs | Engagement rollups, conversation logs, and session intelligence for Ask AI. | [Analytics](/api-reference/endpoint/ask-ai-analytics), [logs](/api-reference/endpoint/ask-ai-logs), [session intelligence](/api-reference/endpoint/session-intelligence) |
+
+### Advertisers
+
+| Product | What it is | Docs |
+| --- | --- | --- |
+| Brand Agents | A conversational AI ad format. A Brand Agent runs inside publisher Ask AI conversations and as a standalone creative on the open web. | [AI Brand Builder](/advertisers/ai-brand-builder) |
+| AI Brand Builder | Builds a Brand Agent and campaign from a prompt and generates the ad tags. In preview. | [AI Brand Builder](/advertisers/ai-brand-builder) |
+| Sales Agent MCP | An MCP server for discovering inventory, creating Brand Agents, launching and managing campaigns, and pulling performance data. Server address: `https://sales-agent.dappier.com/mcp`. | [Sales Agent MCP](/sales-agent-mcp) |
+| Brand Agents Analytics API | Campaign KPIs, a daily timeline, and breakdowns by campaign, prompt, and click type. | [Endpoint](/api-reference/endpoint/brand-agents-analytics) |
+
+### Developers and AI agents
+
+| Product | What it is | Docs |
+| --- | --- | --- |
+| Real Time Search API | Real-time search covering live web search, breaking news, stock prices, and financial insights. | [Guide](/real-time-data-api), [endpoint](/api-reference/endpoint/real-time-search) |
+| Marketplace data models | Publisher content you can query by data model ID. IDs start with `dm_`. | [Marketplace](/rag-marketplace) |
+| Dappier MCP server | Dappier tools for Claude, Cursor, and other MCP clients. | [MCP server](/integrations/dappier-mcp-server-integration) |
+| SDKs | Python and Go client libraries. | [Python](/integrations/python-sdk), [Go](/integrations/go-sdk) |
+| Integrations | Guides for LangChain, LlamaIndex, OpenAI Agents, Google ADK, Zapier, and other platforms. | [Integrations overview](/integrations/introduction-integration) |
+
+## Act without a human
+
+| Goal | Where to go |
+| --- | --- |
+| Buy and call Dappier data as an agent | The agent storefront at [agents.dappier.com/llms.txt](https://agents.dappier.com/llms.txt) lists services, payment methods, and setup. |
+| Create and run advertising campaigns | Connect to the Sales Agent MCP at `https://sales-agent.dappier.com/mcp`. |
+| Call the APIs with a key | Create an API key on the [Dappier platform](https://platform.dappier.com), then follow the [developer quickstart](/quickstart). |
